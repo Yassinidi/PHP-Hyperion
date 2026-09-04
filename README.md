@@ -5,7 +5,7 @@
 **Next-Generation High-Performance PHP 8.4 Runtime Engine Engineered in Rust**
 
 [![Version](https://img.shields.io/badge/version-v0.1.0-blue.svg)](https://github.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/License-NonCommercial-red.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-2021%20edition-orange.svg)](https://www.rust-lang.org/)
 [![PHP](https://img.shields.io/badge/php-8.4%20compatible-777bb4.svg)](https://www.php.net/)
 [![Throughput](https://img.shields.io/badge/throughput-146%2C000%2B%20req%2Fsec-brightgreen.svg)](#-benchmarks)
@@ -149,4 +149,8 @@ python3 benchmark_laravel_crud.py
 
 ## 📜 License
 
-PHP-Hyperion is open-source software licensed under the [MIT License](LICENSE).
+PHP-Hyperion is licensed under the **PolyForm Noncommercial License 1.0.0** ([LICENSE](LICENSE)).
+
+- ✅ **Free for Noncommercial Use**: You are free to use, study, modify, test, and distribute this software for personal projects, academic research, education, and non-commercial evaluation.
+- 🚫 **Commercial Use Restricted**: Any commercial use, production business deployment, or integration into revenue-generating services/platforms requires an explicit commercial license.
+- 💼 **Commercial Licensing**: To acquire a commercial license or enterprise support, please contact **ELIDI NAILI** at [nailiyassin2@gmail.com](mailto:nailiyassin2@gmail.com).
