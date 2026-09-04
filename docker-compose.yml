@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # PHP-Hyperion Ultra-Fast Application Engine
+  # ============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hyperion_app
+    restart: always
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - HYPERION_REACTORS=8
+      - HYPERION_MAX_FIBRES=32
+      - PORT=8000
+      - HOST=0.0.0.0
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/app/laravel-crud/database/database.sqlite
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./laravel-crud:/app/laravel-crud
+    working_dir: /app/laravel-crud
+    command: ["hyperion", "-S", "0.0.0.0:8000", "-W", "hyperion_worker.php"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '8.0'
+          memory: 4096M
+        reservations:
+          cpus: '2.0'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/api/categories"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+
+  # ============================================================================
+  # Nginx High-Concurrency Edge Reverse Proxy
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: hyperion_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./laravel-crud/public:/app/public:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 512M
+
+  # ============================================================================
+  # Redis Cache & Session Store
+  # ============================================================================
+  redis:
+    image: redis:alpine
+    container_name: hyperion_redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+
+volumes:
+  redis_data:
+    driver: local

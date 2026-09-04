@@ -1,0 +1,13 @@
+# Rust build artifacts
+target/
+Cargo.lock.backup
+*.rs.bk
+
+# System & Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Temp files
+*.log
+*.tmp

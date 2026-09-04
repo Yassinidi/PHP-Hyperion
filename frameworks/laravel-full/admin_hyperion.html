@@ -1,0 +1,3132 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    dir="ltr"
+    class="fi min-h-screen"
+>
+    <head>
+        
+
+
+        <meta charset="utf-8" />
+        <meta name="csrf-token" content="yjlB4NjG5veXCe9qlwGYAqhQrcJkvylqvFCoRrwI" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        
+
+        
+
+        <title>
+            Dashboard -  Tedja
+
+        </title>
+
+        
+
+
+        <style>
+            [x-cloak=''],
+            [x-cloak='x-cloak'],
+            [x-cloak='1'] {
+                display: none !important;
+            }
+
+            @media (max-width: 1023px) {
+                [x-cloak='-lg'] {
+                    display: none !important;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                [x-cloak='lg'] {
+                    display: none !important;
+                }
+            }
+        </style>
+
+        <link
+            href="http://localhost/css/filament/forms/forms.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+    
+
+    
+        <link
+            href="http://localhost/css/filament/support/support.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+    
+
+
+<style>
+    :root {
+         --danger-50:254, 242, 242;  --danger-100:254, 226, 226;  --danger-200:254, 202, 202;  --danger-300:252, 165, 165;  --danger-400:248, 113, 113;  --danger-500:239, 68, 68;  --danger-600:220, 38, 38;  --danger-700:185, 28, 28;  --danger-800:153, 27, 27;  --danger-900:127, 29, 29;  --danger-950:69, 10, 10;  --gray-50:250, 250, 250;  --gray-100:244, 244, 245;  --gray-200:228, 228, 231;  --gray-300:212, 212, 216;  --gray-400:161, 161, 170;  --gray-500:113, 113, 122;  --gray-600:82, 82, 91;  --gray-700:63, 63, 70;  --gray-800:39, 39, 42;  --gray-900:24, 24, 27;  --gray-950:9, 9, 11;  --info-50:239, 246, 255;  --info-100:219, 234, 254;  --info-200:191, 219, 254;  --info-300:147, 197, 253;  --info-400:96, 165, 250;  --info-500:59, 130, 246;  --info-600:37, 99, 235;  --info-700:29, 78, 216;  --info-800:30, 64, 175;  --info-900:30, 58, 138;  --info-950:23, 37, 84;  --primary-50:255, 251, 235;  --primary-100:254, 243, 199;  --primary-200:253, 230, 138;  --primary-300:252, 211, 77;  --primary-400:251, 191, 36;  --primary-500:245, 158, 11;  --primary-600:217, 119, 6;  --primary-700:180, 83, 9;  --primary-800:146, 64, 14;  --primary-900:120, 53, 15;  --primary-950:69, 26, 3;  --success-50:240, 253, 244;  --success-100:220, 252, 231;  --success-200:187, 247, 208;  --success-300:134, 239, 172;  --success-400:74, 222, 128;  --success-500:34, 197, 94;  --success-600:22, 163, 74;  --success-700:21, 128, 61;  --success-800:22, 101, 52;  --success-900:20, 83, 45;  --success-950:5, 46, 22;  --warning-50:255, 251, 235;  --warning-100:254, 243, 199;  --warning-200:253, 230, 138;  --warning-300:252, 211, 77;  --warning-400:251, 191, 36;  --warning-500:245, 158, 11;  --warning-600:217, 119, 6;  --warning-700:180, 83, 9;  --warning-800:146, 64, 14;  --warning-900:120, 53, 15;  --warning-950:69, 26, 3; 
+    }
+</style>
+
+
+        <link
+            href="http://localhost/css/filament/filament/app.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+        
+            <link rel="preconnect" href="https://fonts.bunny.net">
+            <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        
+
+
+        <style>
+            :root {
+                --font-family: 'Inter';
+                --sidebar-width: 20rem;
+                --collapsed-sidebar-width: 4.5rem;
+                --default-theme-mode: system;
+            }
+        </style>
+
+        
+
+        
+
+
+        
+            <script>
+                const loadDarkMode = () => {
+                    window.theme = localStorage.getItem('theme') ?? 'system'
+
+                    if (
+                        window.theme === 'dark' ||
+                        (window.theme === 'system' &&
+                            window.matchMedia('(prefers-color-scheme: dark)')
+                                .matches)
+                    ) {
+                        document.documentElement.classList.add('dark')
+                    }
+                }
+
+                loadDarkMode()
+
+                document.addEventListener('livewire:navigated', loadDarkMode)
+            </script>
+        
+
+        
+
+    <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}</style>
+</head>
+
+    <body
+        class="fi-body fi-panel-admin min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
+
+    >
+        
+
+
+        <div
+        class="fi-layout flex min-h-screen w-full flex-row-reverse overflow-x-clip"
+    >
+        <div
+            
+                x-data="{}"
+                x-bind:style="'display: flex; opacity:1;'" 
+            
+            class="fi-main-ctn w-screen flex-1 flex-col opacity-0"
+        >
+            
+                
+
+
+                
+
+
+
+
+<div
+    class="fi-topbar sticky top-0 z-20 overflow-x-clip"
+
+>
+    <nav
+        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8"
+    >
+        
+
+
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-1.5 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-topbar-open-sidebar-btn lg:hidden" title="Expand sidebar" type="button" wire:loading.attr="disabled" x-cloak="x-cloak" x-data="{}" x-on:click="$store.sidebar.open()" x-show="! $store.sidebar.isOpen"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Expand sidebar
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-1.5 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-topbar-close-sidebar-btn lg:hidden" title="Collapse sidebar" type="button" wire:loading.attr="disabled" x-cloak="x-cloak" x-data="{}" x-on:click="$store.sidebar.close()" x-show="$store.sidebar.isOpen"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Collapse sidebar
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+        
+
+        
+
+        <div
+            
+                x-persist="topbar.end.panel-admin"
+            
+            class="ms-auto flex items-center gap-x-4"
+        >
+            
+
+
+            
+
+            
+
+
+            
+                
+
+                
+
+
+
+
+<div
+    x-data="{
+        toggle: function (event) {
+            $refs.panel?.toggle(event)
+        },
+
+        open: function (event) {
+            $refs.panel?.open(event)
+        },
+
+        close: function (event) {
+            $refs.panel?.close(event)
+        },
+    }"
+    class="fi-dropdown fi-user-menu"
+
+>
+    <div
+        x-on:click="toggle"
+        class="fi-dropdown-trigger flex cursor-pointer"
+
+    >
+        <button
+            aria-label="User menu"
+            type="button"
+            class="shrink-0"
+        >
+            
+
+
+
+
+<img
+    class="fi-avatar object-cover object-center fi-circular rounded-full h-8 w-8 fi-user-avatar" src="https://ui-avatars.com/api/?name=A+T&amp;color=FFFFFF&amp;background=000000" alt="Avatar of Admin Tedja"
+
+/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </button>
+
+    </div>
+
+    
+        <div
+            x-cloak
+            x-float.placement.bottom-end.flip.teleport.offset="{ offset: 8,  }"
+            x-ref="panel"
+            x-transition:enter-start="opacity-0"
+            x-transition:leave-end="opacity-0"
+            
+            class="fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10 !max-w-[14rem]"
+            style=""
+        >
+            <div
+
+    class="fi-dropdown-header flex w-full gap-2 p-3 text-sm  fi-dropdown-header-color-gray fi-color-gray"
+
+>
+    
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-dropdown-header-icon h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+    
+
+    <span
+        class="fi-dropdown-header-label flex-1 truncate text-start text-gray-700 dark:text-gray-200"
+        style=""
+    >
+        Admin Tedja
+
+    </span>
+</div>
+
+
+
+
+
+
+
+
+
+
+        
+
+        
+
+    
+
+    
+        
+
+
+
+
+<div class="fi-dropdown-list p-1">
+    <div
+    x-data="{ theme: null }"
+    x-init="
+        $watch('theme', () => {
+            $dispatch('theme-changed', theme)
+        })
+
+        theme = localStorage.getItem('theme') || 'system'
+    "
+    class="fi-theme-switcher grid grid-flow-col gap-x-1"
+>
+    
+
+
+
+
+<button
+    aria-label="Enable light theme"
+    type="button"
+    x-on:click="(theme = 'light') && close()"
+    x-tooltip="{
+        content: 'Enable light theme',
+        theme: $store.theme,
+    }"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    x-bind:class="
+        theme === 'light'
+            ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
+            : 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400'
+    "
+>
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06l-1.06-1.06a.75.75 0 1 0-1.061 1.06l1.06 1.06Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+</button>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+<button
+    aria-label="Enable dark theme"
+    type="button"
+    x-on:click="(theme = 'dark') && close()"
+    x-tooltip="{
+        content: 'Enable dark theme',
+        theme: $store.theme,
+    }"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    x-bind:class="
+        theme === 'dark'
+            ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
+            : 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400'
+    "
+>
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+</button>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+<button
+    aria-label="Enable system theme"
+    type="button"
+    x-on:click="(theme = 'system') && close()"
+    x-tooltip="{
+        content: 'Enable system theme',
+        theme: $store.theme,
+    }"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    x-bind:class="
+        theme === 'system'
+            ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
+            : 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400'
+    "
+>
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M2 4.25A2.25 2.25 0 0 1 4.25 2h11.5A2.25 2.25 0 0 1 18 4.25v8.5A2.25 2.25 0 0 1 15.75 15h-3.105a3.501 3.501 0 0 0 1.1 1.677A.75.75 0 0 1 13.26 18H6.74a.75.75 0 0 1-.484-1.323A3.501 3.501 0 0 0 7.355 15H4.25A2.25 2.25 0 0 1 2 12.75v-8.5Zm1.5 0a.75.75 0 0 1 .75-.75h11.5a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-.75.75H4.25a.75.75 0 0 1-.75-.75v-7.5Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+</button>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+
+
+
+<div class="fi-dropdown-list p-1">
+    <form
+        action="http://localhost/admin/logout" method="post"
+
+    >
+        <input type="hidden" name="_token" value="yjlB4NjG5veXCe9qlwGYAqhQrcJkvylqvFCoRrwI" autocomplete="off">
+
+        <button
+            
+            
+            
+            type="submit"
+            style=";" class="fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 fi-dropdown-list-item-color-gray fi-color-gray"
+
+        >
+            
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-dropdown-list-item-icon h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            
+
+            <span class="fi-dropdown-list-item-label flex-1 truncate text-start text-gray-700 dark:text-gray-200" style="">
+                Sign out
+
+            </span>
+
+            
+        </button>
+    </form>
+
+</div>
+
+        </div>
+    
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+        </div>
+
+        
+
+    </nav>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+                
+
+            
+
+            
+
+
+            <main
+                class="fi-main mx-auto h-full w-full px-4 md:px-6 lg:px-8 max-w-7xl"
+            >
+                
+
+
+                <div wire:snapshot="{&quot;data&quot;:{&quot;mountedActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;defaultAction&quot;:null,&quot;defaultActionArguments&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;areFormStateUpdateHooksDisabledForTesting&quot;:false,&quot;mountedInfolistActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedInfolistActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedInfolistActionsComponent&quot;:null,&quot;mountedInfolistActionsInfolist&quot;:null,&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;Fx5F7mC3LaOGEUguGXgN&quot;,&quot;name&quot;:&quot;filament.pages.dashboard&quot;,&quot;path&quot;:&quot;admin&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;6eb6b93582e410d56f3fc430c6732d098a1fcfd111af243c8c274f15e51e80d1&quot;}" wire:effects="[]" wire:id="Fx5F7mC3LaOGEUguGXgN"
+    class="fi-page fi-dashboard-page"
+
+>
+    
+
+
+    <section
+        class="flex flex-col gap-y-8 py-8"
+    >
+        <!--[if BLOCK]><![endif]-->
+            
+
+            
+
+
+
+
+<header
+    class="fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+
+>
+    <div>
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <h1
+            class="fi-header-heading text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl"
+        >
+            Dashboard
+
+        </h1>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+
+    <div
+        class="flex shrink-0 items-center gap-3"
+    >
+        
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        
+
+    </div>
+</header>
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]-->
+
+        <div
+            class=""
+        >
+            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+            <div
+                class="grid flex-1 auto-cols-fr gap-y-8"
+            >
+                
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    
+
+
+
+
+<div
+    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-wi gap-6"
+
+>
+    <!--[if BLOCK]><![endif]-->
+        
+
+        <div wire:snapshot="{&quot;data&quot;:[],&quot;memo&quot;:{&quot;id&quot;:&quot;q3M9AMtIBWeiRHXgpHkW&quot;,&quot;name&quot;:&quot;filament.widgets.account-widget&quot;,&quot;path&quot;:&quot;admin&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;f55f4375a11a05c9d2bbeaf8cfdf3ae56c9c2259522f9c412151d0d23e621b83&quot;}" wire:effects="[]" wire:id="q3M9AMtIBWeiRHXgpHkW"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] fi-wi-widget fi-account-widget"
+
+>
+    <section
+    
+    x-data="{
+        isCollapsed:  false ,
+    }"
+    
+    class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-section-content-ctn"
+    >
+        <div
+            class="fi-section-content p-6"
+        >
+            <div class="flex items-center gap-x-3">
+            
+
+
+
+
+<img
+    class="fi-avatar object-cover object-center fi-circular rounded-full h-10 w-10 fi-user-avatar" src="https://ui-avatars.com/api/?name=A+T&amp;color=FFFFFF&amp;background=000000" alt="Avatar of Admin Tedja"
+
+/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="flex-1">
+                <h2
+                    class="grid flex-1 text-base font-semibold leading-6 text-gray-950 dark:text-white"
+                >
+                    Welcome
+
+                </h2>
+
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Admin Tedja
+
+                </p>
+            </div>
+
+            <form
+                action="http://localhost/admin/logout"
+                method="post"
+                class="my-auto"
+            >
+                <input type="hidden" name="_token" value="yjlB4NjG5veXCe9qlwGYAqhQrcJkvylqvFCoRrwI" autocomplete="off">
+
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray sm:hidden" title="" type="submit" wire:loading.attr="disabled"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Sign out
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+<!--[if ENDBLOCK]><![endif]-->
+
+<button
+
+    
+    
+    
+    
+    
+    style=";" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg  fi-btn-color-gray fi-color-gray fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm hidden sm:inline-grid shadow-sm bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 [input:checked+&amp;]:bg-gray-400 [input:checked+&amp;]:text-white [input:checked+&amp;]:ring-0 [input:checked+&amp;]:hover:bg-gray-300 dark:[input:checked+&amp;]:bg-gray-600 dark:[input:checked+&amp;]:hover:bg-gray-500" type="submit" wire:loading.attr="disabled"
+
+>
+    <!--[if BLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-btn-icon transition duration-75 h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    <!--[if ENDBLOCK]><![endif]-->
+
+    <span
+        
+        class="fi-btn-label"
+    >
+        Sign out
+
+    </span>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</button>
+
+
+
+
+
+
+
+            </form>
+        </div>
+
+        </div>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</section>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+        
+
+        <div wire:snapshot="{&quot;data&quot;:[],&quot;memo&quot;:{&quot;id&quot;:&quot;h2APHsSsSl6m2qIxm5Gl&quot;,&quot;name&quot;:&quot;filament.widgets.filament-info-widget&quot;,&quot;path&quot;:&quot;admin&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;ab9f1904de6ff5fc82dd2083d4b62903850980e08048ebf920c827130d80294a&quot;}" wire:effects="[]" wire:id="h2APHsSsSl6m2qIxm5Gl"
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] fi-wi-widget fi-filament-info-widget"
+
+>
+    <section
+    
+    x-data="{
+        isCollapsed:  false ,
+    }"
+    
+    class="fi-section rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-section-content-ctn"
+    >
+        <div
+            class="fi-section-content p-6"
+        >
+            <div class="flex items-center gap-x-3">
+            <div class="flex-1">
+                <a
+                    href="https://filamentphp.com"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                >
+                    <svg
+                        aria-label="Filament"
+                        fill="currentColor"
+                        role="img"
+                        viewBox="0 0 303 61"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 text-gray-950 dark:text-white"
+                    >
+                        <path
+                            d="M11.739 58.266c.598-2.782 1.17-5.473 1.716-8.073.455-2.167.964-4.568 1.527-7.204l.345-1.61 2.786-13.26h10.669l1.872-8.775H19.5l.351-1.736c.156-.767.286-1.41.39-1.93.416-2.002 1.17-3.504 2.262-4.505 1.092-1 2.6-1.501 4.524-1.501 1.092 0 2.171.13 3.237.39 1.066.26 2.08.624 3.042 1.092l2.808-9.36c-.832-.364-1.8-.683-2.905-.956a28.228 28.228 0 0 0-3.491-.623A31.515 31.515 0 0 0 26.052 0c-1.924 0-3.77.228-5.538.682a13.837 13.837 0 0 0-4.836 2.301c-1.456 1.08-2.724 2.542-3.803 4.388-1.079 1.846-1.904 4.147-2.476 6.903-.364 1.742-.76 3.633-1.19 5.675l.128-.605H1.872L0 28.119h6.474l-.095.447-.512 2.405-.251 1.185c-.416 1.962-.793 3.75-1.131 5.362l-.819 3.9c-.676 3.224-1.293 6.142-1.853 8.755a1037.9 1037.9 0 0 0-1.696 8.093h11.622Z"
+                        />
+                        <path
+                            d="M11.739 58.266c.598-2.782 1.17-5.473 1.716-8.073.455-2.167.964-4.568 1.527-7.204l.345-1.61 2.786-13.26h10.669l1.872-8.775H19.5l.351-1.736c.156-.767.286-1.41.39-1.93.416-2.002 1.17-3.504 2.262-4.505 1.092-1 2.6-1.501 4.524-1.501 1.092 0 2.171.13 3.237.39 1.066.26 2.08.624 3.042 1.092l2.808-9.36c-.832-.364-1.8-.683-2.905-.956a28.228 28.228 0 0 0-3.491-.623A31.515 31.515 0 0 0 26.052 0c-1.924 0-3.77.228-5.538.682a13.837 13.837 0 0 0-4.836 2.301c-1.456 1.08-2.724 2.542-3.803 4.388-1.079 1.846-1.904 4.147-2.476 6.903-.364 1.742-.76 3.633-1.19 5.675l.128-.605H1.872L0 28.119h6.474l-.095.447-.512 2.405-.251 1.185c-.416 1.962-.793 3.75-1.131 5.362l-.819 3.9c-.676 3.224-1.293 6.142-1.853 8.755a1037.9 1037.9 0 0 0-1.696 8.093h11.622zm50.58 0a1959.83 1959.83 0 0 1 3.55-16.887l4.562-21.606c.754-3.588 1.476-7 2.165-10.237.689-3.237 1.358-6.39 2.008-9.458L62.748 1.092c-.65 3.12-1.3 6.227-1.95 9.321a896.385 896.385 0 0 1-2.028 9.399l-4.524 21.606c-.702 3.224-1.326 6.142-1.872 8.755-.546 2.613-1.118 5.311-1.716 8.093H62.32zM39.103 19.483l-.732 2.512-.019.108c-.042.364.111.725.398.918l4.02 2.702-4.7.305c-.37.024-.683.312-.773.71l-.358 1.58-.018.11c-.042.363.11.724.398.917l4.019 2.702-4.7.305c-.37.024-.682.312-.772.71l-.358 1.581-.019.11c-.042.362.111.724.398.917l4.019 2.701-4.7.306c-.369.024-.682.311-.772.71l-.358 1.58-.018.11c-.043.363.11.724.398.917l4.018 2.701-4.7.306c-.368.024-.681.312-.772.71l-.357 1.58-.02.11c-.041.363.112.724.399.917l4.02 2.701-4.7.306c-.37.024-.683.312-.773.71l-1.627 6.231h5.262l.82-3.391 6.593-.56c.369-.025.682-.313.772-.71l.358-1.582.018-.109c.043-.363-.11-.724-.397-.917l-4.02-2.703 4.7-.304c.37-.024.682-.312.773-.71l.358-1.581.018-.11c.042-.362-.11-.724-.398-.917l-4.019-2.702 4.7-.305c.369-.023.682-.311.772-.71l.358-1.58.019-.11c.042-.363-.111-.724-.398-.917l-4.02-2.702 4.7-.305c.37-.024.683-.312.773-.71l.358-1.58.018-.11c.043-.363-.11-.724-.398-.917l-4.02-2.703 4.701-.304c.37-.024.682-.312.772-.71l.358-1.581.019-.11c.042-.362-.111-.724-.398-.917l-5.325-3.61 1.136-2.821-5.804.215ZM46.303 13.338c2.184 0 4.01-.396 5.48-1.19 1.468-.793 2.437-2.32 2.905-4.582.416-1.976.104-3.672-.936-5.09C52.712 1.06 51.113.352 48.955.352s-3.985.455-5.48 1.365c-1.495.91-2.463 2.405-2.905 4.485-.468 2.288-.163 4.05.916 5.285 1.08 1.234 2.685 1.852 4.817 1.852zm48.448 4.953c3.744 0 6.825.624 9.243 1.872 2.418 1.248 4.095 3.023 5.031 5.323.936 2.302 1.053 5.038.351 8.21-.26 1.3-.533 2.62-.819 3.959l-.897 4.192-.702 3.276c-.416 1.95-.851 4.004-1.306 6.162a948.634 948.634 0 0 1-1.502 6.981H94.088l.507-5.187h-.897c-.962 1.378-2.021 2.515-3.178 3.413a12.74 12.74 0 0 1-3.764 2.028c-1.352.454-2.808.682-4.368.682-2.47 0-4.537-.605-6.2-1.813-1.665-1.21-2.822-2.815-3.472-4.817-.65-2.002-.715-4.186-.195-6.552.39-1.82 1.02-3.341 1.892-4.563a11.194 11.194 0 0 1 3.159-3.003c1.235-.78 2.6-1.398 4.095-1.852a31.55 31.55 0 0 1 4.66-1.034l12.207-1.911c.26-1.17.163-2.19-.292-3.061-.455-.872-1.268-1.547-2.438-2.029-1.17-.48-2.665-.721-4.485-.721-.936 0-1.93.072-2.983.215a33.843 33.843 0 0 0-3.296.623c-1.144.273-2.32.611-3.53 1.014-1.208.404-2.45.878-3.724 1.424l1.833-10.218a43.732 43.732 0 0 1 3.198-.916 75.564 75.564 0 0 1 3.783-.839 50.322 50.322 0 0 1 4.076-.624 36.562 36.562 0 0 1 4.075-.234zm2.34 20.631c-.364.26-.806.514-1.326.76-.52.247-1.235.494-2.145.741-.91.247-2.145.54-3.705.878a21.975 21.975 0 0 0-2.769.819c-.832.312-1.52.754-2.067 1.326-.546.572-.91 1.313-1.092 2.223-.26 1.43-.013 2.542.741 3.335.754.793 1.781 1.189 3.081 1.189.936 0 1.879-.201 2.828-.604.949-.404 1.859-.982 2.73-1.736a14.629 14.629 0 0 0 2.398-2.691zm56.696-13.686c-.41-1.957-1.242-3.518-2.498-4.683-1.625-1.508-3.893-2.262-6.805-2.262-1.794 0-3.517.312-5.168.936a17.493 17.493 0 0 0-4.563 2.555c-1.39 1.078-2.567 2.281-3.53 3.607h-.974l.819-6.63-9.828.585c-.676 3.25-1.34 6.39-1.99 9.418a858.45 858.45 0 0 0-1.832 8.756l-.82 3.9c-.701 3.224-1.325 6.142-1.871 8.755-.546 2.613-1.118 5.311-1.716 8.093h11.66c.573-2.782 1.132-5.46 1.678-8.034.546-2.574 1.13-5.317 1.755-8.229l1.677-8.073a27.92 27.92 0 0 1 2.515-2.574 11.36 11.36 0 0 1 2.652-1.794 6.731 6.731 0 0 1 2.945-.663c1.82 0 2.983.709 3.49 2.125.507 1.417.514 3.296.02 5.636l-1.131 5.382a858.89 858.89 0 0 0-1.716 8.19 966.047 966.047 0 0 1-1.677 8.034H148.5c.598-2.782 1.176-5.48 1.735-8.093.56-2.613 1.177-5.531 1.853-8.755.312-1.508.617-2.964.916-4.368l.8-3.744-.055.254.082-.09a29.133 29.133 0 0 1 1.69-1.69l.428-.385a12.286 12.286 0 0 1 2.671-1.814 6.572 6.572 0 0 1 2.945-.682c1.82 0 2.983.709 3.49 2.125.507 1.417.514 3.296.02 5.636l-1.131 5.382c-.598 2.938-1.164 5.675-1.697 8.21-.533 2.534-1.098 5.206-1.696 8.014h11.66a1578.075 1578.075 0 0 1 3.549-16.848c.313-1.508.618-2.964.917-4.368l.8-3.744c.988-4.55.676-8.19-.936-10.92-1.612-2.73-4.407-4.095-8.385-4.095-1.794 0-3.523.319-5.187.956a18.181 18.181 0 0 0-4.622 2.593 18.554 18.554 0 0 0-3.646 3.705h-.855l-.06-.309zm50.415-6.945c4.082 0 7.41.741 9.984 2.223 2.574 1.482 4.316 3.562 5.226 6.24.91 2.678.923 5.798.04 9.36a53.053 53.053 0 0 1-.644 2.418 33.67 33.67 0 0 1-.53 1.653l-.192.531h-23.875l-.008.154c-.055 1.488.165 2.782.659 3.883.74 1.65 1.97 2.886 3.685 3.705 1.716.819 3.822 1.228 6.318 1.228 1.092 0 2.308-.097 3.647-.292a27.224 27.224 0 0 0 3.997-.898 18.584 18.584 0 0 0 3.666-1.54l-1.56 9.906c-.702.416-1.664.806-2.886 1.17-1.222.364-2.632.663-4.231.897a35.747 35.747 0 0 1-5.168.351c-4.68 0-8.586-.904-11.72-2.71-3.132-1.807-5.342-4.375-6.63-7.703-1.286-3.328-1.462-7.28-.526-11.856.78-3.77 2.106-7.059 3.978-9.867 1.872-2.808 4.225-4.985 7.06-6.532 2.833-1.547 6.07-2.321 9.71-2.321zm.234 8.229c-1.326 0-2.62.351-3.88 1.053-1.261.702-2.386 1.794-3.374 3.276-.592.89-1.101 1.933-1.525 3.13l-.117.343 14.094-.294.044-.335c.193-1.711-.059-3.244-.757-4.599-.884-1.716-2.379-2.574-4.485-2.574zm29.383 31.746c.572-2.782 1.13-5.453 1.677-8.014l1.755-8.249 1.677-8.073a25.182 25.182 0 0 1 2.554-2.574 11.767 11.767 0 0 1 2.73-1.794c.95-.442 1.983-.663 3.1-.663 2.055 0 3.355.709 3.9 2.125.547 1.417.56 3.296.04 5.636l-1.131 5.382a2287.206 2287.206 0 0 1-3.393 16.224h11.66c.599-2.782 1.177-5.48 1.736-8.093a763.396 763.396 0 0 0 1.814-8.755c.338-1.508.656-2.964.955-4.368l.8-3.744c.962-4.55.624-8.19-1.014-10.92-1.638-2.73-4.563-4.095-8.775-4.095-1.846 0-3.62.312-5.324.936a17.45 17.45 0 0 0-4.66 2.555c-1.404 1.078-2.587 2.281-3.55 3.607h-.974l.819-6.63-9.828.585c-.676 3.25-1.34 6.396-1.99 9.438-.65 3.042-1.26 5.954-1.832 8.736l-.82 3.9a4169.42 4169.42 0 0 1-3.588 16.848h11.662zm51.582 1.053c.936 0 1.95-.085 3.042-.254a24.8 24.8 0 0 0 3.062-.662c.949-.273 1.696-.592 2.242-.956l1.248-9.555c-1.014.702-2.021 1.196-3.022 1.482-1.001.286-1.918.429-2.75.429-1.898 0-3.191-.65-3.88-1.95-.69-1.3-.76-3.198-.215-5.694l2.946-14.04h11.601l1.872-8.775H289.93l.078-.366c.169-.787.33-1.548.486-2.282l.153-.726c.403-1.91.8-3.77 1.19-5.577.39-1.807.792-3.724 1.208-5.752l-11.934 2.067c-.546 2.574-1.072 5.07-1.58 7.488-.303 1.45-.633 3-.989 4.647l-.108.501h-6.293l-1.872 8.775h6.313l-.049.236-.14.68c-.417 2.015-.813 3.9-1.19 5.655a795.333 795.333 0 0 0-1.073 5.07 719.362 719.362 0 0 1-1.053 4.973c-.702 3.302-.624 6.032.234 8.19.858 2.158 2.334 3.764 4.427 4.816 2.093 1.053 4.647 1.58 7.663 1.58z"
+                        />
+                    </svg>
+                </a>
+
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    v3.3.30
+
+                </p>
+            </div>
+
+            <div class="flex flex-col items-end gap-y-1">
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <a
+        href="https://filamentphp.com/docs" target="_blank"
+
+        
+        
+        
+        class="fi-link group/link relative inline-flex items-center justify-center outline-none fi-size-md fi-link-size-md gap-1.5  fi-color-gray" rel="noopener noreferrer"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-link-icon h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M10.75 16.82A7.462 7.462 0 0 1 15 15.5c.71 0 1.396.098 2.046.282A.75.75 0 0 0 18 15.06v-11a.75.75 0 0 0-.546-.721A9.006 9.006 0 0 0 15 3a8.963 8.963 0 0 0-4.25 1.065V16.82ZM9.25 4.065A8.963 8.963 0 0 0 5 3c-.85 0-1.673.118-2.454.339A.75.75 0 0 0 2 4.06v11a.75.75 0 0 0 .954.721A7.506 7.506 0 0 1 5 15.5c1.579 0 3.042.487 4.25 1.32V4.065Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]-->
+
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-200 group-hover/link:underline group-focus-visible/link:underline" style="">
+            Documentation
+
+        </span>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </a><!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <a
+        href="https://github.com/filamentphp/filament" target="_blank"
+
+        
+        
+        
+        class="fi-link group/link relative inline-flex items-center justify-center outline-none fi-size-md fi-link-size-md gap-1.5  fi-color-gray" rel="noopener noreferrer"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <span class="fi-link-icon h-5 w-5 text-gray-400 dark:text-gray-500" style=";">
+        <svg
+                            viewBox="0 0 98 96"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                clip-rule="evenodd"
+                                fill="currentColor"
+                                fill-rule="evenodd"
+                                d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                            />
+                        </svg>
+
+    </span>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]-->
+
+        <span class="font-semibold text-sm text-gray-700 dark:text-gray-200 group-hover/link:underline group-focus-visible/link:underline" style="">
+            GitHub
+
+        </span>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </a><!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            </div>
+        </div>
+
+        </div>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</section>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+                
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                
+
+            </div>
+
+            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+        </div>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </section>
+
+    <!--[if BLOCK]><![endif]-->
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <form wire:submit.prevent="callMountedAction">
+        
+
+        
+
+
+
+
+<div
+    
+    aria-modal="true"
+    role="dialog"
+    x-data="{
+        isOpen: false,
+
+        livewire: null,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { detail: { id: 'Fx5F7mC3LaOGEUguGXgN-action' } }),
+            )
+        },
+
+        open: function () {
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { detail: { id: 'Fx5F7mC3LaOGEUguGXgN-action' } }),
+                )
+            })
+        },
+    }"
+    
+        x-on:close-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN-action') close()"
+        x-on:open-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN-action') open()"
+        data-fi-modal-id="Fx5F7mC3LaOGEUguGXgN-action"
+    
+    x-trap.noscroll="isOpen"
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
+    class="fi-modal block"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div x-cloak x-show="isOpen">
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75"
+        ></div>
+
+        <div
+            class="fixed inset-0 z-40 overflow-y-auto cursor-pointer"
+        >
+            <div
+                x-ref="modalContainer"
+                
+                    
+                    x-on:click.self="
+                        document.activeElement.selectionStart === undefined &&
+                            document.activeElement.selectionEnd === undefined &&
+                            $dispatch(&#039;close-modal&#039;, { id: &#039;Fx5F7mC3LaOGEUguGXgN-action&#039; })
+
+                    "
+                
+                class="relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr] p-4" x-on:closed-form-component-action-modal.window="if (($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN') && $wire.mountedActions.length) open()" x-on:modal-closed.stop="if (!$event.detail?.id?.startsWith('Fx5F7mC3LaOGEUguGXgN-')) {
+                    return
+                }
+
+                const mountedActionShouldOpenModal = false
+
+
+                if (! mountedActionShouldOpenModal) {
+                    return
+                }
+
+                if ($wire.mountedFormComponentActions.length) {
+                    return
+                }
+
+                $wire.unmountAction(false, false)" x-on:opened-form-component-action-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN') close()"
+
+            >
+                <div
+                    x-data="{ isShown: false }"
+                    x-init="
+                        $nextTick(() => {
+                            isShown = isOpen
+                            $watch('isOpen', () => (isShown = isOpen))
+                        })
+                    "
+                    
+                        x-on:keydown.window.escape="$dispatch(&#039;close-modal&#039;, { id: &#039;Fx5F7mC3LaOGEUguGXgN-action&#039; })"
+                    
+                    x-show="isShown"
+                    x-transition:enter="duration-300"
+                    x-transition:leave="duration-300"
+                    
+                        x-transition:enter-start="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
+                    
+                    
+                        wire:key="Fx5F7mC3LaOGEUguGXgN.modal.Fx5F7mC3LaOGEUguGXgN-action.window"
+                    
+                    class="fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mx-auto rounded-xl hidden max-w-sm"
+
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]-->
+                        <div
+                            
+                                wire:key="Fx5F7mC3LaOGEUguGXgN.modal.Fx5F7mC3LaOGEUguGXgN-action.content"
+                            
+                            class="fi-modal-content flex flex-col gap-y-4 py-6 px-6"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+    </form>
+
+    
+<!--[if ENDBLOCK]><![endif]-->
+
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+<!--[if BLOCK]><![endif]-->
+    <form wire:submit.prevent="callMountedInfolistAction">
+        
+
+        
+
+
+
+
+<div
+    
+    aria-modal="true"
+    role="dialog"
+    x-data="{
+        isOpen: false,
+
+        livewire: null,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { detail: { id: 'Fx5F7mC3LaOGEUguGXgN-infolist-action' } }),
+            )
+        },
+
+        open: function () {
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { detail: { id: 'Fx5F7mC3LaOGEUguGXgN-infolist-action' } }),
+                )
+            })
+        },
+    }"
+    
+        x-on:close-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN-infolist-action') close()"
+        x-on:open-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN-infolist-action') open()"
+        data-fi-modal-id="Fx5F7mC3LaOGEUguGXgN-infolist-action"
+    
+    x-trap.noscroll="isOpen"
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
+    class="fi-modal block"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div x-cloak x-show="isOpen">
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75"
+        ></div>
+
+        <div
+            class="fixed inset-0 z-40 overflow-y-auto cursor-pointer"
+        >
+            <div
+                x-ref="modalContainer"
+                
+                    
+                    x-on:click.self="
+                        document.activeElement.selectionStart === undefined &&
+                            document.activeElement.selectionEnd === undefined &&
+                            $dispatch(&#039;close-modal&#039;, { id: &#039;Fx5F7mC3LaOGEUguGXgN-infolist-action&#039; })
+
+                    "
+                
+                class="relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr] p-4" x-on:closed-form-component-action-modal.window="if (($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN') && $wire.mountedInfolistActions.length) open()" x-on:modal-closed.stop="if (!$event.detail?.id?.startsWith('Fx5F7mC3LaOGEUguGXgN-')) {
+                    return
+                }
+
+                const mountedInfolistActionShouldOpenModal = false
+
+
+                if (! mountedInfolistActionShouldOpenModal) {
+                    return
+                }
+
+                if ($wire.mountedFormComponentActions.length) {
+                    return
+                }
+
+                $wire.unmountInfolistAction(false, false)" x-on:opened-form-component-action-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN') close()"
+
+            >
+                <div
+                    x-data="{ isShown: false }"
+                    x-init="
+                        $nextTick(() => {
+                            isShown = isOpen
+                            $watch('isOpen', () => (isShown = isOpen))
+                        })
+                    "
+                    
+                        x-on:keydown.window.escape="$dispatch(&#039;close-modal&#039;, { id: &#039;Fx5F7mC3LaOGEUguGXgN-infolist-action&#039; })"
+                    
+                    x-show="isShown"
+                    x-transition:enter="duration-300"
+                    x-transition:leave="duration-300"
+                    
+                        x-transition:enter-start="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
+                    
+                    
+                        wire:key="Fx5F7mC3LaOGEUguGXgN.modal.Fx5F7mC3LaOGEUguGXgN-infolist-action.window"
+                    
+                    class="fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mx-auto rounded-xl hidden max-w-sm"
+
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]-->
+                        <div
+                            
+                                wire:key="Fx5F7mC3LaOGEUguGXgN.modal.Fx5F7mC3LaOGEUguGXgN-infolist-action.content"
+                            
+                            class="fi-modal-content flex flex-col gap-y-4 py-6 px-6"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    </form>
+
+    
+<!--[if ENDBLOCK]><![endif]-->
+
+<!--[if BLOCK]><![endif]-->
+    
+
+    <form wire:submit.prevent="callMountedFormComponentAction">
+        
+
+
+
+
+<div
+    
+    aria-modal="true"
+    role="dialog"
+    x-data="{
+        isOpen: false,
+
+        livewire: null,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { detail: { id: 'Fx5F7mC3LaOGEUguGXgN-form-component-action' } }),
+            )
+        },
+
+        open: function () {
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { detail: { id: 'Fx5F7mC3LaOGEUguGXgN-form-component-action' } }),
+                )
+            })
+        },
+    }"
+    
+        x-on:close-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN-form-component-action') close()"
+        x-on:open-modal.window="if ($event.detail.id === 'Fx5F7mC3LaOGEUguGXgN-form-component-action') open()"
+        data-fi-modal-id="Fx5F7mC3LaOGEUguGXgN-form-component-action"
+    
+    x-trap.noscroll="isOpen"
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
+    class="fi-modal block"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div x-cloak x-show="isOpen">
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75"
+        ></div>
+
+        <div
+            class="fixed inset-0 z-40 overflow-y-auto cursor-pointer"
+        >
+            <div
+                x-ref="modalContainer"
+                
+                    
+                    x-on:click.self="
+                        document.activeElement.selectionStart === undefined &&
+                            document.activeElement.selectionEnd === undefined &&
+                            $dispatch(&#039;close-modal&#039;, { id: &#039;Fx5F7mC3LaOGEUguGXgN-form-component-action&#039; })
+
+                    "
+                
+                class="relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr] p-4" x-on:modal-closed.stop="if (!$event.detail?.id?.startsWith('Fx5F7mC3LaOGEUguGXgN-')) {
+                    return
+                }
+
+                const mountedFormComponentActionShouldOpenModal = false
+
+
+                if (mountedFormComponentActionShouldOpenModal) {
+                    $wire.unmountFormComponentAction(false, false)
+                }"
+
+            >
+                <div
+                    x-data="{ isShown: false }"
+                    x-init="
+                        $nextTick(() => {
+                            isShown = isOpen
+                            $watch('isOpen', () => (isShown = isOpen))
+                        })
+                    "
+                    
+                        x-on:keydown.window.escape="$dispatch(&#039;close-modal&#039;, { id: &#039;Fx5F7mC3LaOGEUguGXgN-form-component-action&#039; })"
+                    
+                    x-show="isShown"
+                    x-transition:enter="duration-300"
+                    x-transition:leave="duration-300"
+                    
+                        x-transition:enter-start="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
+                    
+                    
+                        wire:key="Fx5F7mC3LaOGEUguGXgN.modal.Fx5F7mC3LaOGEUguGXgN-form-component-action.window"
+                    
+                    class="fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mx-auto rounded-xl hidden max-w-sm"
+
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]-->
+                        <div
+                            
+                                wire:key="Fx5F7mC3LaOGEUguGXgN.modal.Fx5F7mC3LaOGEUguGXgN-form-component-action.content"
+                            
+                            class="fi-modal-content flex flex-col gap-y-4 py-6 px-6"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    </form>
+
+    
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+    <!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    
+
+
+    
+
+
+
+
+<!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+                
+
+            </main>
+
+            
+
+
+            
+
+        </div>
+
+        
+            <div
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.close()"
+                x-show="$store.sidebar.isOpen"
+                x-transition.opacity.300ms
+                class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
+            ></div>
+
+            
+
+
+
+
+<aside
+    x-data="{}"
+    
+        
+            x-cloak="-lg"
+            x-bind:class="
+                $store.sidebar.isOpen
+                    ? 'fi-sidebar-open w-[--sidebar-width] translate-x-0 shadow-xl ring-1 ring-gray-950/5 dark:ring-white/10 rtl:-translate-x-0 lg:sticky'
+                    : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
+            "
+        
+    
+    class="fi-sidebar fixed inset-y-0 start-0 z-30 flex flex-col h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent lg:translate-x-0 rtl:lg:-translate-x-0 fi-main-sidebar"
+
+>
+    <div class="overflow-x-clip">
+        <header
+            class="fi-sidebar-header flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
+        >
+            <div
+                
+            >
+                
+                    <a href="http://localhost/admin?tenant=">
+                        
+
+
+
+
+<div
+            class="fi-logo flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
+
+        >
+            Tedja
+
+        </div>
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+                    </a>
+                
+            </div>
+
+            
+
+            
+        </header>
+    </div>
+
+    <nav
+        class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
+        style="scrollbar-gutter: stable"
+    >
+        
+
+
+        
+
+        <ul class="fi-sidebar-nav-groups -mx-2 flex flex-col gap-y-7">
+            
+                
+
+
+
+
+<li
+    x-data="{ label: null }"
+    data-group-label=""
+    class="fi-sidebar-group flex flex-col gap-y-1 fi-active"
+
+>
+    
+
+    
+
+    <ul
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item fi-active fi-sidebar-item-active flex flex-col gap-y-1"
+
+>
+    <a
+        href="http://localhost/admin?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 bg-gray-100 dark:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-primary-600 dark:text-primary-400"
+        >
+            Dashboard
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Vendors' }"
+    data-group-label="Vendors"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Vendors
+
+            </span>
+
+            
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Vendors" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Vendors
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/banks?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Banks
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/interests?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Interests
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Management' }"
+    data-group-label="Management"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Management
+
+            </span>
+
+            
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Management" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Management
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/categories?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Categories
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/cities?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Cities
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/roles?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Roles
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/users?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Users
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Products' }"
+    data-group-label="Products"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Products
+
+            </span>
+
+            
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Products" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Products
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/facilities?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Facilities
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/houses?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Houses
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Transactions' }"
+    data-group-label="Transactions"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Transactions
+
+            </span>
+
+            
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Transactions" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <span class="sr-only">
+                Transactions
+
+            </span>
+        <!--[if ENDBLOCK]><![endif]-->
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </button>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/mortgage-requests?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Mortgage Requests
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+        </ul>
+
+        <script>
+            var collapsedGroups = JSON.parse(
+                localStorage.getItem('collapsedGroups'),
+            )
+
+            if (collapsedGroups === null || collapsedGroups === 'null') {
+                localStorage.setItem(
+                    'collapsedGroups',
+                    JSON.stringify([]),
+                )
+            }
+
+            collapsedGroups = JSON.parse(
+                localStorage.getItem('collapsedGroups'),
+            )
+
+            document
+                .querySelectorAll('.fi-sidebar-group')
+                .forEach((group) => {
+                    if (
+                        !collapsedGroups.includes(group.dataset.groupLabel)
+                    ) {
+                        return
+                    }
+
+                    // Alpine.js loads too slow, so attempt to hide a
+                    // collapsed sidebar group earlier.
+                    group.querySelector(
+                        '.fi-sidebar-group-items',
+                    ).style.display = 'none'
+                    group
+                        .querySelector('.fi-sidebar-group-collapse-button')
+                        .classList.add('rotate-180')
+                })
+        </script>
+
+        
+
+    </nav>
+
+    
+
+</aside>
+
+
+
+
+
+
+
+
+
+
+
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        let activeSidebarItem = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-item.fi-active',
+                        )
+
+                        if (
+                            !activeSidebarItem ||
+                            activeSidebarItem.offsetParent === null
+                        ) {
+                            activeSidebarItem = document.querySelector(
+                                '.fi-main-sidebar .fi-sidebar-group.fi-active',
+                            )
+                        }
+
+                        if (
+                            !activeSidebarItem ||
+                            activeSidebarItem.offsetParent === null
+                        ) {
+                            return
+                        }
+
+                        const sidebarWrapper = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-nav',
+                        )
+
+                        if (!sidebarWrapper) {
+                            return
+                        }
+
+                        sidebarWrapper.scrollTo(
+                            0,
+                            activeSidebarItem.offsetTop -
+                                window.innerHeight / 2,
+                        )
+                    }, 10)
+                })
+            </script>
+        
+    </div>
+
+
+        <div wire:snapshot="{&quot;data&quot;:{&quot;isFilamentNotificationsComponent&quot;:true,&quot;notifications&quot;:[[],{&quot;class&quot;:&quot;Filament\\Notifications\\Collection&quot;,&quot;s&quot;:&quot;wrbl&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;2t6OT0wy3bgoBdCe8K0R&quot;,&quot;name&quot;:&quot;filament.livewire.notifications&quot;,&quot;path&quot;:&quot;admin&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;044a6e5de29bdccb995186ad8d8bd78de2b572690ae38c273934e7deebe86e06&quot;}" wire:effects="{&quot;listeners&quot;:[&quot;notificationClosed&quot;,&quot;notificationsSent&quot;,&quot;notificationSent&quot;]}" wire:id="2t6OT0wy3bgoBdCe8K0R">
+    <div
+        class="fi-no pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3 items-end flex-col-reverse justify-end"
+        role="status"
+    >
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+
+    <!--[if BLOCK]><![endif]-->
+        
+
+
+
+
+<div
+    x-data="{}"
+    x-init="
+        window.addEventListener('EchoLoaded', () => {
+            window.Echo.private('App.Models.User.1').notification((notification) => {
+                setTimeout(() => $wire.handleBroadcastNotification(notification), 500)
+            })
+        })
+
+        if (window.Echo) {
+            window.dispatchEvent(new CustomEvent('EchoLoaded'))
+        }
+    "
+    
+
+></div>
+
+
+
+
+    <!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+        
+
+
+        <script>
+        window.filamentData = []
+    </script>
+
+
+
+    
+        
+            <script
+                src="http://localhost/js/filament/support/support.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://localhost/js/filament/notifications/notifications.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://localhost/js/filament/filament/app.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://localhost/js/filament/filament/echo.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+
+<style>
+    :root {
+        
+    }
+</style>
+
+
+        
+
+        
+            <script>
+                loadDarkMode()
+            </script>
+        
+
+        
+
+        
+
+
+        
+
+    <!-- Livewire Scripts -->
+<script src="/livewire/livewire.js?id=df3a17f2"   data-csrf="yjlB4NjG5veXCe9qlwGYAqhQrcJkvylqvFCoRrwI" data-update-uri="/livewire/update" data-navigate-once="true"></script>
+</body>
+</html>
+
+
+
+
+
+
+

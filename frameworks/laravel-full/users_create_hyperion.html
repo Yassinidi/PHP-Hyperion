@@ -1,0 +1,4204 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    dir="ltr"
+    class="fi min-h-screen"
+>
+    <head>
+        
+
+
+        <meta charset="utf-8" />
+        <meta name="csrf-token" content="tZT6xw17g1YQ50PVxTgrAGeHxcYNITt8SZSgRiuN" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        
+
+        
+
+        <title>
+            Create User -  Tedja
+
+        </title>
+
+        
+
+
+        <style>
+            [x-cloak=''],
+            [x-cloak='x-cloak'],
+            [x-cloak='1'] {
+                display: none !important;
+            }
+
+            @media (max-width: 1023px) {
+                [x-cloak='-lg'] {
+                    display: none !important;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                [x-cloak='lg'] {
+                    display: none !important;
+                }
+            }
+        </style>
+
+        <link
+            href="http://localhost/css/filament/forms/forms.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+    
+
+    
+        <link
+            href="http://localhost/css/filament/support/support.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+    
+
+
+<style>
+    :root {
+         --danger-50:254, 242, 242;  --danger-100:254, 226, 226;  --danger-200:254, 202, 202;  --danger-300:252, 165, 165;  --danger-400:248, 113, 113;  --danger-500:239, 68, 68;  --danger-600:220, 38, 38;  --danger-700:185, 28, 28;  --danger-800:153, 27, 27;  --danger-900:127, 29, 29;  --danger-950:69, 10, 10;  --gray-50:250, 250, 250;  --gray-100:244, 244, 245;  --gray-200:228, 228, 231;  --gray-300:212, 212, 216;  --gray-400:161, 161, 170;  --gray-500:113, 113, 122;  --gray-600:82, 82, 91;  --gray-700:63, 63, 70;  --gray-800:39, 39, 42;  --gray-900:24, 24, 27;  --gray-950:9, 9, 11;  --info-50:239, 246, 255;  --info-100:219, 234, 254;  --info-200:191, 219, 254;  --info-300:147, 197, 253;  --info-400:96, 165, 250;  --info-500:59, 130, 246;  --info-600:37, 99, 235;  --info-700:29, 78, 216;  --info-800:30, 64, 175;  --info-900:30, 58, 138;  --info-950:23, 37, 84;  --primary-50:255, 251, 235;  --primary-100:254, 243, 199;  --primary-200:253, 230, 138;  --primary-300:252, 211, 77;  --primary-400:251, 191, 36;  --primary-500:245, 158, 11;  --primary-600:217, 119, 6;  --primary-700:180, 83, 9;  --primary-800:146, 64, 14;  --primary-900:120, 53, 15;  --primary-950:69, 26, 3;  --success-50:240, 253, 244;  --success-100:220, 252, 231;  --success-200:187, 247, 208;  --success-300:134, 239, 172;  --success-400:74, 222, 128;  --success-500:34, 197, 94;  --success-600:22, 163, 74;  --success-700:21, 128, 61;  --success-800:22, 101, 52;  --success-900:20, 83, 45;  --success-950:5, 46, 22;  --warning-50:255, 251, 235;  --warning-100:254, 243, 199;  --warning-200:253, 230, 138;  --warning-300:252, 211, 77;  --warning-400:251, 191, 36;  --warning-500:245, 158, 11;  --warning-600:217, 119, 6;  --warning-700:180, 83, 9;  --warning-800:146, 64, 14;  --warning-900:120, 53, 15;  --warning-950:69, 26, 3; 
+    }
+</style>
+
+
+        <link
+            href="http://localhost/css/filament/filament/app.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+        
+            <link rel="preconnect" href="https://fonts.bunny.net">
+            <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        
+
+
+        <style>
+            :root {
+                --font-family: 'Inter';
+                --sidebar-width: 20rem;
+                --collapsed-sidebar-width: 4.5rem;
+                --default-theme-mode: system;
+            }
+        </style>
+
+        
+
+        
+
+
+        
+            <script>
+                const loadDarkMode = () => {
+                    window.theme = localStorage.getItem('theme') ?? 'system'
+
+                    if (
+                        window.theme === 'dark' ||
+                        (window.theme === 'system' &&
+                            window.matchMedia('(prefers-color-scheme: dark)')
+                                .matches)
+                    ) {
+                        document.documentElement.classList.add('dark')
+                    }
+                }
+
+                loadDarkMode()
+
+                document.addEventListener('livewire:navigated', loadDarkMode)
+            </script>
+        
+
+        
+
+    <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}</style>
+</head>
+
+    <body
+        class="fi-body fi-panel-admin min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
+
+    >
+        
+
+
+        <div
+        class="fi-layout flex min-h-screen w-full flex-row-reverse overflow-x-clip"
+    >
+        <div
+            
+                x-data="{}"
+                x-bind:style="'display: flex; opacity:1;'" 
+            
+            class="fi-main-ctn w-screen flex-1 flex-col opacity-0"
+        >
+            
+                
+
+
+                
+
+
+
+
+<div
+    class="fi-topbar sticky top-0 z-20 overflow-x-clip"
+
+>
+    <nav
+        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8"
+    >
+        
+
+
+        
+            
+
+
+
+
+<button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-1.5 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-topbar-open-sidebar-btn lg:hidden" title="Expand sidebar" type="button" wire:loading.attr="disabled" x-cloak="x-cloak" x-data="{}" x-on:click="$store.sidebar.open()" x-show="! $store.sidebar.isOpen"
+
+    >
+        
+            <span class="sr-only">
+                Expand sidebar
+
+            </span>
+        
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        
+
+        
+    </button>
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+<button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-1.5 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-topbar-close-sidebar-btn lg:hidden" title="Collapse sidebar" type="button" wire:loading.attr="disabled" x-cloak="x-cloak" x-data="{}" x-on:click="$store.sidebar.close()" x-show="$store.sidebar.isOpen"
+
+    >
+        
+            <span class="sr-only">
+                Collapse sidebar
+
+            </span>
+        
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        
+
+        
+    </button>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+        
+
+        <div
+            
+                x-persist="topbar.end.panel-admin"
+            
+            class="ms-auto flex items-center gap-x-4"
+        >
+            
+
+
+            
+
+            
+
+
+            
+                
+
+                
+
+
+
+
+<div
+    x-data="{
+        toggle: function (event) {
+            $refs.panel?.toggle(event)
+        },
+
+        open: function (event) {
+            $refs.panel?.open(event)
+        },
+
+        close: function (event) {
+            $refs.panel?.close(event)
+        },
+    }"
+    class="fi-dropdown fi-user-menu"
+
+>
+    <div
+        x-on:click="toggle"
+        class="fi-dropdown-trigger flex cursor-pointer"
+
+    >
+        <button
+            aria-label="User menu"
+            type="button"
+            class="shrink-0"
+        >
+            
+
+
+
+
+<img
+    class="fi-avatar object-cover object-center fi-circular rounded-full h-8 w-8 fi-user-avatar" src="https://ui-avatars.com/api/?name=A+T&amp;color=FFFFFF&amp;background=000000" alt="Avatar of Admin Tedja"
+
+/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </button>
+
+    </div>
+
+    
+        <div
+            x-cloak
+            x-float.placement.bottom-end.flip.teleport.offset="{ offset: 8,  }"
+            x-ref="panel"
+            x-transition:enter-start="opacity-0"
+            x-transition:leave-end="opacity-0"
+            
+            class="fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10 !max-w-[14rem]"
+            style=""
+        >
+            <div
+
+    class="fi-dropdown-header flex w-full gap-2 p-3 text-sm  fi-dropdown-header-color-gray fi-color-gray"
+
+>
+    
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-dropdown-header-icon h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+    
+
+    <span
+        class="fi-dropdown-header-label flex-1 truncate text-start text-gray-700 dark:text-gray-200"
+        style=""
+    >
+        Admin Tedja
+
+    </span>
+</div>
+
+
+
+
+
+
+
+
+
+
+        
+
+        
+
+    
+
+    
+        
+
+
+
+
+<div class="fi-dropdown-list p-1">
+    <div
+    x-data="{ theme: null }"
+    x-init="
+        $watch('theme', () => {
+            $dispatch('theme-changed', theme)
+        })
+
+        theme = localStorage.getItem('theme') || 'system'
+    "
+    class="fi-theme-switcher grid grid-flow-col gap-x-1"
+>
+    
+
+
+
+
+<button
+    aria-label="Enable light theme"
+    type="button"
+    x-on:click="(theme = 'light') && close()"
+    x-tooltip="{
+        content: 'Enable light theme',
+        theme: $store.theme,
+    }"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    x-bind:class="
+        theme === 'light'
+            ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
+            : 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400'
+    "
+>
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06l-1.06-1.06a.75.75 0 1 0-1.061 1.06l1.06 1.06Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+</button>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+<button
+    aria-label="Enable dark theme"
+    type="button"
+    x-on:click="(theme = 'dark') && close()"
+    x-tooltip="{
+        content: 'Enable dark theme',
+        theme: $store.theme,
+    }"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    x-bind:class="
+        theme === 'dark'
+            ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
+            : 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400'
+    "
+>
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+</button>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+<button
+    aria-label="Enable system theme"
+    type="button"
+    x-on:click="(theme = 'system') && close()"
+    x-tooltip="{
+        content: 'Enable system theme',
+        theme: $store.theme,
+    }"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    x-bind:class="
+        theme === 'system'
+            ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
+            : 'text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400'
+    "
+>
+    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M2 4.25A2.25 2.25 0 0 1 4.25 2h11.5A2.25 2.25 0 0 1 18 4.25v8.5A2.25 2.25 0 0 1 15.75 15h-3.105a3.501 3.501 0 0 0 1.1 1.677A.75.75 0 0 1 13.26 18H6.74a.75.75 0 0 1-.484-1.323A3.501 3.501 0 0 0 7.355 15H4.25A2.25 2.25 0 0 1 2 12.75v-8.5Zm1.5 0a.75.75 0 0 1 .75-.75h11.5a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-.75.75H4.25a.75.75 0 0 1-.75-.75v-7.5Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+</button>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+
+
+
+<div class="fi-dropdown-list p-1">
+    <form
+        action="http://localhost/admin/logout" method="post"
+
+    >
+        <input type="hidden" name="_token" value="tZT6xw17g1YQ50PVxTgrAGeHxcYNITt8SZSgRiuN" autocomplete="off">
+
+        <button
+            
+            
+            
+            type="submit"
+            style=";" class="fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 fi-dropdown-list-item-color-gray fi-color-gray"
+
+        >
+            
+                
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-dropdown-list-item-icon h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M19 10a.75.75 0 0 0-.75-.75H8.704l1.048-.943a.75.75 0 1 0-1.004-1.114l-2.5 2.25a.75.75 0 0 0 0 1.114l2.5 2.25a.75.75 0 1 0 1.004-1.114l-1.048-.943h9.546A.75.75 0 0 0 19 10Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+            
+
+            <span class="fi-dropdown-list-item-label flex-1 truncate text-start text-gray-700 dark:text-gray-200" style="">
+                Sign out
+
+            </span>
+
+            
+        </button>
+    </form>
+
+</div>
+
+        </div>
+    
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+        </div>
+
+        
+
+    </nav>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+                
+
+            
+
+            
+
+
+            <main
+                class="fi-main mx-auto h-full w-full px-4 md:px-6 lg:px-8 max-w-7xl"
+            >
+                
+
+
+                <div wire:snapshot="{&quot;data&quot;:{&quot;record&quot;:null,&quot;data&quot;:[{&quot;name&quot;:null,&quot;phone&quot;:null,&quot;email&quot;:null,&quot;password&quot;:null,&quot;roles&quot;:null,&quot;photo&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},{&quot;s&quot;:&quot;arr&quot;}],&quot;previousUrl&quot;:&quot;http:\/\/localhost&quot;,&quot;savedDataHash&quot;:null,&quot;mountedActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;defaultAction&quot;:null,&quot;defaultActionArguments&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;areFormStateUpdateHooksDisabledForTesting&quot;:false,&quot;mountedInfolistActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedInfolistActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedInfolistActionsComponent&quot;:null,&quot;mountedInfolistActionsInfolist&quot;:null,&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;WncysfT7qTLVqCAtzRee&quot;,&quot;name&quot;:&quot;app.filament.resources.user-resource.pages.create-user&quot;,&quot;path&quot;:&quot;admin\/users\/create&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;d3ec11d9c037393d9b30266bb7270a76104386a3a1c74eccb7f3146ad6e8b817&quot;}" wire:effects="[]" wire:id="WncysfT7qTLVqCAtzRee"
+    class="fi-page fi-resource-create-record-page fi-resource-users"
+
+>
+    
+
+
+    <section
+        class="flex flex-col gap-y-8 py-8"
+    >
+        
+            
+
+            
+
+
+
+
+<header
+    class="fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+
+>
+    <div>
+        <!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<nav class="fi-breadcrumbs mb-2 hidden sm:block">
+    <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2">
+        
+            <li class="fi-breadcrumbs-item flex items-center gap-x-2">
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]-->
+                    <a
+                        href="http://localhost/admin/users?tenant="
+
+                        class="fi-breadcrumbs-item-label text-sm font-medium text-gray-500 dark:text-gray-400 transition duration-75 hover:text-gray-700 dark:hover:text-gray-200"
+                    >
+                        Users
+
+                    </a>
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </li>
+        
+            <li class="fi-breadcrumbs-item flex items-center gap-x-2">
+                
+                    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-breadcrumbs-item-separator flex h-5 w-5 text-gray-400 dark:text-gray-500 rtl:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+                    
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-breadcrumbs-item-separator flex h-5 w-5 text-gray-400 dark:text-gray-500 ltr:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]-->
+                    <span class="fi-breadcrumbs-item-label text-sm font-medium text-gray-500 dark:text-gray-400">
+                        Create
+
+                    </span>
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </li>
+        <!--[if ENDBLOCK]><![endif]-->
+    </ol>
+</nav>
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <h1
+            class="fi-header-heading text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl"
+        >
+            Create User
+
+        </h1>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+
+    <div
+        class="flex shrink-0 items-center gap-3 sm:mt-7"
+    >
+        
+
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        
+
+    </div>
+</header>
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <div
+            class=""
+        >
+            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+            <div
+                class="grid flex-1 auto-cols-fr gap-y-8"
+            >
+                
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                
+
+
+                <form
+    method="post"
+    x-data="{ isProcessing: false }"
+    x-on:submit="if (isProcessing) $event.preventDefault()"
+    x-on:form-processing-started="isProcessing = true"
+    x-on:form-processing-finished="isProcessing = false"
+    class="fi-form grid gap-y-6" id="form" wire:key="WncysfT7qTLVqCAtzRee.forms.data" wire:submit="create"
+
+>
+    <div
+    style="--cols-default: repeat(1, minmax(0, 1fr)); --cols-lg: repeat(2, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] lg:grid-cols-[--cols-lg] fi-fo-component-ctn gap-6" x-data="{}" x-on:form-validation-error.window="if ($event.detail.livewireId !== &#039;WncysfT7qTLVqCAtzRee&#039;) {
+                return
+            }
+
+            $nextTick(() =&gt; {
+                let error = $el.querySelector(&#039;[data-validation-error]&#039;)
+
+                if (! error) {
+                    return
+                }
+
+                let elementToExpand = error
+
+                while (elementToExpand) {
+                    elementToExpand.dispatchEvent(new CustomEvent(&#039;expand&#039;))
+
+                    elementToExpand = elementToExpand.parentNode
+                }
+
+                setTimeout(
+                    () =&gt;
+                        error.closest(&#039;[data-field-wrapper]&#039;).scrollIntoView({
+                            behavior: &#039;smooth&#039;,
+                            block: &#039;start&#039;,
+                            inline: &#039;start&#039;,
+                        }),
+                    200,
+                )
+        })"
+
+>
+    <!--[if BLOCK]><![endif]-->
+        
+
+        
+
+
+
+
+<div
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="WncysfT7qTLVqCAtzRee.data.name.Filament\Forms\Components\TextInput"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.name"
+
+>
+    
+
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Name<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+
+</label>
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+    
+    class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white dark:bg-white/5 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-2 ring-gray-950/10 dark:ring-white/20 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-600 dark:[&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500 fi-fo-text-input overflow-hidden"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-input-wrp-input min-w-0 flex-1"
+    >
+        <input
+    class="fi-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3" id="data.name" maxlength="255" required="required" type="text" wire:model="data.name"
+
+/>
+
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+        
+
+        
+
+
+
+
+<div
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="WncysfT7qTLVqCAtzRee.data.phone.Filament\Forms\Components\TextInput"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.phone"
+
+>
+    
+
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Phone<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+
+</label>
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+    
+    class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white dark:bg-white/5 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-2 ring-gray-950/10 dark:ring-white/20 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-600 dark:[&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500 fi-fo-text-input overflow-hidden"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-input-wrp-input min-w-0 flex-1"
+    >
+        <input
+    class="fi-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3" id="data.phone" maxlength="255" required="required" type="text" wire:model="data.phone"
+
+/>
+
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+        
+
+        
+
+
+
+
+<div
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="WncysfT7qTLVqCAtzRee.data.email.Filament\Forms\Components\TextInput"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.email"
+
+>
+    
+
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Email<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+
+</label>
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+    
+    class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white dark:bg-white/5 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-2 ring-gray-950/10 dark:ring-white/20 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-600 dark:[&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500 fi-fo-text-input overflow-hidden"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-input-wrp-input min-w-0 flex-1"
+    >
+        <input
+    class="fi-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3" id="data.email" maxlength="255" required="required" type="email" wire:model="data.email"
+
+/>
+
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+        
+
+        
+
+
+
+
+<div
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="WncysfT7qTLVqCAtzRee.data.password.Filament\Forms\Components\TextInput"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.password"
+
+>
+    
+
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Password<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+
+</label>
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+    
+    class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white dark:bg-white/5 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-2 ring-gray-950/10 dark:ring-white/20 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-600 dark:[&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500 fi-fo-text-input overflow-hidden"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-input-wrp-input min-w-0 flex-1"
+    >
+        <input
+    class="fi-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6 bg-white/0 ps-3 pe-3" id="data.password" maxlength="255" minlength="9" required="required" type="password" wire:model="data.password"
+
+/>
+
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<div
+    class="fi-fo-field-wrp-helper-text break-words text-sm text-gray-500"
+
+>
+    Minimum 9 characters
+
+</div>
+
+
+
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+        
+
+        
+
+
+
+
+<div
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="WncysfT7qTLVqCAtzRee.data.roles.Filament\Forms\Components\Select"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.roles"
+
+>
+    
+
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Role<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+
+</label>
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+    
+    class="fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75 bg-white dark:bg-white/5 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-2 ring-gray-950/10 dark:ring-white/20 [&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-600 dark:[&amp;:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500 fi-fo-select"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        
+        class="fi-input-wrp-input min-w-0 flex-1"
+    >
+        <!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<select
+    class="fi-select-input block w-full border-none bg-transparent py-1.5 pe-8 text-base text-gray-950 transition duration-75 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6 [&amp;_optgroup]:bg-white [&amp;_optgroup]:dark:bg-gray-900 [&amp;_option]:bg-white [&amp;_option]:dark:bg-gray-900 ps-3" id="data.roles" required="required" wire:model="data.roles"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                    <option value="">
+                        <!--[if BLOCK]><![endif]-->
+                            Select an option
+
+                        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                    </option>
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                
+                    <!--[if BLOCK]><![endif]-->
+                        <option
+                            
+                            value="1"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+                                admin
+
+                            <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        </option>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                
+                    <!--[if BLOCK]><![endif]-->
+                        <option
+                            
+                            value="3"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+                                agent
+
+                            <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        </option>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                
+                    <!--[if BLOCK]><![endif]-->
+                        <option
+                            
+                            value="4"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+                                customer
+
+                            <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        </option>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                
+                    <!--[if BLOCK]><![endif]-->
+                        <option
+                            
+                            value="2"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+                                lender
+
+                            <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        </option>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                
+                    <!--[if BLOCK]><![endif]-->
+                        <option
+                            
+                            value="5"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+                                super-admin
+
+                            <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                        </option>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+</select>
+
+
+
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    
+        
+
+        
+
+
+
+
+<div
+    style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default]" wire:key="WncysfT7qTLVqCAtzRee.data.photo.Filament\Forms\Components\FileUpload"
+
+>
+    <!--[if BLOCK]><![endif]-->
+                <div
+    data-field-wrapper
+    class="fi-fo-field-wrp"
+
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div
+        class="grid gap-y-2"
+    >
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="flex items-center gap-x-3 justify-between "
+            >
+                <!--[if BLOCK]><![endif]-->
+                    
+
+
+
+
+<label
+    class="fi-fo-field-wrp-label inline-flex items-center gap-x-3" for="data.photo"
+
+>
+    
+
+
+    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+        
+        Photo<!--[if BLOCK]><![endif]--><sup class="text-danger-600 dark:text-danger-400 font-medium">*</sup>
+        <!--[if ENDBLOCK]><![endif]-->
+    </span>
+
+    
+
+</label>
+
+
+
+
+
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]-->
+            <div
+                class="grid auto-cols-fr gap-y-2"
+            >
+                <div
+        
+            x-load
+        
+        x-load-src="http://localhost/js/filament/forms/components/file-upload.js?v=3.3.30.0"
+        x-data="fileUploadFormComponent({
+                    acceptedFileTypes: JSON.parse('[\u0022image\\\/*\u0022]'),
+                    imageEditorEmptyFillColor: null,
+                    imageEditorMode: 1,
+                    imageEditorViewportHeight: null,
+                    imageEditorViewportWidth: null,
+                    deleteUploadedFileUsing: async (fileKey) => {
+                        return await $wire.deleteUploadedFile('data.photo', fileKey)
+                    },
+                    getUploadedFilesUsing: async () => {
+                        return await $wire.getFormUploadedFiles('data.photo')
+                    },
+                    hasImageEditor: false,
+                    hasCircleCropper: false,
+                    canEditSvgs: true,
+                    isSvgEditingConfirmed: false,
+                    confirmSvgEditingMessage: 'Editing SVG files is not recommended as it can result in quality loss when scaling.\\n Are you sure you want to continue?',
+                    disabledSvgEditingMessage: 'Editing SVG files is disabled as it can result in quality loss when scaling.',
+                    imageCropAspectRatio: null,
+                    imagePreviewHeight: null,
+                    imageResizeMode: null,
+                    imageResizeTargetHeight: null,
+                    imageResizeTargetWidth: null,
+                    imageResizeUpscale: true,
+                    isAvatar: false,
+                    isDeletable: true,
+                    isDisabled: false,
+                    isDownloadable: false,
+                    isMultiple: false,
+                    isOpenable: false,
+                    isPasteable: true,
+                    isPreviewable: true,
+                    isReorderable: false,
+                    itemPanelAspectRatio: null,
+                    loadingIndicatorPosition: 'right',
+                    locale: 'en',
+                    panelAspectRatio: null,
+                    panelLayout: 'compact',
+                    placeholder: null,
+                    maxFiles: null,
+                    maxSize: null,
+                    minSize: null,
+                    mimeTypeMap: [],
+                    maxParallelUploads: null,
+                    removeUploadedFileUsing: async (fileKey) => {
+                        return await $wire.removeFormUploadedFile('data.photo', fileKey)
+                    },
+                    removeUploadedFileButtonPosition: 'left',
+                    reorderUploadedFilesUsing: async (files) => {
+                        return await $wire.reorderFormUploadedFiles('data.photo', files)
+                    },
+                    shouldAppendFiles: false,
+                    shouldOrientImageFromExif: true,
+                    shouldTransformImage: false,
+                    state: $wire.$entangle(&#039;data.photo&#039;, false),
+                    uploadButtonPosition: 'right',
+                    uploadingMessage: 'Uploading file...',
+                    uploadProgressIndicatorPosition: 'right',
+                    uploadUsing: (fileKey, file, success, error, progress) => {
+                        $wire.upload(
+                            `data.photo.${fileKey}`,
+                            file,
+                            () => {
+                                success(fileKey)
+                            },
+                            error,
+                            (progressEvent) => {
+                                progress(true, progressEvent.detail.progress, 100)
+                            },
+                        )
+                    },
+                })"
+        wire:ignore
+        class="fi-fo-file-upload flex flex-col gap-y-2 [&amp;_.filepond--root]:font-sans items-start" id="data.photo"
+
+    >
+        <div
+            class="h-full w-full"
+        >
+            <input
+                x-ref="input"
+                type="file"
+
+            />
+        </div>
+
+        <div
+            x-show="error"
+            x-text="error"
+            x-cloak
+            class="text-sm text-danger-600 dark:text-danger-400"
+        ></div>
+
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+            </div>
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+    <!--[if ENDBLOCK]><![endif]-->
+
+</div>
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <div
+        
+        class="fi-form-actions"
+    >
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <div
+        class="fi-ac gap-3 flex flex-wrap items-center justify-start"
+
+    >
+        <!--[if BLOCK]><![endif]-->
+            <!--[if BLOCK]><![endif]-->
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+<button
+
+    
+    
+    
+        x-bind:id="$id('key-bindings')"
+        x-mousetrap.global.mod-s="document.getElementById($el.id).click()"
+    
+    
+    
+        x-data="{
+            form: null,
+            isProcessing: false,
+            processingMessage: null,
+        }"
+        x-init="
+            form = $el.closest('form')
+
+            form?.addEventListener('form-processing-started', (event) => {
+                isProcessing = true
+                processingMessage = event.detail.message
+            })
+
+            form?.addEventListener('form-processing-finished', () => {
+                isProcessing = false
+            })
+        "
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isProcessing }"
+    
+    style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600);" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg fi-color-custom fi-btn-color-primary fi-color-primary fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-custom-600 text-white hover:bg-custom-500 focus-visible:ring-custom-500/50 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus-visible:ring-custom-400/50 fi-ac-action fi-ac-btn-action" type="submit" wire:loading.attr="disabled" x-bind:disabled="isProcessing"
+
+>
+    <!--[if BLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<svg
+    fill="none"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    class="animate-spin fi-btn-icon transition duration-75 h-5 w-5 text-white" wire:loading.delay.default="" wire:target="create"
+
+>
+    <path
+        clip-rule="evenodd"
+        d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+        fill-rule="evenodd"
+        fill="currentColor"
+        opacity="0.2"
+    ></path>
+    <path
+        d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z"
+        fill="currentColor"
+    ></path>
+</svg>
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<svg
+    fill="none"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    class="animate-spin fi-btn-icon transition duration-75 h-5 w-5 text-white" x-cloak="x-cloak" x-show="isProcessing"
+
+>
+    <path
+        clip-rule="evenodd"
+        d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+        fill-rule="evenodd"
+        fill="currentColor"
+        opacity="0.2"
+    ></path>
+    <path
+        d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z"
+        fill="currentColor"
+    ></path>
+</svg>
+
+
+
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <span
+        
+            x-show="! isProcessing"
+        
+        class="fi-btn-label"
+    >
+        Create
+
+    </span>
+
+    <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+        <span
+            x-cloak
+            x-show="isProcessing"
+            x-text="processingMessage"
+            class="fi-btn-label"
+        ></span>
+    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+<button
+
+    
+    
+        x-data="{}"
+    
+    
+        x-bind:id="$id('key-bindings')"
+        x-mousetrap.global.mod-shift-s="document.getElementById($el.id).click()"
+    
+    
+    
+    style=";" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg  fi-btn-color-gray fi-color-gray fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 [input:checked+&amp;]:bg-gray-400 [input:checked+&amp;]:text-white [input:checked+&amp;]:ring-0 [input:checked+&amp;]:hover:bg-gray-300 dark:[input:checked+&amp;]:bg-gray-600 dark:[input:checked+&amp;]:hover:bg-gray-500 fi-ac-action fi-ac-btn-action" type="button" wire:loading.attr="disabled" wire:click="createAnother"
+
+>
+    <!--[if BLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]-->
+            
+
+
+
+
+<svg
+    fill="none"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    class="animate-spin fi-btn-icon transition duration-75 h-5 w-5 text-gray-400 dark:text-gray-500" wire:loading.delay.default="" wire:target="createAnother"
+
+>
+    <path
+        clip-rule="evenodd"
+        d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+        fill-rule="evenodd"
+        fill="currentColor"
+        opacity="0.2"
+    ></path>
+    <path
+        d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z"
+        fill="currentColor"
+    ></path>
+</svg>
+
+
+
+
+
+
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <span
+        
+        class="fi-btn-label"
+    >
+        Create &amp; create another
+
+    </span>
+
+    <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+<button
+
+    
+    
+    
+    
+    
+    style=";" class="fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2 rounded-lg  fi-btn-color-gray fi-color-gray fi-size-md fi-btn-size-md gap-1.5 px-3 py-2 text-sm inline-grid shadow-sm bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 ring-1 ring-gray-950/10 dark:ring-white/20 [input:checked+&amp;]:bg-gray-400 [input:checked+&amp;]:text-white [input:checked+&amp;]:ring-0 [input:checked+&amp;]:hover:bg-gray-300 dark:[input:checked+&amp;]:bg-gray-600 dark:[input:checked+&amp;]:hover:bg-gray-500 fi-ac-action fi-ac-btn-action" type="button" wire:loading.attr="disabled" x-on:click="document.referrer ? window.history.back() : (window.location.href = &#039;http:\/\/localhost&#039;)"
+
+>
+    <!--[if BLOCK]><![endif]-->
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+        <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <span
+        
+        class="fi-btn-label"
+    >
+        Cancel
+
+    </span>
+
+    <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!--[if ENDBLOCK]><![endif]-->
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+    </div>
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+</form>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+                
+
+
+                <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                
+
+            </div>
+
+            <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+        </div>
+
+        <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </section>
+
+    <!--[if BLOCK]><![endif]-->
+        
+
+
+
+
+<form wire:submit.prevent="callMountedAction">
+        
+
+        
+
+
+
+
+<div
+    
+    aria-modal="true"
+    role="dialog"
+    x-data="{
+        isOpen: false,
+
+        livewire: null,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { detail: { id: 'WncysfT7qTLVqCAtzRee-action' } }),
+            )
+        },
+
+        open: function () {
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { detail: { id: 'WncysfT7qTLVqCAtzRee-action' } }),
+                )
+            })
+        },
+    }"
+    
+        x-on:close-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee-action') close()"
+        x-on:open-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee-action') open()"
+        data-fi-modal-id="WncysfT7qTLVqCAtzRee-action"
+    
+    x-trap.noscroll="isOpen"
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
+    class="fi-modal block"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div x-cloak x-show="isOpen">
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75"
+        ></div>
+
+        <div
+            class="fixed inset-0 z-40 overflow-y-auto cursor-pointer"
+        >
+            <div
+                x-ref="modalContainer"
+                
+                    
+                    x-on:click.self="
+                        document.activeElement.selectionStart === undefined &&
+                            document.activeElement.selectionEnd === undefined &&
+                            $dispatch(&#039;close-modal&#039;, { id: &#039;WncysfT7qTLVqCAtzRee-action&#039; })
+
+                    "
+                
+                class="relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr] p-4" x-on:closed-form-component-action-modal.window="if (($event.detail.id === 'WncysfT7qTLVqCAtzRee') && $wire.mountedActions.length) open()" x-on:modal-closed.stop="if (!$event.detail?.id?.startsWith('WncysfT7qTLVqCAtzRee-')) {
+                    return
+                }
+
+                const mountedActionShouldOpenModal = false
+
+
+                if (! mountedActionShouldOpenModal) {
+                    return
+                }
+
+                if ($wire.mountedFormComponentActions.length) {
+                    return
+                }
+
+                $wire.unmountAction(false, false)" x-on:opened-form-component-action-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee') close()"
+
+            >
+                <div
+                    x-data="{ isShown: false }"
+                    x-init="
+                        $nextTick(() => {
+                            isShown = isOpen
+                            $watch('isOpen', () => (isShown = isOpen))
+                        })
+                    "
+                    
+                        x-on:keydown.window.escape="$dispatch(&#039;close-modal&#039;, { id: &#039;WncysfT7qTLVqCAtzRee-action&#039; })"
+                    
+                    x-show="isShown"
+                    x-transition:enter="duration-300"
+                    x-transition:leave="duration-300"
+                    
+                        x-transition:enter-start="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
+                    
+                    
+                        wire:key="WncysfT7qTLVqCAtzRee.modal.WncysfT7qTLVqCAtzRee-action.window"
+                    
+                    class="fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mx-auto rounded-xl hidden max-w-sm"
+
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]-->
+                        <div
+                            
+                                wire:key="WncysfT7qTLVqCAtzRee.modal.WncysfT7qTLVqCAtzRee-action.content"
+                            
+                            class="fi-modal-content flex flex-col gap-y-4 py-6 px-6"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+    </form>
+
+    
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+    <form wire:submit.prevent="callMountedInfolistAction">
+        
+
+        
+
+
+
+
+<div
+    
+    aria-modal="true"
+    role="dialog"
+    x-data="{
+        isOpen: false,
+
+        livewire: null,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { detail: { id: 'WncysfT7qTLVqCAtzRee-infolist-action' } }),
+            )
+        },
+
+        open: function () {
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { detail: { id: 'WncysfT7qTLVqCAtzRee-infolist-action' } }),
+                )
+            })
+        },
+    }"
+    
+        x-on:close-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee-infolist-action') close()"
+        x-on:open-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee-infolist-action') open()"
+        data-fi-modal-id="WncysfT7qTLVqCAtzRee-infolist-action"
+    
+    x-trap.noscroll="isOpen"
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
+    class="fi-modal block"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div x-cloak x-show="isOpen">
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75"
+        ></div>
+
+        <div
+            class="fixed inset-0 z-40 overflow-y-auto cursor-pointer"
+        >
+            <div
+                x-ref="modalContainer"
+                
+                    
+                    x-on:click.self="
+                        document.activeElement.selectionStart === undefined &&
+                            document.activeElement.selectionEnd === undefined &&
+                            $dispatch(&#039;close-modal&#039;, { id: &#039;WncysfT7qTLVqCAtzRee-infolist-action&#039; })
+
+                    "
+                
+                class="relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr] p-4" x-on:closed-form-component-action-modal.window="if (($event.detail.id === 'WncysfT7qTLVqCAtzRee') && $wire.mountedInfolistActions.length) open()" x-on:modal-closed.stop="if (!$event.detail?.id?.startsWith('WncysfT7qTLVqCAtzRee-')) {
+                    return
+                }
+
+                const mountedInfolistActionShouldOpenModal = false
+
+
+                if (! mountedInfolistActionShouldOpenModal) {
+                    return
+                }
+
+                if ($wire.mountedFormComponentActions.length) {
+                    return
+                }
+
+                $wire.unmountInfolistAction(false, false)" x-on:opened-form-component-action-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee') close()"
+
+            >
+                <div
+                    x-data="{ isShown: false }"
+                    x-init="
+                        $nextTick(() => {
+                            isShown = isOpen
+                            $watch('isOpen', () => (isShown = isOpen))
+                        })
+                    "
+                    
+                        x-on:keydown.window.escape="$dispatch(&#039;close-modal&#039;, { id: &#039;WncysfT7qTLVqCAtzRee-infolist-action&#039; })"
+                    
+                    x-show="isShown"
+                    x-transition:enter="duration-300"
+                    x-transition:leave="duration-300"
+                    
+                        x-transition:enter-start="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
+                    
+                    
+                        wire:key="WncysfT7qTLVqCAtzRee.modal.WncysfT7qTLVqCAtzRee-infolist-action.window"
+                    
+                    class="fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mx-auto rounded-xl hidden max-w-sm"
+
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]-->
+                        <div
+                            
+                                wire:key="WncysfT7qTLVqCAtzRee.modal.WncysfT7qTLVqCAtzRee-infolist-action.content"
+                            
+                            class="fi-modal-content flex flex-col gap-y-4 py-6 px-6"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    </form>
+
+    
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+    
+
+    <form wire:submit.prevent="callMountedFormComponentAction">
+        
+
+
+
+
+<div
+    
+    aria-modal="true"
+    role="dialog"
+    x-data="{
+        isOpen: false,
+
+        livewire: null,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { detail: { id: 'WncysfT7qTLVqCAtzRee-form-component-action' } }),
+            )
+        },
+
+        open: function () {
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { detail: { id: 'WncysfT7qTLVqCAtzRee-form-component-action' } }),
+                )
+            })
+        },
+    }"
+    
+        x-on:close-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee-form-component-action') close()"
+        x-on:open-modal.window="if ($event.detail.id === 'WncysfT7qTLVqCAtzRee-form-component-action') open()"
+        data-fi-modal-id="WncysfT7qTLVqCAtzRee-form-component-action"
+    
+    x-trap.noscroll="isOpen"
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
+    class="fi-modal block"
+>
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <div x-cloak x-show="isOpen">
+        <div
+            aria-hidden="true"
+            x-show="isOpen"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75"
+        ></div>
+
+        <div
+            class="fixed inset-0 z-40 overflow-y-auto cursor-pointer"
+        >
+            <div
+                x-ref="modalContainer"
+                
+                    
+                    x-on:click.self="
+                        document.activeElement.selectionStart === undefined &&
+                            document.activeElement.selectionEnd === undefined &&
+                            $dispatch(&#039;close-modal&#039;, { id: &#039;WncysfT7qTLVqCAtzRee-form-component-action&#039; })
+
+                    "
+                
+                class="relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr] p-4" x-on:modal-closed.stop="if (!$event.detail?.id?.startsWith('WncysfT7qTLVqCAtzRee-')) {
+                    return
+                }
+
+                const mountedFormComponentActionShouldOpenModal = false
+
+
+                if (mountedFormComponentActionShouldOpenModal) {
+                    $wire.unmountFormComponentAction(false, false)
+                }"
+
+            >
+                <div
+                    x-data="{ isShown: false }"
+                    x-init="
+                        $nextTick(() => {
+                            isShown = isOpen
+                            $watch('isOpen', () => (isShown = isOpen))
+                        })
+                    "
+                    
+                        x-on:keydown.window.escape="$dispatch(&#039;close-modal&#039;, { id: &#039;WncysfT7qTLVqCAtzRee-form-component-action&#039; })"
+                    
+                    x-show="isShown"
+                    x-transition:enter="duration-300"
+                    x-transition:leave="duration-300"
+                    
+                        x-transition:enter-start="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
+                    
+                    
+                        wire:key="WncysfT7qTLVqCAtzRee.modal.WncysfT7qTLVqCAtzRee-form-component-action.window"
+                    
+                    class="fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 mx-auto rounded-xl hidden max-w-sm"
+
+                >
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]-->
+                        <div
+                            
+                                wire:key="WncysfT7qTLVqCAtzRee.modal.WncysfT7qTLVqCAtzRee-form-component-action.content"
+                            
+                            class="fi-modal-content flex flex-col gap-y-4 py-6 px-6"
+                        >
+                            <!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                        </div>
+                    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+    </form>
+
+    
+<!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    <!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+
+    
+
+
+    
+
+
+
+
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+                
+
+            </main>
+
+            
+
+
+            
+
+        </div>
+
+        
+            <div
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.close()"
+                x-show="$store.sidebar.isOpen"
+                x-transition.opacity.300ms
+                class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
+            ></div>
+
+            
+
+
+
+
+<aside
+    x-data="{}"
+    
+        
+            x-cloak="-lg"
+            x-bind:class="
+                $store.sidebar.isOpen
+                    ? 'fi-sidebar-open w-[--sidebar-width] translate-x-0 shadow-xl ring-1 ring-gray-950\/5 dark:ring-white\/10 rtl:-translate-x-0 lg:sticky'
+                    : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
+            "
+        
+    
+    class="fi-sidebar fixed inset-y-0 start-0 z-30 flex flex-col h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent lg:translate-x-0 rtl:lg:-translate-x-0 fi-main-sidebar"
+
+>
+    <div class="overflow-x-clip">
+        <header
+            class="fi-sidebar-header flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
+        >
+            <div
+                
+            >
+                
+                    <a href="http://localhost/admin?tenant=">
+                        
+
+
+
+
+<div
+            class="fi-logo flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
+
+        >
+            Tedja
+
+        </div>
+    
+
+            
+
+
+
+
+
+
+
+
+
+
+                    </a>
+                
+            </div>
+
+            
+
+            
+        </header>
+    </div>
+
+    <nav
+        class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
+        style="scrollbar-gutter: stable"
+    >
+        
+
+
+        
+
+        <ul class="fi-sidebar-nav-groups -mx-2 flex flex-col gap-y-7">
+            
+                
+
+
+
+
+<li
+    x-data="{ label: null }"
+    data-group-label=""
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+
+    
+
+    <ul
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Dashboard
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Vendors' }"
+    data-group-label="Vendors"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Vendors
+
+            </span>
+
+            
+                
+
+
+
+
+<button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Vendors" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        
+            <span class="sr-only">
+                Vendors
+
+            </span>
+        
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        
+
+        
+    </button>
+
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/banks?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Banks
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/interests?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Interests
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Management' }"
+    data-group-label="Management"
+    class="fi-sidebar-group flex flex-col gap-y-1 fi-active"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Management
+
+            </span>
+
+            
+                
+
+
+
+
+<button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Management" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        
+            <span class="sr-only">
+                Management
+
+            </span>
+        
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        
+
+        
+    </button>
+
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/categories?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/>
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Categories
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/cities?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Cities
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/roles?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Roles
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item fi-active fi-sidebar-item-active flex flex-col gap-y-1"
+
+>
+    <a
+        href="http://localhost/admin/users?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5 bg-gray-100 dark:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-primary-600 dark:text-primary-400"
+        >
+            Users
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Products' }"
+    data-group-label="Products"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Products
+
+            </span>
+
+            
+                
+
+
+
+
+<button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Products" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        
+            <span class="sr-only">
+                Products
+
+            </span>
+        
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        
+
+        
+    </button>
+
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/facilities?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Facilities
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/houses?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Houses
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+
+
+
+<li
+    x-data="{ label: 'Transactions' }"
+    data-group-label="Transactions"
+    class="fi-sidebar-group flex flex-col gap-y-1"
+
+>
+    
+        <div
+            
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            
+            
+            class="fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2 cursor-pointer"
+        >
+            
+
+            <span
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+            >
+                Transactions
+
+            </span>
+
+            
+                
+
+
+
+
+<button
+        
+        
+        
+        style="--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);" class="fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 -m-2 h-9 w-9 text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500 fi-color-gray fi-sidebar-group-collapse-button" title="Transactions" type="button" wire:loading.attr="disabled" x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)" x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)" x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+
+    >
+        
+            <span class="sr-only">
+                Transactions
+
+            </span>
+        
+
+        
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-icon-btn-icon h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+  <path fill-rule="evenodd" d="M9.47 6.47a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L10 8.06l-3.72 3.72a.75.75 0 0 1-1.06-1.06l4.25-4.25Z" clip-rule="evenodd"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+
+        
+
+        
+    </button>
+
+
+
+
+
+
+
+
+            
+        </div>
+    
+
+    
+
+    <ul
+        
+            
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            
+            x-collapse.duration.200ms
+        
+        
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
+    >
+        
+            
+
+            
+
+
+
+
+<li
+    class="fi-sidebar-item"
+
+>
+    <a
+        href="http://localhost/admin/mortgage-requests?tenant="
+
+        x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        
+        class="fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    >
+        
+            
+
+
+
+
+<!--[if BLOCK]><![endif]-->
+    <svg class="fi-sidebar-item-icon h-6 w-6 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"/>
+</svg>
+<!--[if ENDBLOCK]><![endif]-->
+
+
+
+
+
+
+
+        
+
+        
+
+        <span
+            
+            class="fi-sidebar-item-label flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+            Mortgage Requests
+
+        </span>
+
+        
+    </a>
+
+    
+</li>
+
+
+
+
+
+
+
+
+
+
+        
+    </ul>
+</li>
+
+
+
+
+
+
+
+
+
+
+            
+        </ul>
+
+        <script>
+            var collapsedGroups = JSON.parse(
+                localStorage.getItem('collapsedGroups'),
+            )
+
+            if (collapsedGroups === null || collapsedGroups === 'null') {
+                localStorage.setItem(
+                    'collapsedGroups',
+                    JSON.stringify([]),
+                )
+            }
+
+            collapsedGroups = JSON.parse(
+                localStorage.getItem('collapsedGroups'),
+            )
+
+            document
+                .querySelectorAll('.fi-sidebar-group')
+                .forEach((group) => {
+                    if (
+                        !collapsedGroups.includes(group.dataset.groupLabel)
+                    ) {
+                        return
+                    }
+
+                    // Alpine.js loads too slow, so attempt to hide a
+                    // collapsed sidebar group earlier.
+                    group.querySelector(
+                        '.fi-sidebar-group-items',
+                    ).style.display = 'none'
+                    group
+                        .querySelector('.fi-sidebar-group-collapse-button')
+                        .classList.add('rotate-180')
+                })
+        </script>
+
+        
+
+    </nav>
+
+    
+
+</aside>
+
+
+
+
+
+
+
+
+
+
+
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        let activeSidebarItem = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-item.fi-active',
+                        )
+
+                        if (
+                            !activeSidebarItem ||
+                            activeSidebarItem.offsetParent === null
+                        ) {
+                            activeSidebarItem = document.querySelector(
+                                '.fi-main-sidebar .fi-sidebar-group.fi-active',
+                            )
+                        }
+
+                        if (
+                            !activeSidebarItem ||
+                            activeSidebarItem.offsetParent === null
+                        ) {
+                            return
+                        }
+
+                        const sidebarWrapper = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-nav',
+                        )
+
+                        if (!sidebarWrapper) {
+                            return
+                        }
+
+                        sidebarWrapper.scrollTo(
+                            0,
+                            activeSidebarItem.offsetTop -
+                                window.innerHeight / 2,
+                        )
+                    }, 10)
+                })
+            </script>
+        
+    </div>
+
+
+        <div wire:snapshot="{&quot;data&quot;:{&quot;isFilamentNotificationsComponent&quot;:true,&quot;notifications&quot;:[[],{&quot;class&quot;:&quot;Filament\\Notifications\\Collection&quot;,&quot;s&quot;:&quot;wrbl&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;ukH1e9tZs3Rkvjt66ppy&quot;,&quot;name&quot;:&quot;filament.livewire.notifications&quot;,&quot;path&quot;:&quot;admin\/users\/create&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;2ccaf87d405417475a49684d1f7c25724b2641e6f7adc68f28b887137a1f8bd6&quot;}" wire:effects="{&quot;listeners&quot;:[&quot;notificationClosed&quot;,&quot;notificationSent&quot;,&quot;notificationsSent&quot;]}" wire:id="ukH1e9tZs3Rkvjt66ppy">
+    <div
+        class="fi-no pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3 items-end flex-col-reverse justify-end"
+        role="status"
+    >
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+
+    
+        
+
+
+
+
+<div
+    x-data="{}"
+    x-init="
+        window.addEventListener('EchoLoaded', () => {
+            window.Echo.private('App.Models.User.1').notification((notification) => {
+                setTimeout(() => $wire.handleBroadcastNotification(notification), 500)
+            })
+        })
+
+        if (window.Echo) {
+            window.dispatchEvent(new CustomEvent('EchoLoaded'))
+        }
+    "
+    
+
+></div>
+
+
+
+
+    <!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+        
+
+
+        <script>
+        window.filamentData = []
+    </script>
+
+
+
+    
+        
+            <script
+                src="http://localhost/js/filament/support/support.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://localhost/js/filament/notifications/notifications.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://localhost/js/filament/filament/app.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://localhost/js/filament/filament/echo.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+
+<style>
+    :root {
+        
+    }
+</style>
+
+
+        
+
+        
+            <script>
+                loadDarkMode()
+            </script>
+        
+
+        
+
+        
+
+
+        
+
+    <!-- Livewire Scripts -->
+<script src="/livewire/livewire.js?id=df3a17f2"   data-csrf="tZT6xw17g1YQ50PVxTgrAGeHxcYNITt8SZSgRiuN" data-update-uri="/livewire/update" data-navigate-once="true"></script>
+</body>
+</html>
+
+
+
+
+
+
+

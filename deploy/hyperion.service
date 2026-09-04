@@ -1,0 +1,40 @@
+[Unit]
+Description=PHP-Hyperion Ultra-High Performance Application Engine
+After=network.target remote-fs.target
+Documentation=https://github.com/your-username/php-hyperion
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/html/laravel-crud
+
+# Production Environment
+Environment="HYPERION_REACTORS=8"
+Environment="HYPERION_MAX_FIBRES=32"
+Environment="APP_ENV=production"
+Environment="APP_DEBUG=false"
+Environment="RUST_BACKTRACE=1"
+
+# Command to execute
+ExecStart=/usr/local/bin/hyperion -S 127.0.0.1:8000 -W hyperion_worker.php
+
+# Process Management
+Restart=always
+RestartSec=1s
+KillMode=mixed
+TimeoutStopSec=5s
+
+# High-Concurrency System Limits (65,535 open file descriptors for 100k+ concurrent connections)
+LimitNOFILE=65535
+LimitNPROC=65535
+LimitMEMLOCK=infinity
+
+# Production Security Hardening
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

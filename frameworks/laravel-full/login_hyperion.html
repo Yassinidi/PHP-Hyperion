@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    dir="ltr"
+    class="fi min-h-screen"
+>
+    <head>
+        
+
+
+        <meta charset="utf-8" />
+        <meta name="csrf-token" content="F1G12bBUZFHQRbeR3LmP8Ee1MToECPUg3zqFLGUZ" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        
+
+        
+
+        <title>
+            Login -  Tedja
+
+        </title>
+
+        
+
+
+        <style>
+            [x-cloak=''],
+            [x-cloak='x-cloak'],
+            [x-cloak='1'] {
+                display: none !important;
+            }
+
+            @media (max-width: 1023px) {
+                [x-cloak='-lg'] {
+                    display: none !important;
+                }
+            }
+
+            @media (min-width: 1024px) {
+                [x-cloak='lg'] {
+                    display: none !important;
+                }
+            }
+        </style>
+
+        <link
+            href="http://127.0.0.1:8000/css/filament/forms/forms.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+    
+
+    
+        <link
+            href="http://127.0.0.1:8000/css/filament/support/support.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+    
+
+
+<style>
+    :root {
+         --danger-50:254, 242, 242;  --danger-100:254, 226, 226;  --danger-200:254, 202, 202;  --danger-300:252, 165, 165;  --danger-400:248, 113, 113;  --danger-500:239, 68, 68;  --danger-600:220, 38, 38;  --danger-700:185, 28, 28;  --danger-800:153, 27, 27;  --danger-900:127, 29, 29;  --danger-950:69, 10, 10;  --gray-50:250, 250, 250;  --gray-100:244, 244, 245;  --gray-200:228, 228, 231;  --gray-300:212, 212, 216;  --gray-400:161, 161, 170;  --gray-500:113, 113, 122;  --gray-600:82, 82, 91;  --gray-700:63, 63, 70;  --gray-800:39, 39, 42;  --gray-900:24, 24, 27;  --gray-950:9, 9, 11;  --info-50:239, 246, 255;  --info-100:219, 234, 254;  --info-200:191, 219, 254;  --info-300:147, 197, 253;  --info-400:96, 165, 250;  --info-500:59, 130, 246;  --info-600:37, 99, 235;  --info-700:29, 78, 216;  --info-800:30, 64, 175;  --info-900:30, 58, 138;  --info-950:23, 37, 84;  --primary-50:255, 251, 235;  --primary-100:254, 243, 199;  --primary-200:253, 230, 138;  --primary-300:252, 211, 77;  --primary-400:251, 191, 36;  --primary-500:245, 158, 11;  --primary-600:217, 119, 6;  --primary-700:180, 83, 9;  --primary-800:146, 64, 14;  --primary-900:120, 53, 15;  --primary-950:69, 26, 3;  --success-50:240, 253, 244;  --success-100:220, 252, 231;  --success-200:187, 247, 208;  --success-300:134, 239, 172;  --success-400:74, 222, 128;  --success-500:34, 197, 94;  --success-600:22, 163, 74;  --success-700:21, 128, 61;  --success-800:22, 101, 52;  --success-900:20, 83, 45;  --success-950:5, 46, 22;  --warning-50:255, 251, 235;  --warning-100:254, 243, 199;  --warning-200:253, 230, 138;  --warning-300:252, 211, 77;  --warning-400:251, 191, 36;  --warning-500:245, 158, 11;  --warning-600:217, 119, 6;  --warning-700:180, 83, 9;  --warning-800:146, 64, 14;  --warning-900:120, 53, 15;  --warning-950:69, 26, 3; 
+    }
+</style>
+
+
+        <link
+            href="http://127.0.0.1:8000/css/filament/filament/app.css?v=3.3.30.0"
+            rel="stylesheet"
+            data-navigate-track
+        />
+
+        
+            <link rel="preconnect" href="https://fonts.bunny.net">
+            <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        
+
+
+        <style>
+            :root {
+                --font-family: 'Inter';
+                --sidebar-width: 20rem;
+                --collapsed-sidebar-width: 4.5rem;
+                --default-theme-mode: system;
+            }
+        </style>
+
+        
+
+        
+
+
+        
+            <script>
+                const loadDarkMode = () => {
+                    window.theme = localStorage.getItem('theme') ?? 'system'
+
+                    if (
+                        window.theme === 'dark' ||
+                        (window.theme === 'system' &&
+                            window.matchMedia('(prefers-color-scheme: dark)')
+                                .matches)
+                    ) {
+                        document.documentElement.classList.add('dark')
+                    }
+                }
+
+                loadDarkMode()
+
+                document.addEventListener('livewire:navigated', loadDarkMode)
+            </script>
+        
+
+        
+
+    <!-- Livewire Styles --><style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}[wire\:cloak] {display: none !important;}</style>
+</head>
+
+    <body
+        class="fi-body fi-panel-admin min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
+
+    >
+        
+
+
+        <div class="fi-simple-layout flex min-h-screen flex-col items-center">
+        
+
+        <div
+            class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center"
+        >
+            <main
+                class="fi-simple-main my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:rounded-xl sm:px-12 max-w-lg"
+            >
+                <div wire:snapshot="{&quot;data&quot;:{&quot;data&quot;:[{&quot;email&quot;:null,&quot;password&quot;:null,&quot;remember&quot;:true},{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;defaultAction&quot;:null,&quot;defaultActionArguments&quot;:null,&quot;componentFileAttachments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;areFormStateUpdateHooksDisabledForTesting&quot;:false,&quot;mountedInfolistActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedInfolistActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedInfolistActionsComponent&quot;:null,&quot;mountedInfolistActionsInfolist&quot;:null,&quot;mountedFormComponentActions&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsArguments&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsData&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}],&quot;mountedFormComponentActionsComponents&quot;:[[],{&quot;s&quot;:&quot;arr&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;3JO9cawGabol1vS9CdpZ&quot;,&quot;name&quot;:&quot;app.filament.pages.auth.login&quot;,&quot;path&quot;:&quot;admin/login&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;769ed26525b341ecdb06fd1feff921ec3b53fba975f33407419c6c19bdf94ecf&quot;}" wire:effects="[]" wire:id="3JO9cawGabol1vS9CdpZ">
+    
+    <link href="http://127.0.0.1:8000/css/output.css" rel="stylesheet">
+
+    
+    <div
+        style="position: fixed; inset: 0; background-color: #FAFAFA; background-image: radial-gradient(#E5E5E5 1px, transparent 1px); background-size: 20px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 16px; overflow-y: auto; z-index: 9999;">
+
+        
+        <div style="margin-bottom: 30px;">
+            <a href="http://127.0.0.1:8000">
+                <img src="http://127.0.0.1:8000/assets/images/logos/logo-black.svg" alt="Tedja"
+                    style="height: 40px; width: auto;">
+            </a>
+        </div>
+
+        
+        <div
+            style="width: 100%; max-width: 500px; background: white; border: 1px solid #F2F2F4; border-radius: 20px; padding: 24px; box-shadow: 0px 8px 30px rgba(6,9,34,0.03);">
+
+            
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h1 style="font-weight: 700; font-size: 24px; line-height: 36px; margin-bottom: 4px; color: #060922;">
+                    Admin Panel</h1>
+                <p style="font-weight: 600; color: #8F91A2; font-size: 14px;">Sign in to manage properties</p>
+            </div>
+
+            
+            <form wire:submit.prevent="authenticate" style="display: flex; flex-direction: column; gap: 14px;">
+
+                
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 600; font-size: 14px; color: #060922;">Email</label>
+                    <div style="position: relative;">
+                        <img src="http://127.0.0.1:8000/assets/images/icons/sms.svg"
+                            style="position: absolute; width: 20px; height: 20px; top: 50%; transform: translateY(-50%); left: 16px; pointer-events: none;"
+                            alt="icon">
+                        <input type="email" wire:model="data.email" required
+                            style="width: 100%; border-radius: 9999px; border: 1px solid #F2F2F4; padding: 12px 16px 12px 48px; font-weight: 600; font-size: 14px; box-sizing: border-box; color: #060922;">
+                    </div>
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+
+                
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-weight: 600; font-size: 14px; color: #060922;">Password</label>
+                    <div style="position: relative;">
+                        <img src="http://127.0.0.1:8000/assets/images/icons/lock.svg"
+                            style="position: absolute; width: 20px; height: 20px; top: 50%; transform: translateY(-50%); left: 16px; pointer-events: none;"
+                            alt="icon">
+                        <input type="password" wire:model="data.password" id="password" required
+                            style="width: 100%; border-radius: 9999px; border: 1px solid #F2F2F4; padding: 12px 48px 12px 48px; font-weight: 600; font-size: 14px; box-sizing: border-box; color: #060922;">
+                        
+                        <button type="button" id="toggle-password"
+                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;">
+                            
+                            <svg id="eye-show" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="#8F91A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            
+                            <svg id="eye-hide" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="#8F91A2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                style="display: none;">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                </path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+                </div>
+
+                
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                    <input type="checkbox" wire:model="data.remember" id="remember"
+                        style="width: 16px; height: 16px; border: 1px solid #F2F2F4; border-radius: 4px;">
+                    <label for="remember" style="font-size: 14px; font-weight: 600; color: #060922;">Remember me</label>
+                </div>
+
+                
+                <button type="submit"
+                    style="width: 100%; border-radius: 9999px; padding: 12px 20px; background-color: #CEF27F; border: none; font-weight: 600; font-size: 14px; color: #060922; cursor: pointer; margin-top: 4px;">
+                    Sign In
+                </button>
+            </form>
+        </div>
+
+        
+        <div style="margin-top: 24px;">
+            <a href="http://127.0.0.1:8000"
+                style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #8F91A2; text-decoration: none;">
+                <span style="font-size: 18px;">←</span> Back to homepage
+            </a>
+        </div>
+
+        
+        <style>
+            /* Reset all backgrounds */
+            body,
+            .fi-body,
+            .fi-simple-layout,
+            .fi-simple-main,
+            .fi-simple-main-ctn,
+            .fi-page {
+                background: #FAFAFA !important;
+            }
+
+            .fi-simple-layout {
+                background: transparent !important;
+                display: block !important;
+            }
+
+            .fi-simple-main {
+                background: transparent !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: none !important;
+            }
+
+            .fi-simple-main-ctn {
+                background: transparent !important;
+                padding: 0 !important;
+            }
+
+            /* Override browser autofill styling to match frontend */
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 30px white inset !important;
+                -webkit-text-fill-color: #060922 !important;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+        </style>
+
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const passwordInput = document.getElementById('password');
+                const toggleButton = document.getElementById('toggle-password');
+                const eyeShow = document.getElementById('eye-show');
+                const eyeHide = document.getElementById('eye-hide');
+
+                if (toggleButton) {
+                    toggleButton.addEventListener('click', function() {
+                        if (passwordInput.type === 'password') {
+                            passwordInput.type = 'text';
+                            eyeShow.style.display = 'none';
+                            eyeHide.style.display = 'block';
+                        } else {
+                            passwordInput.type = 'password';
+                            eyeShow.style.display = 'block';
+                            eyeHide.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+
+            </main>
+        </div>
+
+        
+
+    </div>
+
+
+        <div wire:snapshot="{&quot;data&quot;:{&quot;isFilamentNotificationsComponent&quot;:true,&quot;notifications&quot;:[[],{&quot;class&quot;:&quot;Filament\\Notifications\\Collection&quot;,&quot;s&quot;:&quot;wrbl&quot;}]},&quot;memo&quot;:{&quot;id&quot;:&quot;YbXJ4IwD6eoi0nIuOaHd&quot;,&quot;name&quot;:&quot;filament.livewire.notifications&quot;,&quot;path&quot;:&quot;admin/login&quot;,&quot;method&quot;:&quot;GET&quot;,&quot;children&quot;:[],&quot;scripts&quot;:[],&quot;assets&quot;:[],&quot;errors&quot;:[],&quot;locale&quot;:&quot;en&quot;},&quot;checksum&quot;:&quot;f7d3d18efbb08aabfbd5eb28c690b0589be0755d626ecd34d1baeeaf97adf6e9&quot;}" wire:effects="{&quot;listeners&quot;:[&quot;notificationClosed&quot;,&quot;notificationsSent&quot;,&quot;notificationSent&quot;]}" wire:id="YbXJ4IwD6eoi0nIuOaHd">
+    <div
+        class="fi-no pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3 items-end flex-col-reverse justify-end"
+        role="status"
+    >
+        <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+    </div>
+
+    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
+</div>
+
+
+        
+
+
+        <script>
+        window.filamentData = []
+    </script>
+
+
+
+    
+        
+            <script
+                src="http://127.0.0.1:8000/js/filament/support/support.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://127.0.0.1:8000/js/filament/notifications/notifications.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://127.0.0.1:8000/js/filament/filament/app.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+    
+        
+            <script
+                src="http://127.0.0.1:8000/js/filament/filament/echo.js?v=3.3.30.0"
+                
+                
+                
+                
+                
+                
+            ></script>
+        
+
+    
+
+
+<style>
+    :root {
+        
+    }
+</style>
+
+
+        
+
+        
+            <script>
+                loadDarkMode()
+            </script>
+        
+
+        
+
+        
+
+
+        
+
+    <!-- Livewire Scripts -->
+<script src="/livewire/livewire.js?id=df3a17f2"   data-csrf="F1G12bBUZFHQRbeR3LmP8Ee1MToECPUg3zqFLGUZ" data-update-uri="/livewire/update" data-navigate-once="true"></script>
+</body>
+</html>
+
+
+
+
+
+
+

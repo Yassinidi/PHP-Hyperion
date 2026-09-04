@@ -1,0 +1,78 @@
+name: PHP-Hyperion CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (Ubuntu & macOS)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: php-hyperion -> target
+
+      - name: Install System Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang pkg-config libssl-dev sqlite3 libsqlite3-dev apache2-utils
+
+      - name: Install System Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install sqlite
+
+      - name: Build PHP-Hyperion Release Binary
+        run: |
+          cd php-hyperion
+          cargo build --release -p hyperion-cli
+
+      - name: Run Core Engine Unit Tests
+        run: |
+          cd php-hyperion
+          cargo test --release --workspace
+
+      - name: Setup PHP for Composer & Seed Verification
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_sqlite, bcmath
+          coverage: none
+
+      - name: Install Laravel Dependencies
+        run: |
+          cd laravel-crud
+          composer install --no-interaction --prefer-dist --optimize-autoloader
+          touch database/database.sqlite
+          php artisan migrate:fresh --seed
+
+      - name: Run PHPUnit Suite via PHP-Hyperion Engine
+        run: |
+          cd laravel-crud
+          ../php-hyperion/target/release/hyperion-cli vendor/bin/phpunit tests/Unit
+          ../php-hyperion/target/release/hyperion-cli vendor/bin/phpunit tests/Feature
+
+      - name: Run High-Throughput Sanity Benchmark
+        run: |
+          cd laravel-crud
+          HYPERION_REACTORS=4 HYPERION_MAX_FIBRES=16 ../php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8000 -W hyperion_worker.php &
+          PID=$!
+          while ! curl -s http://127.0.0.1:8000/api/categories > /dev/null; do sleep 0.2; done
+          ab -k -n 5000 -c 50 http://127.0.0.1:8000/api/categories
+          kill -9 $PID || true

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../laravel-crud/vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="../../laravel-crud/vendor/autoload.php"
+         colors="true"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="Hyperion Framework and Architecture Unit Test Suite">
+            <file>AssertionSuiteTest.php</file>
+            <file>AdvancedFeaturesTest.php</file>
+            <file>MockingSuiteTest.php</file>
+            <file>DomainModelTest.php</file>
+            <file>DatabaseRepositoryTest.php</file>
+            <file>ContainerTest.php</file>
+            <file>ServiceIntegrationTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

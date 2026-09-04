@@ -1,0 +1,24 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/hyperion-core",
+    "crates/hyperion-parser",
+    "crates/hyperion-bytecode",
+    "crates/hyperion-compiler",
+    "crates/hyperion-vm",
+    "crates/hyperion-jit",
+    "crates/hyperion-bridge",
+    "ext/hyperion-ext-standard",
+    "sapi/hyperion-cli",
+]
+
+[workspace.dependencies]
+thiserror = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+debug = true
+strip = false

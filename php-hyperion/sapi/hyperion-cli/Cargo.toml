@@ -1,0 +1,13 @@
+[package]
+name = "hyperion-cli"
+version = "0.1.0"
+edition = "2021"
+
+
+
+[dependencies]
+hyperion-core = { path = "../../crates/hyperion-core" }
+hyperion-compiler = { path = "../../crates/hyperion-compiler" }
+hyperion-vm = { path = "../../crates/hyperion-vm" }
+dashmap = "6"
+libc = "0.2"
