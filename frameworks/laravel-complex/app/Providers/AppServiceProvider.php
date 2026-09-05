@@ -35,5 +35,23 @@ class AppServiceProvider extends ServiceProvider
         // Event Listener registration
         Event::listen(OrderPlaced::class, AuditOrderPlaced::class);
         Event::listen(OrderShipped::class, SendOrderShippedNotification::class);
+
+        // Share current active theme & store settings globally with all views
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            try {
+                $themeService = app(\App\Services\ThemeService::class);
+                $cartService = app(\App\Services\CartService::class);
+                $currentTheme = $themeService->getActiveTheme();
+                $siteSettings = \App\Models\StoreSetting::getAllGrouped();
+                $cartCount = $cartService->getItemCount();
+                $view->with([
+                    'currentTheme' => $currentTheme,
+                    'siteSettings' => $siteSettings,
+                    'cartCount' => $cartCount,
+                ]);
+            } catch (\Throwable $e) {
+                // Fallback gracefully during early migrations/CLI boot
+            }
+        });
     }
 }

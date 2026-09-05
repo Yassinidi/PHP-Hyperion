@@ -1,9 +1,14 @@
 @extends('layouts.store')
 
-@section('title', 'Hyperion Enterprise Store - Product Catalog')
+@section('title', ($siteSettings['store_name'] ?? 'Hyperion Pro Store') . ' - Hardware Catalog & Gear')
 
 @section('styles')
 <style>
+    .store-content-wrapper {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 1.5rem 3rem 1.5rem;
+    }
     .metrics-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -13,7 +18,7 @@
     .metric-card {
         background: var(--bg-card);
         border: 1px solid var(--border-color);
-        border-radius: 12px;
+        border-radius: var(--theme-radius, 12px);
         padding: 1.25rem;
         display: flex;
         flex-direction: column;
@@ -59,7 +64,7 @@
         padding: 0.45rem 0.9rem;
         background: var(--bg-card);
         border: 1px solid var(--border-color);
-        border-radius: 20px;
+        border-radius: 9999px;
         color: var(--text-muted);
         text-decoration: none;
         font-size: 0.85rem;
@@ -79,7 +84,7 @@
         background: var(--bg-card);
         border: 1px solid var(--border-color);
         padding: 0.5rem 1rem;
-        border-radius: 8px;
+        border-radius: var(--theme-radius, 8px);
         color: var(--text-main);
         font-size: 0.9rem;
         outline: none;
@@ -87,24 +92,6 @@
     }
     .search-input:focus {
         border-color: var(--accent);
-    }
-    .btn {
-        background: var(--accent);
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: opacity 0.2s;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .btn:hover {
-        opacity: 0.9;
     }
     .products-grid {
         display: grid;
@@ -115,7 +102,7 @@
     .product-card {
         background: var(--bg-card);
         border: 1px solid var(--border-color);
-        border-radius: 14px;
+        border-radius: var(--theme-radius, 14px);
         padding: 1.5rem;
         display: flex;
         flex-direction: column;
@@ -136,7 +123,7 @@
     .cat-badge {
         font-size: 0.75rem;
         font-weight: 600;
-        color: #818cf8;
+        color: var(--accent);
         background: rgba(99, 102, 241, 0.12);
         padding: 0.2rem 0.6rem;
         border-radius: 6px;
@@ -148,7 +135,7 @@
         border-radius: 6px;
     }
     .stock-in {
-        color: #34d399;
+        color: var(--accent-green);
         background: rgba(16, 185, 129, 0.12);
     }
     .product-name {
@@ -163,7 +150,7 @@
         transition: color 0.2s;
     }
     .product-name a:hover {
-        color: #818cf8;
+        color: var(--accent);
     }
     .product-desc {
         font-size: 0.85rem;
@@ -180,84 +167,140 @@
         justify-content: space-between;
         padding-top: 1rem;
         border-top: 1px solid var(--border-color);
+        gap: 0.5rem;
     }
     .price {
         font-size: 1.35rem;
         font-weight: 800;
         color: var(--text-main);
     }
-    .rating {
+    .btn-add-cart {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.5rem 0.9rem;
+        border-radius: var(--theme-radius, 8px);
         font-size: 0.85rem;
-        font-weight: 600;
-        color: #fbbf24;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn-add-cart:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+    .pagination-wrapper {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
     }
 </style>
 @endsection
 
 @section('content')
-<!-- Analytics Dashboard Banner -->
-<section class="metrics-grid">
-    <div class="metric-card">
-        <span class="metric-title">Gross Revenue</span>
-        <span class="metric-val green">${{ number_format($analytics['metrics']['total_revenue'], 2) }}</span>
-    </div>
-    <div class="metric-card">
-        <span class="metric-title">Completed Orders</span>
-        <span class="metric-val">{{ $analytics['metrics']['total_orders'] }}</span>
-    </div>
-    <div class="metric-card">
-        <span class="metric-title">Active Products</span>
-        <span class="metric-val">{{ $analytics['metrics']['total_products'] }}</span>
-    </div>
-    <div class="metric-card">
-        <span class="metric-title">Average Order Value</span>
-        <span class="metric-val">${{ number_format($analytics['metrics']['average_order_value'], 2) }}</span>
-    </div>
-</section>
-
-<!-- Filter Controls -->
-<div class="controls-row">
-    <div class="category-pills">
-        <a href="{{ route('store.index') }}" class="pill {{ !request('category') ? 'active' : '' }}">All Products</a>
-        @foreach($categories as $cat)
-            <a href="{{ route('store.index', ['category' => $cat->slug]) }}" class="pill {{ request('category') === $cat->slug ? 'active' : '' }}">
-                {{ $cat->name }} ({{ $cat->products_count }})
-            </a>
-        @endforeach
-    </div>
-
-    <form method="GET" action="{{ route('store.index') }}" class="search-form">
-        <input type="text" name="search" class="search-input" placeholder="Search catalog..." value="{{ request('search') }}">
-        <button type="submit" class="btn">Filter</button>
-    </form>
-</div>
-
-<!-- Products Grid -->
-<div class="products-grid">
-    @forelse($products as $prod)
-        <div class="product-card">
-            <div>
-                <div class="card-top">
-                    <span class="cat-badge">{{ $prod->category->name }}</span>
-                    <span class="stock-badge stock-in">{{ $prod->stock }} in stock</span>
+<!-- Dynamic No-Code Page Builder Sections (Hero, Features, Flash Sale, etc.) -->
+@if(isset($sections) && $sections->isNotEmpty())
+    @foreach($sections as $section)
+        @if($section->section_type === 'featured_products')
+            <!-- Inlined Catalog Grid Anchor Point -->
+            <div id="products" class="store-content-wrapper">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    <div>
+                        <h2 style="font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text-main);">
+                            {{ $section->title ?? 'Curated Hardware & Peripherals' }}
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">
+                            {{ $section->subtitle ?? 'Handpicked by system architects for maximum throughput.' }}
+                        </p>
+                    </div>
+                    <span style="font-size: 0.85rem; color: var(--accent-green); font-weight: 700;">
+                        ● Instant Dispatch Available
+                    </span>
                 </div>
-                <h3 class="product-name">
-                    <a href="{{ route('store.show', $prod->id) }}">{{ $prod->name }}</a>
-                </h3>
-                <p class="product-desc">{{ $prod->description }}</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div class="price">${{ number_format($prod->price, 2) }}</div>
-                    <div class="rating">★ {{ $prod->average_rating }} ({{ $prod->reviews_count }})</div>
+
+                <!-- Controls Row: Category Filtering and Search -->
+                <div class="controls-row">
+                    <div class="category-pills">
+                        <a href="{{ route('store.index') }}#products" class="pill {{ !request('category') ? 'active' : '' }}">
+                            All Hardware
+                        </a>
+                        @foreach($categories as $cat)
+                            <a href="{{ route('store.index', ['category' => $cat->slug]) }}#products" class="pill {{ request('category') === $cat->slug ? 'active' : '' }}">
+                                {{ $cat->name }}
+                                <span style="font-size: 0.75rem; opacity: 0.7;">({{ $cat->products_count }})</span>
+                            </a>
+                        @endforeach
+                    </div>
+
+                    <form action="{{ route('store.index') }}#products" method="GET" class="search-form">
+                        @if(request('category'))
+                            <input type="hidden" name="category" value="{{ request('category') }}">
+                        @endif
+                        <input type="text" name="search" class="search-input" placeholder="Search devices, chips..." value="{{ request('search') }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
                 </div>
-                <a href="{{ route('store.show', $prod->id) }}" class="btn">View</a>
+
+                <!-- Products Grid -->
+                <div class="products-grid">
+                    @forelse($products as $product)
+                        <div class="product-card">
+                            <div>
+                                <div class="card-top">
+                                    <span class="cat-badge">{{ $product->category->name ?? 'Hardware' }}</span>
+                                    <span class="stock-badge stock-in">In Stock ({{ $product->stock }})</span>
+                                </div>
+                                <h3 class="product-name">
+                                    <a href="{{ route('store.show', $product->id) }}">{{ $product->name }}</a>
+                                </h3>
+                                <p class="product-desc">{{ $product->description }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="price">${{ number_format($product->price, 2) }}</div>
+                                <button type="button" class="btn-add-cart" onclick="quickAddToCart({{ $product->id }})">
+                                    🛒 Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    @empty
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 0; color: var(--text-muted);">
+                            <h3>No hardware products found.</h3>
+                            <p>Try clearing your category or search filter.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                <!-- Pagination -->
+                @if($products->hasPages())
+                    <div class="pagination-wrapper">
+                        {{ $products->links() }}
+                    </div>
+                @endif
             </div>
+        @elseif(view()->exists('_partials.sections.' . $section->section_type))
+            @include('_partials.sections.' . $section->section_type, ['section' => $section])
+        @endif
+    @endforeach
+@else
+    <!-- Fallback Standard Catalog View if no sections exist -->
+    <div id="products" class="store-content-wrapper" style="padding-top: 2rem;">
+        <div class="products-grid">
+            @foreach($products as $product)
+                <div class="product-card">
+                    <div>
+                        <h3 class="product-name"><a href="{{ route('store.show', $product->id) }}">{{ $product->name }}</a></h3>
+                        <p class="product-desc">{{ $product->description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="price">${{ number_format($product->price, 2) }}</div>
+                        <button type="button" class="btn-add-cart" onclick="quickAddToCart({{ $product->id }})">🛒 Add to Cart</button>
+                    </div>
+                </div>
+            @endforeach
         </div>
-    @empty
-        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
-            <h3>No products found matching the criteria.</h3>
-        </div>
-    @endforelse
-</div>
+    </div>
+@endif
 @endsection

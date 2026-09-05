@@ -47,5 +47,20 @@ Route::prefix('v1')->group(function () {
     Route::post('/queries/test-soft-deletes', [AdvancedQueryController::class, 'testSoftDeletes']);
     Route::get('/queries/test-modern-syntax', [AdvancedQueryController::class, 'testModernSyntax']);
     Route::get('/queries/modern-syntax', [AdvancedQueryController::class, 'testModernSyntax']);
+
+    // Shopping Cart APIs
+    Route::get('/cart', [\App\Http\Controllers\CartController::class, 'apiSummary']);
+    Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add']);
+    Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'update']);
+    Route::post('/cart/remove/{productId}', [\App\Http\Controllers\CartController::class, 'remove']);
+    Route::post('/cart/coupon', [\App\Http\Controllers\CartController::class, 'applyCoupon']);
+
+    // No-Code Customizer APIs
+    Route::post('/customizer/theme/activate', [\App\Http\Controllers\Api\CustomizerApiController::class, 'activateTheme']);
+    Route::post('/customizer/theme/styles', [\App\Http\Controllers\Api\CustomizerApiController::class, 'updateStyles']);
+    Route::post('/customizer/sections/{id}', [\App\Http\Controllers\Api\CustomizerApiController::class, 'updateSection']);
+    Route::post('/customizer/sections/reorder', [\App\Http\Controllers\Api\CustomizerApiController::class, 'reorderSections']);
+    Route::post('/customizer/settings', [\App\Http\Controllers\Api\CustomizerApiController::class, 'updateSettings']);
+    Route::post('/customizer/reset', [\App\Http\Controllers\Api\CustomizerApiController::class, 'resetTheme']);
 });
 

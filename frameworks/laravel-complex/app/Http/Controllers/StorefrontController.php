@@ -34,7 +34,10 @@ class StorefrontController extends Controller
         $products = $query->latest()->paginate(8);
         $analytics = $this->analyticsService->getDashboardMetrics();
 
-        return view('store.index', compact('categories', 'products', 'analytics'));
+        $homePage = \App\Models\Page::with('activeSections')->where('slug', 'home')->first();
+        $sections = $homePage ? $homePage->activeSections : collect([]);
+
+        return view('store.index', compact('categories', 'products', 'analytics', 'sections'));
     }
 
     public function show(int $id): View
@@ -57,6 +60,25 @@ class StorefrontController extends Controller
             ->paginate(8);
 
         return view('store.orders', compact('orders'));
+    }
+
+    public function track(string $order_number): View
+    {
+        $order = \App\Models\Order::with(['customer', 'items.product', 'activities'])
+            ->where('order_number', $order_number)
+            ->firstOrFail();
+
+        return view('store.track', compact('order'));
+    }
+
+    public function page(string $slug): View
+    {
+        $page = \App\Models\Page::with('activeSections')
+            ->where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+
+        return view('store.page', compact('page'));
     }
 
     public function operations(): View
@@ -89,6 +111,5 @@ class StorefrontController extends Controller
             'attachments', 'orders', 'rankings', 'salesSummary', 'modernSyntax'
         ));
     }
-
 }
 
