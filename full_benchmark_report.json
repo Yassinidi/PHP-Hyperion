@@ -1,0 +1,321 @@
+{
+  "memory_initial": {
+    "php_mb": 348.12,
+    "hyperion_mb": 425.42
+  },
+  "memory_final": {
+    "php_mb": 369.23,
+    "hyperion_mb": 425.44
+  },
+  "endpoints": [
+    {
+      "category": "API - Stateless Health",
+      "path": "/health",
+      "php": {
+        "rps": 1055.68,
+        "mean_latency_ms": 47.363,
+        "p99_latency_ms": 91.0,
+        "failed": 0,
+        "transfer_rate_kbps": 1392.74,
+        "document_length_bytes": 83,
+        "total_requests": 2000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 187575.03,
+        "mean_latency_ms": 0.533,
+        "p99_latency_ms": 1.0,
+        "failed": 0,
+        "transfer_rate_kbps": 67226.6,
+        "document_length_bytes": 58,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 177.7
+    },
+    {
+      "category": "API - Eloquent Products",
+      "path": "/api/v1/products",
+      "php": {
+        "rps": 683.83,
+        "mean_latency_ms": 73.118,
+        "p99_latency_ms": 286.0,
+        "failed": 0,
+        "transfer_rate_kbps": 5657.01,
+        "document_length_bytes": 8070,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 172375.16,
+        "mean_latency_ms": 0.58,
+        "p99_latency_ms": 1.0,
+        "failed": 0,
+        "transfer_rate_kbps": 1366039.45,
+        "document_length_bytes": 7770,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 252.1
+    },
+    {
+      "category": "API - Complex Analytics",
+      "path": "/api/v1/analytics/dashboard",
+      "php": {
+        "rps": 702.93,
+        "mean_latency_ms": 71.131,
+        "p99_latency_ms": 146.0,
+        "failed": 0,
+        "transfer_rate_kbps": 2912.68,
+        "document_length_bytes": 3842,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 170900.73,
+        "mean_latency_ms": 0.585,
+        "p99_latency_ms": 2.0,
+        "failed": 0,
+        "transfer_rate_kbps": 698790.4,
+        "document_length_bytes": 3842,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 243.1
+    },
+    {
+      "category": "API - Queue & Jobs Stats",
+      "path": "/api/v1/queue/stats",
+      "php": {
+        "rps": 1040.69,
+        "mean_latency_ms": 48.045,
+        "p99_latency_ms": 112.0,
+        "failed": 0,
+        "transfer_rate_kbps": 21456.94,
+        "document_length_bytes": 20712,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 147280.83,
+        "mean_latency_ms": 0.679,
+        "p99_latency_ms": 2.0,
+        "failed": 0,
+        "transfer_rate_kbps": 3024866.3,
+        "document_length_bytes": 20687,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 141.5
+    },
+    {
+      "category": "API - SQL Window Rankings",
+      "path": "/api/v1/queries/window-rankings",
+      "php": {
+        "rps": 1136.16,
+        "mean_latency_ms": 44.008,
+        "p99_latency_ms": 69.0,
+        "failed": 0,
+        "transfer_rate_kbps": 3268.59,
+        "document_length_bytes": 2545,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 171805.07,
+        "mean_latency_ms": 0.582,
+        "p99_latency_ms": 1.0,
+        "failed": 0,
+        "transfer_rate_kbps": 484543.99,
+        "document_length_bytes": 2545,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 151.2
+    },
+    {
+      "category": "API - Cohort Conditional Aggs",
+      "path": "/api/v1/queries/cohort-spending",
+      "php": {
+        "rps": 1163.82,
+        "mean_latency_ms": 42.962,
+        "p99_latency_ms": 78.0,
+        "failed": 0,
+        "transfer_rate_kbps": 1005.73,
+        "document_length_bytes": 484,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 173085.24,
+        "mean_latency_ms": 0.578,
+        "p99_latency_ms": 2.0,
+        "failed": 0,
+        "transfer_rate_kbps": 139617.59,
+        "document_length_bytes": 484,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 148.7
+    },
+    {
+      "category": "View - Storefront Catalog",
+      "path": "/",
+      "php": {
+        "rps": 554.46,
+        "mean_latency_ms": 90.178,
+        "p99_latency_ms": 238.0,
+        "failed": 0,
+        "transfer_rate_kbps": 10705.97,
+        "document_length_bytes": 18496,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 152773.22,
+        "mean_latency_ms": 0.655,
+        "p99_latency_ms": 2.0,
+        "failed": 0,
+        "transfer_rate_kbps": 2809893.31,
+        "document_length_bytes": 18512,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 275.5
+    },
+    {
+      "category": "View - Orders & Audits",
+      "path": "/orders",
+      "php": {
+        "rps": 521.43,
+        "mean_latency_ms": 95.89,
+        "p99_latency_ms": 169.0,
+        "failed": 0,
+        "transfer_rate_kbps": 23022.57,
+        "document_length_bytes": 43936,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 124861.09,
+        "mean_latency_ms": 0.801,
+        "p99_latency_ms": 3.0,
+        "failed": 0,
+        "transfer_rate_kbps": 5410606.68,
+        "document_length_bytes": 44051,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 239.5
+    },
+    {
+      "category": "View - Operations Dashboard",
+      "path": "/operations",
+      "php": {
+        "rps": 640.89,
+        "mean_latency_ms": 78.016,
+        "p99_latency_ms": 267.0,
+        "failed": 0,
+        "transfer_rate_kbps": 14196.76,
+        "document_length_bytes": 21407,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 118491.84,
+        "mean_latency_ms": 0.844,
+        "p99_latency_ms": 2.0,
+        "failed": 0,
+        "transfer_rate_kbps": 2515058.65,
+        "document_length_bytes": 21414,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 184.9
+    },
+    {
+      "category": "View - Complex Features Lab (48KB)",
+      "path": "/complex",
+      "php": {
+        "rps": 631.08,
+        "mean_latency_ms": 79.229,
+        "p99_latency_ms": 185.0,
+        "failed": 0,
+        "transfer_rate_kbps": 30575.44,
+        "document_length_bytes": 48336,
+        "total_requests": 1000,
+        "concurrency": 50
+      },
+      "hyperion": {
+        "rps": 74957.18,
+        "mean_latency_ms": 1.334,
+        "p99_latency_ms": 20.0,
+        "failed": 0,
+        "transfer_rate_kbps": 3569103.73,
+        "document_length_bytes": 48437,
+        "total_requests": 20000,
+        "concurrency": 100
+      },
+      "speedup_x": 118.8
+    }
+  ],
+  "stress_and_leak_test": [
+    {
+      "batch": 1,
+      "cumulative_requests": 20000,
+      "rps": 219024.47,
+      "rss_mb": 425.44,
+      "failed": 0
+    },
+    {
+      "batch": 2,
+      "cumulative_requests": 40000,
+      "rps": 206517.7,
+      "rss_mb": 425.44,
+      "failed": 0
+    },
+    {
+      "batch": 3,
+      "cumulative_requests": 60000,
+      "rps": 219392.06,
+      "rss_mb": 425.44,
+      "failed": 0
+    },
+    {
+      "batch": 4,
+      "cumulative_requests": 80000,
+      "rps": 219173.28,
+      "rss_mb": 425.44,
+      "failed": 0
+    },
+    {
+      "batch": 5,
+      "cumulative_requests": 100000,
+      "rps": 219647.47,
+      "rss_mb": 425.44,
+      "failed": 0
+    }
+  ],
+  "pure_compute": {
+    "php_cli": {
+      "fib_time_ms": 15.89,
+      "array_time_ms": 0.98,
+      "string_hash_time_ms": 1.31,
+      "json_time_ms": 33.42,
+      "total_compute_time_ms": 51.61,
+      "peak_memory_mb": 4,
+      "fib_result": 317811,
+      "sum_result": 133346667
+    },
+    "hyperion_cli": {
+      "fib_time_ms": 158.9,
+      "array_time_ms": 15.74,
+      "string_hash_time_ms": 3.4,
+      "json_time_ms": 67.79,
+      "total_compute_time_ms": 245.83,
+      "peak_memory_mb": 32,
+      "fib_result": 317811,
+      "sum_result": 133346667
+    }
+  }
+}

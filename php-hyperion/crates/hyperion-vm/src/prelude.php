@@ -1165,6 +1165,7 @@ class RecursiveIteratorIterator implements OuterIterator
     public const CATCH_GET_CHILD = 16;
 
     protected $iterators = [];
+    protected $childrenVisited = [];
     protected $mode;
     protected $flags;
 
@@ -1174,8 +1175,10 @@ class RecursiveIteratorIterator implements OuterIterator
         $this->flags = $flags;
         if ($iterator instanceof Iterator) {
             $this->iterators[] = $iterator;
+            $this->childrenVisited[] = false;
         } elseif ($iterator instanceof IteratorAggregate) {
             $this->iterators[] = $iterator->getIterator();
+            $this->childrenVisited[] = false;
         }
     }
 
@@ -1206,44 +1209,90 @@ class RecursiveIteratorIterator implements OuterIterator
     {
         while (count($this->iterators) > 1) {
             array_pop($this->iterators);
+            array_pop($this->childrenVisited);
         }
         if (!empty($this->iterators)) {
             $this->iterators[0]->rewind();
+            $this->childrenVisited[0] = false;
             $this->advanceToNextValid();
         }
     }
 
     public function next(): void
     {
-        $it = end($this->iterators);
-        if ($it) {
-            if ($it instanceof RecursiveIterator && $it->hasChildren() && $this->mode !== self::CHILD_FIRST) {
-                $child = $it->getChildren();
-                $child->rewind();
-                $this->iterators[] = $child;
+        if (empty($this->iterators)) {
+            return;
+        }
+
+        $idx = count($this->iterators) - 1;
+        $it = $this->iterators[$idx];
+
+        if ($this->mode === self::CHILD_FIRST) {
+            if (!empty($this->childrenVisited[$idx])) {
+                $this->childrenVisited[$idx] = false;
+                $it->next();
             } else {
                 $it->next();
             }
-            $this->advanceToNextValid();
+        } elseif ($this->mode === self::SELF_FIRST) {
+            if ($it instanceof RecursiveIterator && $it->hasChildren()) {
+                $child = $it->getChildren();
+                $child->rewind();
+                $this->iterators[] = $child;
+                $this->childrenVisited[] = false;
+            } else {
+                $it->next();
+            }
+        } else {
+            $it->next();
         }
+
+        $this->advanceToNextValid();
     }
 
     protected function advanceToNextValid(): void
     {
         while (!empty($this->iterators)) {
-            $it = end($this->iterators);
+            $idx = count($this->iterators) - 1;
+            $it = $this->iterators[$idx];
+
             if ($it->valid()) {
-                if ($this->mode === self::LEAVES_ONLY && $it instanceof RecursiveIterator && $it->hasChildren()) {
-                    $child = $it->getChildren();
-                    $child->rewind();
-                    $this->iterators[] = $child;
-                    continue;
+                if ($this->mode === self::CHILD_FIRST) {
+                    if (empty($this->childrenVisited[$idx]) && $it instanceof RecursiveIterator && $it->hasChildren()) {
+                        $this->childrenVisited[$idx] = true;
+                        $child = $it->getChildren();
+                        $child->rewind();
+                        $this->iterators[] = $child;
+                        $this->childrenVisited[] = false;
+                        continue;
+                    }
+                    return;
+                } elseif ($this->mode === self::LEAVES_ONLY) {
+                    if ($it instanceof RecursiveIterator && $it->hasChildren()) {
+                        $child = $it->getChildren();
+                        $child->rewind();
+                        $this->iterators[] = $child;
+                        $this->childrenVisited[] = false;
+                        continue;
+                    }
+                    return;
+                } else {
+                    return;
                 }
-                return;
             }
+
             array_pop($this->iterators);
+            array_pop($this->childrenVisited);
+
             if (!empty($this->iterators)) {
-                end($this->iterators)->next();
+                $parentIdx = count($this->iterators) - 1;
+                if ($this->mode === self::CHILD_FIRST) {
+                    if ($this->iterators[$parentIdx]->valid()) {
+                        return;
+                    }
+                } else {
+                    $this->iterators[$parentIdx]->next();
+                }
             }
         }
     }

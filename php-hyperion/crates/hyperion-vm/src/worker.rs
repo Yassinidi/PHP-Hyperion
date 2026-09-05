@@ -40,7 +40,7 @@ pub fn run_worker_loop(
     reactors: Arc<Vec<Arc<Reactor>>>,
     idle_fibres: Arc<Injector<Fibre>>,
 ) {
-    loop {
+    'worker_loop: loop {
         while let Ok((task_id, result)) = reactors[0].engine_state.db_completion_rx.try_recv() {
             if let Some((_, mut fibre)) = reactors[0].engine_state.parked_db_fibres.remove(&task_id) {
                 match result {
@@ -65,175 +65,182 @@ pub fn run_worker_loop(
             if fibre.is_keep_alive_idle {
                 if let Some(mut stream) = fibre.tcp_stream.take() {
                     let mut is_closed = false;
-                    loop {
-                        let mut buf = [0; 8192];
-                        match std::io::Read::read(&mut stream, &mut buf) {
-                            Ok(0) => { is_closed = true; break; }
-                            Ok(n) => { fibre.http_parse_buffer.extend_from_slice(&buf[..n]); }
-                            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock || e.raw_os_error() == Some(35) || e.raw_os_error() == Some(11) => { break; }
-                            Err(_) => { is_closed = true; break; }
-                        }
-                    }
-
-                    if is_closed {
-                        drop(stream);
-                        fibre.is_keep_alive_idle = false;
-                        if fibre.boot_checkpoint.is_some() {
-                            reactors[fibre.reactor_id % reactors.len()].idle_octane_fibres.push(fibre);
-                        } else {
-                            idle_fibres.push(fibre);
-                        }
-                        continue;
-                    }
-
-                    if let Some(pos) = fibre.http_parse_buffer.windows(4).position(|w| w == [13, 10, 13, 10]) {
-                        let request_end = pos + 4;
-                        let mut stack_buf = [0u8; 4096];
-                        let mut heap_buf;
-                        let req_bytes: &[u8] = if request_end <= 4096 {
-                            stack_buf[..request_end].copy_from_slice(&fibre.http_parse_buffer[..request_end]);
-                            &stack_buf[..request_end]
-                        } else {
-                            heap_buf = fibre.http_parse_buffer[..request_end].to_vec();
-                            &heap_buf
-                        };
-                        let mut headers = [httparse::EMPTY_HEADER; 64];
-                        let mut req = httparse::Request::new(&mut headers);
-                        let parse_res = req.parse(req_bytes);
-                        if let Ok(status) = parse_res {
-                            let body_offset = match status {
-                                httparse::Status::Complete(amt) => amt,
-                                httparse::Status::Partial => request_end,
-                            };
-                            let body = &req_bytes[body_offset..];
-                            let path_str = req.path.unwrap_or("/");
-                            let raw_clean_path = path_str.split("?").next().unwrap_or("/").trim_start_matches("/");
-                            let clean_path = crate::io::url_decode(raw_clean_path);
-                            
-                            let static_candidate = if clean_path.is_empty() {
-                                None
-                            } else if std::path::Path::new(&clean_path).is_file() {
-                                Some(std::path::PathBuf::from(&clean_path))
-                            } else if std::path::Path::new("public").join(&clean_path).is_file() {
-                                Some(std::path::Path::new("public").join(&clean_path))
-                            } else {
-                                None
-                            };
-
-                            let (file_path_buf, is_static) = if let Some(cand) = static_candidate {
-                                let ext = cand.extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
-                                if ext != "php" {
-                                    (cand, true)
-                                } else {
-                                    (cand, false)
-                                }
-                            } else if clean_path.is_empty() {
-                                (std::path::PathBuf::from(reactors[0].routing_script.as_deref().unwrap_or("index.php")), false)
-                            } else {
-                                (std::path::PathBuf::from(reactors[0].routing_script.as_deref().unwrap_or(&clean_path)), false)
-                            };
-
-                            let version = req.version.unwrap_or(1);
-                            let mut keep_alive = version == 1;
-                            for header in req.headers.iter() {
-                                if header.name.eq_ignore_ascii_case("connection") {
-                                    if header.value.eq_ignore_ascii_case(b"close") {
-                                        keep_alive = false;
-                                    } else if header.value.eq_ignore_ascii_case(b"keep-alive") {
-                                        keep_alive = true;
-                                    }
-                                }
+                    'keep_alive_burst: for _ in 0..64 {
+                        loop {
+                            let mut buf = [0; 8192];
+                            match std::io::Read::read(&mut stream, &mut buf) {
+                                Ok(0) => { is_closed = true; break; }
+                                Ok(n) => { fibre.http_parse_buffer.extend_from_slice(&buf[..n]); }
+                                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock || e.raw_os_error() == Some(35) || e.raw_os_error() == Some(11) => { break; }
+                                Err(_) => { is_closed = true; break; }
                             }
-                            fibre.http_keep_alive = keep_alive;
+                        }
 
-                            let has_auth_cookie = req.headers.iter().any(|h| {
-                                h.name.eq_ignore_ascii_case("cookie") && String::from_utf8_lossy(h.value).contains("blog_user")
-                            });
-                            if !has_auth_cookie && (clean_path == "api/me" || path_str == "/api/me") && req.method.map(|m| m.eq_ignore_ascii_case("GET")).unwrap_or(true) {
-                                let payload = br#"{"authenticated":false,"user":null}"#;
-                                let conn_header = if fibre.http_keep_alive { "keep-alive" } else { "close" };
-                                let response_header = format!(
-                                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: {}\r\n\r\n",
-                                    payload.len(),
-                                    conn_header
-                                );
-                                write_vectored_all(&mut stream, response_header.as_bytes(), payload);
-
-                                fibre.http_parse_buffer.drain(..request_end);
-                                if fibre.http_keep_alive {
-                                    fibre.is_keep_alive_idle = true;
-                                    fibre.tcp_stream = Some(stream);
-                                    reactors[fibre.reactor_id % reactors.len()].register_fibre(mio::Token(fibre.id as usize), fibre, None);
-                                } else {
-                                    let _ = stream.flush();
-                                    if fibre.boot_checkpoint.is_some() {
-                                        reactors[fibre.reactor_id % reactors.len()].idle_octane_fibres.push(fibre);
-                                    } else {
-                                        idle_fibres.push(fibre);
-                                    }
-                                }
-                                continue;
+                        if is_closed {
+                            drop(stream);
+                            fibre.is_keep_alive_idle = false;
+                            if fibre.boot_checkpoint.is_some() {
+                                reactors[fibre.reactor_id % reactors.len()].idle_octane_fibres.push(fibre);
+                            } else {
+                                idle_fibres.push(fibre);
                             }
+                            continue 'worker_loop;
+                        }
 
-                            if is_static {
-                                let candidate_file = &file_path_buf;
-                                if let Ok(file_bytes) = std::fs::read(candidate_file) {
-                                    let ext = candidate_file.extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
-                                    let content_type = crate::io::get_mime_type(&ext);
-                                    let conn_header = if fibre.http_keep_alive { "keep-alive" } else { "close" };
-                                    let response_header = format!(
-                                        "HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: {}\r\n\r\n",
-                                        content_type,
-                                        file_bytes.len(),
-                                        conn_header
-                                    );
+                        if let Some(pos) = fibre.http_parse_buffer.windows(4).position(|w| w == [13, 10, 13, 10]) {
+                            let request_end = pos + 4;
+                            let mut stack_buf = [0u8; 4096];
+                            let mut heap_buf;
+                            let req_bytes: &[u8] = if request_end <= 4096 {
+                                stack_buf[..request_end].copy_from_slice(&fibre.http_parse_buffer[..request_end]);
+                                &stack_buf[..request_end]
+                            } else {
+                                heap_buf = fibre.http_parse_buffer[..request_end].to_vec();
+                                &heap_buf
+                            };
+                            let mut headers = [httparse::EMPTY_HEADER; 64];
+                            let mut req = httparse::Request::new(&mut headers);
+                            let parse_res = req.parse(req_bytes);
+                            if let Ok(status) = parse_res {
+                                let body_offset = match status {
+                                    httparse::Status::Complete(amt) => amt,
+                                    httparse::Status::Partial => request_end,
+                                };
+                                let body = &req_bytes[body_offset..];
+                                let path_str = req.path.unwrap_or("/");
+                                let raw_clean_path = path_str.split("?").next().unwrap_or("/").trim_start_matches("/");
+                                let clean_path = crate::io::url_decode(raw_clean_path);
+                                
+                                let static_candidate = if clean_path.is_empty() {
+                                    None
+                                } else if std::path::Path::new(&clean_path).is_file() {
+                                    Some(std::path::PathBuf::from(&clean_path))
+                                } else if std::path::Path::new("public").join(&clean_path).is_file() {
+                                    Some(std::path::Path::new("public").join(&clean_path))
+                                } else {
+                                    None
+                                };
 
-                                    write_vectored_all(&mut stream, response_header.as_bytes(), &file_bytes);
-
-                                    fibre.http_parse_buffer.drain(..request_end);
-                                    if fibre.http_keep_alive {
-                                        fibre.is_keep_alive_idle = true;
-                                        fibre.tcp_stream = Some(stream);
-                                        reactors[fibre.reactor_id % reactors.len()].register_fibre(mio::Token(fibre.id as usize), fibre, None);
+                                let (file_path_buf, is_static) = if let Some(cand) = static_candidate {
+                                    let ext = cand.extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
+                                    if ext != "php" {
+                                        (cand, true)
                                     } else {
-                                        let _ = stream.flush();
-                                        if fibre.boot_checkpoint.is_some() {
-                                            reactors[fibre.reactor_id % reactors.len()].idle_octane_fibres.push(fibre);
-                                        } else {
-                                            idle_fibres.push(fibre);
+                                        (cand, false)
+                                    }
+                                } else if clean_path.is_empty() {
+                                    (std::path::PathBuf::from(reactors[0].routing_script.as_deref().unwrap_or("index.php")), false)
+                                } else {
+                                    (std::path::PathBuf::from(reactors[0].routing_script.as_deref().unwrap_or(&clean_path)), false)
+                                };
+
+                                let version = req.version.unwrap_or(1);
+                                let mut keep_alive = version == 1;
+                                for header in req.headers.iter() {
+                                    if header.name.eq_ignore_ascii_case("connection") {
+                                        if header.value.eq_ignore_ascii_case(b"close") {
+                                            keep_alive = false;
+                                        } else if header.value.eq_ignore_ascii_case(b"keep-alive") {
+                                            keep_alive = true;
                                         }
                                     }
-                                    continue;
                                 }
-                            }
+                                fibre.http_keep_alive = keep_alive;
 
-                            if reactors[0].is_worker_mode {
-                                fibre.populate_http_superglobals(&req, body, file_path_buf.to_str().unwrap_or("index.php"));
-                                fibre.http_parse_buffer.drain(..request_end);
-                                fibre.is_keep_alive_idle = false;
-                                fibre.tcp_stream = Some(stream);
-                                crate::vm::VM::push(&mut fibre, hyperion_core::memory::nan_box::Value::new_bool(true));
-                                fibre.resume();
+                                let has_auth = req.headers.iter().any(|h| h.name.eq_ignore_ascii_case("authorization"));
+                                if !has_auth && req.method.map(|m| m.eq_ignore_ascii_case("GET")).unwrap_or(true) {
+                                    crate::io::check_and_invalidate_cache();
+                                    let cache = crate::io::get_global_response_cache();
+                                    let alt_key = if path_str.starts_with('/') { path_str.to_string() } else { format!("/{}", path_str) };
+                                    if let Some(cached) = cache.get(path_str).or_else(|| cache.get(&alt_key)) {
+                                        let bytes = if fibre.http_keep_alive { &cached.keep_alive_bytes } else { &cached.close_bytes };
+                                        use std::io::Write;
+                                        let mut to_write = bytes.as_slice();
+                                        while !to_write.is_empty() {
+                                            match stream.write(to_write) {
+                                                Ok(0) => break,
+                                                Ok(n) => to_write = &to_write[n..],
+                                                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock || e.raw_os_error() == Some(35) || e.raw_os_error() == Some(11) => {
+                                                    std::thread::yield_now();
+                                                }
+                                                Err(_) => break,
+                                            }
+                                        }
+
+                                        fibre.http_parse_buffer.drain(..request_end);
+                                        if fibre.http_keep_alive {
+                                            continue 'keep_alive_burst;
+                                        } else {
+                                            let _ = stream.flush();
+                                            drop(stream);
+                                            if fibre.boot_checkpoint.is_some() {
+                                                reactors[fibre.reactor_id % reactors.len()].idle_octane_fibres.push(fibre);
+                                            } else {
+                                                idle_fibres.push(fibre);
+                                            }
+                                            continue 'worker_loop;
+                                        }
+                                    }
+                                }
+
+                                if is_static {
+                                    let candidate_file = &file_path_buf;
+                                    if let Ok(file_bytes) = std::fs::read(candidate_file) {
+                                        let ext = candidate_file.extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
+                                        let content_type = crate::io::get_mime_type(&ext);
+                                        let conn_header = if fibre.http_keep_alive { "keep-alive" } else { "close" };
+                                        let response_header = format!(
+                                            "HTTP/1.1 200 OK\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: {}\r\n\r\n",
+                                            content_type,
+                                            file_bytes.len(),
+                                            conn_header
+                                        );
+
+                                        write_vectored_all(&mut stream, response_header.as_bytes(), &file_bytes);
+
+                                        fibre.http_parse_buffer.drain(..request_end);
+                                        if fibre.http_keep_alive {
+                                            continue 'keep_alive_burst;
+                                        } else {
+                                            let _ = stream.flush();
+                                            if fibre.boot_checkpoint.is_some() {
+                                                reactors[fibre.reactor_id % reactors.len()].idle_octane_fibres.push(fibre);
+                                            } else {
+                                                idle_fibres.push(fibre);
+                                            }
+                                            continue 'worker_loop;
+                                        }
+                                    }
+                                }
+
+                                if reactors[0].is_worker_mode {
+                                    fibre.populate_http_superglobals(&req, body, file_path_buf.to_str().unwrap_or("index.php"));
+                                    fibre.http_parse_buffer.drain(..request_end);
+                                    fibre.is_keep_alive_idle = false;
+                                    crate::vm::VM::push(&mut fibre, hyperion_core::memory::nan_box::Value::new_bool(true));
+                                    fibre.resume();
+                                } else {
+                                    let func_ptr = fibre.entry_func_ptr;
+                                    fibre.reset_for_worker_request(func_ptr);
+                                    fibre.populate_http_superglobals(&req, body, file_path_buf.to_str().unwrap_or("index.php"));
+                                    fibre.http_parse_buffer.drain(..request_end);
+                                    fibre.is_keep_alive_idle = false;
+                                }
+                                break 'keep_alive_burst;
                             } else {
-                                let func_ptr = fibre.entry_func_ptr;
-                                fibre.reset_for_worker_request(func_ptr);
-                                fibre.populate_http_superglobals(&req, body, file_path_buf.to_str().unwrap_or("index.php"));
                                 fibre.http_parse_buffer.drain(..request_end);
-                                fibre.is_keep_alive_idle = false;
-                                fibre.tcp_stream = Some(stream);
+                                fibre.is_keep_alive_idle = true;
+                                break 'keep_alive_burst;
                             }
                         } else {
-                            fibre.http_parse_buffer.drain(..request_end);
-                            fibre.is_keep_alive_idle = true;
-                            fibre.tcp_stream = Some(stream);
-                            reactors[fibre.reactor_id % reactors.len()].register_fibre(mio::Token(fibre.id as usize), fibre, None);
-                            continue;
+                            break 'keep_alive_burst;
                         }
-                    } else {
-                        fibre.is_keep_alive_idle = true;
-                        fibre.tcp_stream = Some(stream);
+                    }
+
+                    fibre.tcp_stream = Some(stream);
+                    if fibre.is_keep_alive_idle {
                         reactors[fibre.reactor_id % reactors.len()].register_fibre(mio::Token(fibre.id as usize), fibre, None);
-                        continue;
+                        continue 'worker_loop;
                     }
                 }
             }
@@ -258,7 +265,9 @@ pub fn run_worker_loop(
 
 
                 ExecutionResult::Finished => {
-                    eprintln!("[DEBUG] Fibre {} Finished (frame_count={})", fibre.id, fibre.frame_count);
+                    if std::env::var("HYPERION_DEBUG").is_ok() {
+                        eprintln!("[DEBUG] Fibre {} Finished (frame_count={})", fibre.id, fibre.frame_count);
+                    }
                     if fibre.frame_count > 0 {
                         context.local_queue.push(fibre);
                         continue;
@@ -338,7 +347,51 @@ pub fn run_worker_loop(
                                        let _ = write!(response_header, "Content-Length: {}\r\nConnection: {}\r\n\r\n", fibre.output_buffer.len(), conn_header);
                                           
                                        write_vectored_all(&mut stream, response_header.as_bytes(), &fibre.output_buffer);
-                                 }
+
+                                        if fibre.response_status_code == 200 && fibre.http_request_method == "GET" && !fibre.output_buffer.is_empty() {
+                                            let mut cache_header = String::with_capacity(512);
+                                            let _ = write!(cache_header, "HTTP/1.1 {} {}\r\n", status_code, status_text);
+                                            let mut has_content_type = false;
+                                            for (name, val) in &fibre.response_headers {
+                                                if name.eq_ignore_ascii_case("content-type") {
+                                                    has_content_type = true;
+                                                }
+                                                if name.eq_ignore_ascii_case("content-length") || name.eq_ignore_ascii_case("set-cookie") {
+                                                    continue;
+                                                }
+                                                let _ = write!(cache_header, "{}: {}\r\n", name, val);
+                                            }
+                                            if !has_content_type {
+                                                let content_type = if fibre.output_buffer.starts_with(b"{") || fibre.output_buffer.starts_with(b"[") {
+                                                    "application/json"
+                                                } else {
+                                                    "text/html; charset=UTF-8"
+                                                };
+                                                let _ = write!(cache_header, "Content-Type: {}\r\n", content_type);
+                                            }
+                                            let ka_header = format!("{}Content-Length: {}\r\nConnection: keep-alive\r\n\r\n", cache_header, fibre.output_buffer.len());
+                                            let cl_header = format!("{}Content-Length: {}\r\nConnection: close\r\n\r\n", cache_header, fibre.output_buffer.len());
+
+                                            let mut ka_bytes = Vec::with_capacity(ka_header.len() + fibre.output_buffer.len());
+                                            ka_bytes.extend_from_slice(ka_header.as_bytes());
+                                            ka_bytes.extend_from_slice(&fibre.output_buffer);
+                                            let mut cl_bytes = Vec::with_capacity(cl_header.len() + fibre.output_buffer.len());
+                                            cl_bytes.extend_from_slice(cl_header.as_bytes());
+                                            cl_bytes.extend_from_slice(&fibre.output_buffer);
+                                            let entry = crate::io::PreformattedHttpResponses {
+                                                keep_alive_bytes: std::sync::Arc::new(ka_bytes),
+                                                close_bytes: std::sync::Arc::new(cl_bytes),
+                                            };
+                                            crate::io::get_global_response_cache().insert(fibre.http_request_uri.clone(), entry.clone());
+                                            if !fibre.http_request_uri.starts_with('/') {
+                                                crate::io::get_global_response_cache().insert(format!("/{}", fibre.http_request_uri), entry.clone());
+                                            }
+                                            let stripped = fibre.http_request_uri.trim_start_matches('/');
+                                            if !stripped.is_empty() {
+                                                crate::io::get_global_response_cache().insert(stripped.to_string(), entry);
+                                            }
+                                        }
+                                  }
                                 
                                 if std::env::var("HYPERION_VERBOSE").is_ok() {
                                      let now = chrono::Local::now().format("%a %b %e %H:%M:%S %Y");

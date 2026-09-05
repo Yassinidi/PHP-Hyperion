@@ -73,4 +73,22 @@ class StorefrontController extends Controller
             'pendingJobs', 'failedJobs', 'recentFailed', 'batches', 'notifications', 'cachedReport', 'recentActivities'
         ));
     }
+
+    public function complex(
+        \App\Services\FileManagerService $fileService,
+        \App\Services\AdvancedQueryService $queryService
+    ): View {
+        $attachments = \App\Models\Attachment::withTrashed()->latest()->take(10)->get();
+        $orders = \App\Models\Order::latest()->take(5)->get();
+        $rankings = $queryService->getCategoryProductRankings();
+        $salesSummary = $queryService->getProductPerformanceViaJoinSub();
+        $customer = \App\Models\Customer::first();
+        $modernSyntax = $customer ? $queryService->testModernPhpSyntax(2500.00, $customer) : null;
+
+        return view('store.complex', compact(
+            'attachments', 'orders', 'rankings', 'salesSummary', 'modernSyntax'
+        ));
+    }
+
 }
+

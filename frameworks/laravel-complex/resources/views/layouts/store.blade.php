@@ -129,8 +129,10 @@
                 <a href="{{ route('store.index') }}" class="{{ request()->routeIs('store.index') ? 'active' : '' }}">Catalog</a>
                 <a href="{{ route('store.orders') }}" class="{{ request()->routeIs('store.orders') ? 'active' : '' }}">Orders & Audits</a>
                 <a href="{{ route('store.operations') }}" class="{{ request()->routeIs('store.operations') ? 'active' : '' }}">Queues & Ops</a>
+                <a href="{{ route('store.complex') }}" class="{{ request()->routeIs('store.complex') ? 'active' : '' }}" id="nav-complex-lab">⚡ Complex Lab</a>
                 <a href="/api/v1/products" target="_blank">Products API</a>
                 <a href="/api/v1/analytics/dashboard" target="_blank">Analytics JSON</a>
+
                 <a href="/health" target="_blank">System Health</a>
             </nav>
         </div>

@@ -3069,3 +3069,25 @@ php_function! {
     }
 }
 
+php_function! {
+    native_setlocale(_category: Value, ...locales) |ctx| {
+        let loc = if let Some(first) = locales.first() {
+            let fd = first.deref();
+            if let Some(s_ptr) = fd.as_string_ptr() {
+                let s = unsafe { &*(s_ptr as *const String) };
+                if s == "0" || s.is_empty() {
+                    "C".to_string()
+                } else {
+                    s.clone()
+                }
+            } else {
+                "C".to_string()
+            }
+        } else {
+            "C".to_string()
+        };
+        let ptr = ctx.get_arena().alloc_and_track(loc);
+        Ok(Value::new_string_ptr(ptr as *mut ()))
+    }
+}
+

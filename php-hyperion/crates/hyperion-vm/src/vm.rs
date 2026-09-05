@@ -2271,15 +2271,89 @@ impl VM {
         Err("getIterator() nested too deeply while resolving a foreach source".to_string())
     }
 
+    pub fn is_property_accessible(fibre: &Fibre, target_class_id: usize, prop_name: &str) -> bool {
+        let classes = &fibre.engine_state.classes;
+        let mut curr_id = Some(target_class_id);
+        let mut declaring_info = None;
+
+        while let Some(id) = curr_id {
+            if let Some(c) = classes.get(&id) {
+                if let Some((_, vis)) = c.default_properties.get(prop_name) {
+                    declaring_info = Some((id, *vis));
+                    break;
+                }
+                let parent_name = c.extends.clone();
+                curr_id = parent_name.and_then(|pn| {
+                    let norm_p = normalize_name(&pn);
+                    fibre.engine_state.class_map.get(&norm_p).map(|v| *v)
+                        .or_else(|| classes.iter().find(|entry| normalize_name(&entry.value().name) == norm_p).map(|entry| *entry.key()))
+                });
+            } else {
+                break;
+            }
+        }
+
+        let Some((declaring_id, vis)) = declaring_info else {
+            // Dynamic property (not defined in class declaration) -> public in PHP
+            return true;
+        };
+
+        match vis {
+            hyperion_parser::parser::ast::Visibility::Public => true,
+            hyperion_parser::parser::ast::Visibility::Protected => {
+                let caller_class_id = if fibre.frame_count > 0 {
+                    fibre.frames[fibre.frame_count - 1].called_class_id
+                } else {
+                    0
+                };
+                if caller_class_id == 0 {
+                    return false;
+                }
+                let is_sub = |child_id: usize, parent_id: usize| -> bool {
+                    let mut cur = Some(child_id);
+                    while let Some(cid) = cur {
+                        if cid == parent_id {
+                            return true;
+                        }
+                        let parent_name = classes.get(&cid).and_then(|c| c.extends.clone());
+                        cur = parent_name.and_then(|pn| {
+                            let norm_p = normalize_name(&pn);
+                            fibre.engine_state.class_map.get(&norm_p).map(|v| *v)
+                                .or_else(|| classes.iter().find(|entry| normalize_name(&entry.value().name) == norm_p).map(|entry| *entry.key()))
+                        });
+                    }
+                    false
+                };
+                caller_class_id == declaring_id
+                    || caller_class_id == target_class_id
+                    || is_sub(caller_class_id, declaring_id)
+                    || is_sub(declaring_id, caller_class_id)
+                    || is_sub(caller_class_id, target_class_id)
+                    || is_sub(target_class_id, caller_class_id)
+            }
+            hyperion_parser::parser::ast::Visibility::Private => {
+                let caller_class_id = if fibre.frame_count > 0 {
+                    fibre.frames[fibre.frame_count - 1].called_class_id
+                } else {
+                    0
+                };
+                caller_class_id != 0 && caller_class_id == declaring_id
+            }
+        }
+    }
+
     /// Snapshot a plain object's properties as an array, so `foreach ($obj as
     /// $k => $v)` over a non-Traversable walks them the way PHP does.
     fn object_properties_as_array(fibre: &mut Fibre, obj_val: Value) -> Value {
         let mut arr = hyperion_core::types::array::PhpArray::new();
         if let Some(obj_ptr) = obj_val.as_object_ptr() {
             let obj = unsafe { &*(obj_ptr as *const hyperion_core::types::object::PhpObject) };
+            let class_id = Self::resolve_obj_class_id(fibre, obj);
             for (name, v) in &obj.properties {
-                let id = hyperion_core::types::string_table::intern_string(name);
-                arr.insert_string_id(id, v.deref());
+                if Self::is_property_accessible(fibre, class_id, name) {
+                    let id = hyperion_core::types::string_table::intern_string(name);
+                    arr.insert_string_id(id, v.deref());
+                }
             }
         }
         let ptr = fibre.arena.alloc_and_track(arr) as *mut ();

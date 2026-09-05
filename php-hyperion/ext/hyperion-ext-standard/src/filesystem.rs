@@ -184,6 +184,19 @@ php_function! {
 }
 
 php_function! {
+    native_copy(from: String, to: String) {
+        if let (Some(f), Some(t)) = (from, to) {
+            match fs::copy(f.as_str(), t.as_str()) {
+                Ok(_) => Ok(Value::new_bool(true)),
+                Err(_) => Ok(Value::new_bool(false)),
+            }
+        } else {
+            Err("copy() expects exactly 2 parameters".to_string())
+        }
+    }
+}
+
+php_function! {
     native_mkdir(filename: String, mode: Value, recursive: Value) {
         if let Some(f) = filename {
             let is_recursive = recursive.and_then(|v| {
@@ -562,6 +575,49 @@ php_function! {
             Ok(Value::new_bool(p.exists()))
         } else {
             Err("is_executable() expects exactly 1 parameter".to_string())
+        }
+    }
+}
+
+php_function! {
+    native_filetype(filename: String) {
+        if let Some(f) = filename {
+            let path = Path::new(f.as_str());
+            match fs::symlink_metadata(path) {
+                Ok(meta) => {
+                    let file_type = meta.file_type();
+                    let type_str = if file_type.is_symlink() {
+                        "link"
+                    } else if file_type.is_dir() {
+                        "dir"
+                    } else if file_type.is_file() {
+                        "file"
+                    } else {
+                        #[cfg(unix)]
+                        {
+                            use std::os::unix::fs::FileTypeExt;
+                            if file_type.is_fifo() {
+                                "fifo"
+                            } else if file_type.is_char_device() {
+                                "char"
+                            } else if file_type.is_block_device() {
+                                "block"
+                            } else if file_type.is_socket() {
+                                "socket"
+                            } else {
+                                "unknown"
+                            }
+                        }
+                        #[cfg(not(unix))]
+                        "unknown"
+                    };
+                    let boxed = crate::into_raw(Box::new(type_str.to_string()));
+                    Ok(Value::new_string_ptr(boxed as *mut ()))
+                }
+                Err(_) => Ok(Value::new_bool(false)),
+            }
+        } else {
+            Err("filetype() expects exactly 1 parameter".to_string())
         }
     }
 }

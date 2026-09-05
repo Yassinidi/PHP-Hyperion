@@ -285,7 +285,69 @@ impl Reactor {
         }
     }
 
+    #[inline(always)]
+    pub fn try_serve_cached(stream: &mut mio::net::TcpStream, buffer: &[u8]) -> Option<(bool, usize)> {
+        let mut headers = [httparse::EMPTY_HEADER; 64];
+        let mut req = httparse::Request::new(&mut headers);
+        if let Ok(status) = req.parse(buffer) {
+            let request_end = match status {
+                httparse::Status::Complete(amt) => amt,
+                httparse::Status::Partial => return None,
+            };
+            let method_str = req.method.unwrap_or("GET");
+            if method_str.eq_ignore_ascii_case("GET") {
+                let has_auth = req.headers.iter().any(|h| h.name.eq_ignore_ascii_case("authorization"));
+                if !has_auth {
+                    check_and_invalidate_cache();
+                    let cache = get_global_response_cache();
+                    let path_str = req.path.unwrap_or("/");
+                    let alt_key = if path_str.starts_with('/') { path_str.to_string() } else { format!("/{}", path_str) };
+                    if let Some(cached) = cache.get(path_str).or_else(|| cache.get(&alt_key)) {
+                        let version = req.version.unwrap_or(1);
+                        let mut keep_alive = version == 1;
+                        for header in req.headers.iter() {
+                            if header.name.eq_ignore_ascii_case("connection") {
+                                if header.value.eq_ignore_ascii_case(b"close") {
+                                    keep_alive = false;
+                                } else if header.value.eq_ignore_ascii_case(b"keep-alive") {
+                                    keep_alive = true;
+                                }
+                            }
+                        }
+                        let bytes = if keep_alive { &cached.keep_alive_bytes } else { &cached.close_bytes };
+                        use std::io::Write;
+                        let mut data = bytes.as_slice();
+                        while !data.is_empty() {
+                            match stream.write(data) {
+                                Ok(0) => break,
+                                Ok(n) => data = &data[n..],
+                                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock || e.raw_os_error() == Some(35) || e.raw_os_error() == Some(11) => {
+                                    std::thread::yield_now();
+                                }
+                                Err(_) => break,
+                            }
+                        }
+                        return Some((keep_alive, request_end));
+                    }
+                }
+            }
+        }
+        None
+    }
+
     pub fn dispatch_http_request(&self, mut stream: mio::net::TcpStream, buffer: Vec<u8>) {
+        // Fast Path: Check Generational HTTP Response Cache for GET requests
+        if let Some((keep_alive, _req_end)) = Self::try_serve_cached(&mut stream, &buffer) {
+            if keep_alive {
+                self.recycle_keep_alive_stream(stream);
+            } else {
+                use std::io::Write;
+                let _ = stream.flush();
+                let _ = stream.shutdown(std::net::Shutdown::Both);
+            }
+            return;
+        }
+
         let mut headers = [httparse::EMPTY_HEADER; 64];
         let mut req = httparse::Request::new(&mut headers);
         
@@ -305,7 +367,9 @@ impl Reactor {
             }
             let raw_clean_path = path_str.split('?').next().unwrap_or("/").trim_start_matches('/');
             let clean_path = url_decode(raw_clean_path);
+
             let candidate_file = if clean_path.is_empty() {
+
                 if let Some(ref rs) = self.routing_script {
                     std::path::PathBuf::from(rs)
                 } else {
@@ -533,6 +597,14 @@ impl Reactor {
                                                     &optval as *const _ as *const libc::c_void,
                                                     std::mem::size_of::<libc::c_int>() as libc::socklen_t,
                                                 );
+                                                let buf_size: libc::c_int = 262144;
+                                                libc::setsockopt(
+                                                    stream.as_raw_fd(),
+                                                    libc::SOL_SOCKET,
+                                                    libc::SO_SNDBUF,
+                                                    &buf_size as *const _ as *const libc::c_void,
+                                                    std::mem::size_of::<libc::c_int>() as libc::socklen_t,
+                                                );
                                             }
                                             let mut buffer = Vec::new();
                                             let mut buf = [0; 4096];
@@ -566,6 +638,25 @@ impl Reactor {
                                                 continue;
                                             }
 
+                                            // Direct Reactor cache fast-path
+                                            if let Some((keep_alive, req_end)) = Self::try_serve_cached(&mut stream, &buffer) {
+                                                if keep_alive {
+                                                    buffer.drain(..req_end);
+                                                    let token = Token(next_token_id);
+                                                    next_token_id += 1;
+                                                    if let Err(e) = self.registry.register(&mut stream, token, Interest::READABLE) {
+                                                        eprintln!("Failed to register keep-alive stream: {}", e);
+                                                    } else {
+                                                        pending_streams.insert(token, (stream, buffer));
+                                                    }
+                                                } else {
+                                                    use std::io::Write;
+                                                    let _ = stream.flush();
+                                                    let _ = stream.shutdown(std::net::Shutdown::Both);
+                                                }
+                                                continue;
+                                            }
+
                                             // Fully read request
                                             self.dispatch_http_request(stream, buffer);
                                         }
@@ -582,43 +673,66 @@ impl Reactor {
                         }
 
                         token if token.0 >= 1_000_000_000 => {
-                            if let Some(entry) = pending_streams.remove(&token) {
-                                let mut stream = entry.0;
-                                let mut buffer = entry.1;
+                            if let Some(mut entry) = pending_streams.remove(&token) {
+                                let stream = &mut entry.0;
+                                let buffer = &mut entry.1;
                                 
-                                let mut is_blocked = false;
+                                let mut is_closed = false;
                                 loop {
-                                    let mut buf = [0; 4096];
+                                    let mut buf = [0; 8192];
                                     match stream.read(&mut buf) {
-                                        Ok(0) => break, // EOF
+                                        Ok(0) => { is_closed = true; break; }
                                         Ok(n) => {
                                             buffer.extend_from_slice(&buf[..n]);
                                         }
-                                        Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                                            is_blocked = true;
+                                        Err(e) if e.kind() == std::io::ErrorKind::WouldBlock || e.raw_os_error() == Some(35) || e.raw_os_error() == Some(11) => {
                                             break;
                                         }
-                                        Err(_e) => {
-                                            is_blocked = false;
+                                        Err(_) => {
+                                            is_closed = true;
                                             break;
                                         }
                                     }
                                 }
-                                
-                                if !buffer.windows(4).any(|w| w == b"\r\n\r\n") {
-                                    if is_blocked {
-                                        if let Err(e) = self.registry.reregister(&mut stream, token, Interest::READABLE).or_else(|_| {
-                                            self.registry.register(&mut stream, token, Interest::READABLE)
-                                        }) {
-                                            eprintln!("Failed to register pending stream: {}", e);
-                                        } else {
-                                            pending_streams.insert(token, (stream, buffer));
+
+                                if is_closed {
+                                    let _ = self.registry.deregister(stream);
+                                    continue;
+                                }
+
+                                // Burst-serve all buffered/pipelined cached requests directly
+                                let mut keep_conn = true;
+                                while buffer.windows(4).any(|w| w == b"\r\n\r\n") {
+                                    if let Some((keep_alive, req_end)) = Self::try_serve_cached(stream, buffer) {
+                                        buffer.drain(..req_end);
+                                        if !keep_alive {
+                                            keep_conn = false;
+                                            use std::io::Write;
+                                            let _ = stream.flush();
+                                            let _ = self.registry.deregister(stream);
+                                            let _ = stream.shutdown(std::net::Shutdown::Both);
+                                            break;
                                         }
+                                    } else {
+                                        break;
                                     }
+                                }
+
+                                if !keep_conn {
+                                    continue;
+                                }
+
+                                if buffer.windows(4).any(|w| w == b"\r\n\r\n") {
+                                    // There is a dynamic request to dispatch to worker thread
+                                    let (mut s, b) = entry;
+                                    let _ = self.registry.deregister(&mut s);
+                                    self.dispatch_http_request(s, b);
                                 } else {
-                                    // Deregister before handing off to worker thread
-                                    let _ = self.registry.deregister(&mut stream);
-                                    self.dispatch_http_request(stream, buffer);
+                                    // Re-arm readable and keep connection alive in pending_streams
+                                    let _ = self.registry.reregister(stream, token, Interest::READABLE).or_else(|_| {
+                                        self.registry.register(stream, token, Interest::READABLE)
+                                    });
+                                    pending_streams.insert(token, entry);
                                 }
                             }
                         }
