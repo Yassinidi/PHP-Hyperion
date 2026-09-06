@@ -397,8 +397,12 @@ php_function! {
                                             }
                                             let mut row_items = Vec::with_capacity(col_names.len());
                                             for i in 0..col_names.len() {
-                                                let val_str: String = row.get(i).unwrap_or_default();
-                                                row_items.push(SqlValue::Text(val_str));
+                                                let val_opt: Option<String> = row.get(i);
+                                                let sql_val = match val_opt {
+                                                    Some(s) => SqlValue::Text(s),
+                                                    None => SqlValue::Null,
+                                                };
+                                                row_items.push(sql_val);
                                             }
                                             rows_data.push(row_items);
                                         }
