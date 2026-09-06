@@ -468,6 +468,52 @@ impl Reactor {
                 ) {
                     Ok(resp) => {
                         let resp_bytes = resp.to_http_bytes();
+
+                        // Cache successful GET responses in Hyperion's in-memory generational response cache
+                        if method_str.eq_ignore_ascii_case("GET") && resp.status_code == 200 && !resp.body.is_empty() {
+                            let has_set_cookie = resp.headers.iter().any(|(k, _)| k.eq_ignore_ascii_case("set-cookie"));
+                            let is_no_store = resp.headers.iter().any(|(k, v)| k.eq_ignore_ascii_case("cache-control") && v.to_lowercase().contains("no-store"));
+                            if !has_set_cookie && !is_no_store {
+                                let mut ka_header = format!("HTTP/1.1 {} {}\r\n", resp.status_code, resp.status_text);
+                                let mut cl_header = ka_header.clone();
+                                for (k, v) in &resp.headers {
+                                    if k.eq_ignore_ascii_case("content-length") || k.eq_ignore_ascii_case("connection") || k.eq_ignore_ascii_case("status") {
+                                        continue;
+                                    }
+                                    let line = format!("{}: {}\r\n", k, v);
+                                    ka_header.push_str(&line);
+                                    cl_header.push_str(&line);
+                                }
+                                ka_header.push_str("Server: PHP-Hyperion/1.0.0 (PHP 8.4 Hybrid SAPI)\r\n");
+                                cl_header.push_str("Server: PHP-Hyperion/1.0.0 (PHP 8.4 Hybrid SAPI)\r\n");
+                                
+                                let ka_str = format!("{}Content-Length: {}\r\nConnection: keep-alive\r\n\r\n", ka_header, resp.body.len());
+                                let cl_str = format!("{}Content-Length: {}\r\nConnection: close\r\n\r\n", cl_header, resp.body.len());
+                                
+                                let mut ka_bytes = Vec::with_capacity(ka_str.len() + resp.body.len());
+                                ka_bytes.extend_from_slice(ka_str.as_bytes());
+                                ka_bytes.extend_from_slice(&resp.body);
+                                
+                                let mut cl_bytes = Vec::with_capacity(cl_str.len() + resp.body.len());
+                                cl_bytes.extend_from_slice(cl_str.as_bytes());
+                                cl_bytes.extend_from_slice(&resp.body);
+                                
+                                let entry = crate::io::PreformattedHttpResponses {
+                                    keep_alive_bytes: std::sync::Arc::new(ka_bytes),
+                                    close_bytes: std::sync::Arc::new(cl_bytes),
+                                };
+                                
+                                crate::io::get_global_response_cache().insert(path_str.to_string(), entry.clone());
+                                if !path_str.starts_with('/') {
+                                    crate::io::get_global_response_cache().insert(format!("/{}", path_str), entry.clone());
+                                }
+                                let stripped = path_str.trim_start_matches('/');
+                                if !stripped.is_empty() {
+                                    crate::io::get_global_response_cache().insert(stripped.to_string(), entry);
+                                }
+                            }
+                        }
+
                         use std::io::Write;
                         let mut data = resp_bytes.as_slice();
                         while !data.is_empty() {
