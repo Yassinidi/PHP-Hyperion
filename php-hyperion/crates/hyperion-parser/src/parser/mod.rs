@@ -1987,7 +1987,23 @@ Token::Try => {
     fn parse_expression_with_left(&mut self, mut left: Expr, precedence: u8) -> Option<Expr> {
         while let Some(record) = self.peek() {
             let next_prec = Self::get_precedence(&record.token);
-            let is_assign = matches!(record.token, Token::Assign | Token::DotAssign | Token::PlusAssign | Token::MinusAssign | Token::NullCoalesceAssign);
+            let is_assign = matches!(
+                record.token,
+                Token::Assign
+                    | Token::DotAssign
+                    | Token::PlusAssign
+                    | Token::MinusAssign
+                    | Token::MultiplyAssign
+                    | Token::DivideAssign
+                    | Token::ModuloAssign
+                    | Token::BitwiseAndAssign
+                    | Token::BitwiseOrAssign
+                    | Token::BitwiseXorAssign
+                    | Token::ShiftLeftAssign
+                    | Token::ShiftRightAssign
+                    | Token::PowerAssign
+                    | Token::NullCoalesceAssign
+            );
             let is_assignable = matches!(left, Expr::Variable(_) | Expr::VariableVariable(_) | Expr::PropertyGet { .. } | Expr::StaticPropertyGet { .. } | Expr::ArrayGet { .. } | Expr::Array(_) | Expr::List(_));
             if next_prec == 0 || (!is_assign && next_prec < precedence) || (is_assign && !is_assignable) {
                 break;
