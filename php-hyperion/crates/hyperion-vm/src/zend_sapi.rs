@@ -207,6 +207,8 @@ pub fn execute_http(
     let mut cmd = Command::new(php_cgi);
 
     cmd.arg("-q"); // Quiet mode: suppresses extraneous headers
+    cmd.arg("-d").arg("opcache.enable_cli=1");
+    cmd.arg("-d").arg("opcache.jit_buffer_size=64M");
 
     if !docroot.is_empty() && Path::new(docroot).is_dir() {
         cmd.current_dir(docroot);

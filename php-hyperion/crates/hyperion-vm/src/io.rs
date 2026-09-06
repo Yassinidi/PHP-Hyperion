@@ -296,11 +296,18 @@ impl Reactor {
             };
             let method_str = req.method.unwrap_or("GET");
             if method_str.eq_ignore_ascii_case("GET") {
-                let has_auth = req.headers.iter().any(|h| h.name.eq_ignore_ascii_case("authorization"));
-                if !has_auth {
+                let path_str = req.path.unwrap_or("/");
+                let is_admin_or_auth = path_str.contains("admin") || path_str.contains("login") || path_str.contains("cart") || path_str.contains("checkout");
+                let has_auth = req.headers.iter().any(|h| {
+                    h.name.eq_ignore_ascii_case("authorization") ||
+                    (h.name.eq_ignore_ascii_case("cookie") && {
+                        let c = std::str::from_utf8(h.value).unwrap_or("");
+                        c.contains("wordpress_logged_in")
+                    })
+                });
+                if !has_auth && !is_admin_or_auth {
                     check_and_invalidate_cache();
                     let cache = get_global_response_cache();
-                    let path_str = req.path.unwrap_or("/");
                     let alt_key = if path_str.starts_with('/') { path_str.to_string() } else { format!("/{}", path_str) };
                     if let Some(cached) = cache.get(path_str).or_else(|| cache.get(&alt_key)) {
                         let version = req.version.unwrap_or(1);
@@ -471,13 +478,16 @@ impl Reactor {
 
                         // Cache successful GET responses in Hyperion's in-memory generational response cache
                         if method_str.eq_ignore_ascii_case("GET") && resp.status_code == 200 && !resp.body.is_empty() {
-                            let has_set_cookie = resp.headers.iter().any(|(k, _)| k.eq_ignore_ascii_case("set-cookie"));
+                            let is_admin_or_auth = path_str.contains("admin") || path_str.contains("login") || path_str.contains("cart") || path_str.contains("checkout");
                             let is_no_store = resp.headers.iter().any(|(k, v)| k.eq_ignore_ascii_case("cache-control") && v.to_lowercase().contains("no-store"));
-                            if !has_set_cookie && !is_no_store {
+                            if !is_admin_or_auth && !is_no_store {
                                 let mut ka_header = format!("HTTP/1.1 {} {}\r\n", resp.status_code, resp.status_text);
                                 let mut cl_header = ka_header.clone();
                                 for (k, v) in &resp.headers {
-                                    if k.eq_ignore_ascii_case("content-length") || k.eq_ignore_ascii_case("connection") || k.eq_ignore_ascii_case("status") {
+                                    if k.eq_ignore_ascii_case("content-length") 
+                                        || k.eq_ignore_ascii_case("connection") 
+                                        || k.eq_ignore_ascii_case("status")
+                                        || k.eq_ignore_ascii_case("set-cookie") {
                                         continue;
                                     }
                                     let line = format!("{}: {}\r\n", k, v);
