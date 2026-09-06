@@ -46,10 +46,13 @@ Tested on Apple Silicon running real-world production Laravel 11 with ApacheBenc
 
 - 🏎️ **Go-Lang Speed for PHP**: Achieve 90,000 to 146,000+ req/s with sub-millisecond response latencies on standard hardware.
 - 🧩 **Zero Code Changes**: Run 100% vanilla Laravel, Symfony, WordPress, Slim, Livewire, and Filament without modifying your controllers, providers, or routes.
+- 🚀 **100% PHP 8.4 Specification Compliance**: Full support for Property Hooks (`get =>`, `set =>`), Asymmetric Visibility (`public(set)`), new `\Dom\HTMLDocument`, `array_find`, `mb_trim`, and all modern PHP 8.4 additions.
+- 🔌 **Full Native C Extensions Support (Hybrid SAPI)**: Seamlessly run native extensions like `mysqli`, `pdo_mysql`, `gd`, `intl`, `imagick`, `sodium`, and `opcache` powered by Hyperion's high-performance Embedded Zend SAPI bridge.
+- 🔄 **Intelligent Dual-Engine Toggle (`--engine`)**: Seamlessly switch between `--engine=auto` (automatic detection), `--engine=php84` (strict Zend 8.4 engine), and `--engine=vm` (Hyperion's custom Rust VM).
+- 🌐 **WordPress Ready**: Built-in MySQLi compatibility layer and HTTP SAPI dispatching to boot and run WordPress out-of-the-box.
 - 🛡️ **Rust Fiber Boot-Checkpointing (`reset_to_boot_checkpoint`)**: Snapshots framework memory at the Rust arena level. At the end of every request, memory and superglobals roll back in microseconds—preventing memory leaks, session bleeding, and auth pollution.
 - 🧵 **M:N Work-Stealing Scheduler**: Spawns non-blocking async fibers multiplexed across multi-threaded epoll/kqueue reactors (`HYPERION_REACTORS=8`).
 - ⚡ **Direct-Threaded Bytecode Engine**: Custom recursive-descent parser, zero-allocation lexer, and register-allocated bytecode virtual machine.
-- 🔌 **Standard PHP Extensions Included**: Built-in native support for PDO, SQLite, MySQL, OpenSSL, Hash, JSON, Strings, Math, Date, and FastCGI.
 - 🌐 **Drop-In FastCGI & SAPI**: Integrate with Nginx, Caddy, or Apache via FastCGI, or run as a standalone high-concurrency HTTP server.
 
 ---
@@ -129,6 +132,52 @@ server {
         include fastcgi_params;
     }
 }
+```
+
+---
+
+## 🔄 Engine Selection & Full PHP 8.4 Support
+
+PHP-Hyperion features a **Hybrid Dual-Engine Architecture** that offers the best of both worlds:
+1. **Hyperion VM Core**: Custom Rust bytecode engine with JIT, M:N fiber scheduler, and memory checkpointing for extreme throughput (> 140k req/s).
+2. **Zend SAPI Bridge**: Integrates the official PHP 8.4 engine (`php-cgi`/`php`) to deliver 100% specification compliance and support for all compiled native C extensions.
+
+### Available Engine Modes
+
+You can select the engine via the `--engine` (or `-E`) flag, or via the `HYPERION_ENGINE` environment variable:
+
+| Engine Mode | Flag | Description |
+| :--- | :--- | :--- |
+| **Auto (Default)** | `--engine=auto` | Automatically inspects your script. If modern PHP 8.4 features (Property Hooks, Asymmetric Visibility, `\Dom\HTMLDocument`, `mysqli_*`, WordPress, etc.) are detected, it dispatches to the Zend 8.4 engine; otherwise runs on Hyperion VM. |
+| **PHP 8.4 (Zend)** | `--engine=php84` / `-E zend` | Forces 100% official PHP 8.4 execution with all compiled native C extensions (`mysqli`, `pdo_mysql`, `gd`, `intl`, `imagick`, `opcache`, etc.). |
+| **Native VM** | `--engine=vm` | Forces Hyperion's native direct-threaded Rust VM and JIT engine for ultra-high throughput benchmarks. |
+
+### Running Scripts & Web Applications
+
+#### 1. Execute PHP 8.4 Scripts (Property Hooks, Asymmetric Visibility, etc.)
+```bash
+# Auto mode detects PHP 8.4 syntax automatically:
+./php-hyperion/target/release/hyperion-cli script.php
+
+# Or explicitly enforce PHP 8.4 engine:
+./php-hyperion/target/release/hyperion-cli --engine=php84 script.php
+```
+
+#### 2. Run WordPress Out-of-the-Box
+Hyperion includes a built-in MySQLi compatibility layer and native CGI/FastCGI bridging to run WordPress with zero missing extension errors:
+```bash
+# Serve WordPress with high-performance async Rust networking:
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8000 \
+    --engine=php84 \
+    -t frameworks/wordpress \
+    frameworks/wordpress/index.php
+```
+
+#### 3. Run Laravel in High-Throughput Mode
+```bash
+HYPERION_REACTORS=8 ./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8000 \
+    -t path/to/laravel/public \
+    path/to/laravel/public/index.php
 ```
 
 ---
