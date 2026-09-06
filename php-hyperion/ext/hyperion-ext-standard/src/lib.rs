@@ -306,6 +306,8 @@ register_native_functions! {
     "hash" => hash::native_hash,
     "hash_file" => hash::native_hash_file,
     "hash_hmac" => hash::native_hash_hmac,
+    "hash_algos" => hash::native_hash_algos,
+    "hash_hmac_algos" => hash::native_hash_hmac_algos,
     "hash_equals" => hash::native_hash_equals,
     "crc32" => hash::native_crc32,
     "password_hash" => hash::native_password_hash,

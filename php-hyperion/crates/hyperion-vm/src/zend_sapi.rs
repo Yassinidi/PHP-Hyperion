@@ -370,32 +370,7 @@ pub fn file_requires_php84(file_path: &str) -> bool {
         return true;
     }
 
-    // If Laravel, Symfony, Drupal, or modern Composer framework:
-    if std::path::Path::new("artisan").is_file()
-        || std::path::Path::new("../artisan").is_file()
-        || std::path::Path::new("bootstrap/app.php").is_file()
-        || std::path::Path::new("../bootstrap/app.php").is_file()
-        || std::path::Path::new("vendor/autoload.php").is_file()
-        || std::path::Path::new("../vendor/autoload.php").is_file()
-        || std::path::Path::new("composer.json").is_file()
-        || std::path::Path::new("../composer.json").is_file()
-        || std::path::Path::new("bin/console").is_file()
-        || std::path::Path::new("../bin/console").is_file()
-        || file_path.contains("artisan")
-        || file_path.contains("vendor/") {
-        return true;
-    }
-
     if let Ok(content) = std::fs::read_to_string(file_path) {
-        // Modern PHP frameworks & Composer autoload
-        if content.contains("LARAVEL_START")
-            || content.contains("Illuminate\\")
-            || content.contains("Symfony\\")
-            || content.contains("vendor/autoload.php")
-            || content.contains("ComposerAutoloader")
-            || content.contains("bootstrap/app.php") {
-            return true;
-        }
         // PHP 8.4 Property Hooks
         if content.contains("get =>") || content.contains("set =>") || content.contains("get {") || content.contains("set {") {
             return true;

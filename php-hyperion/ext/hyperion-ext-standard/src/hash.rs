@@ -350,3 +350,29 @@ php_function! {
         Ok(Value::new_array_ptr(arr_ptr as *mut ()))
     }
 }
+
+php_function! {
+    native_hash_algos() |ctx| {
+        let algos = ["md2", "md4", "md5", "sha1", "sha224", "sha256", "sha384", "sha512", "ripemd128", "ripemd160", "ripemd256", "ripemd320", "whirlpool", "tiger128,3", "tiger160,3", "tiger192,3", "tiger128,4", "tiger160,4", "tiger192,4", "snefru", "snefru256", "gost", "gost-crypto", "adler32", "crc32", "crc32b", "crc32c", "fnv132", "fnv1a32", "fnv164", "fnv1a64", "joaat", "murmur3a", "murmur3c", "murmur3f", "xxh32", "xxh64", "xxh3", "xxh128"];
+        let mut arr = PhpArray::new();
+        for algo in algos {
+            let s = php_string_helper(ctx, algo);
+            arr.push(s);
+        }
+        let arr_ptr = ctx.get_arena().alloc_and_track(arr);
+        Ok(Value::new_array_ptr(arr_ptr as *mut ()))
+    }
+}
+
+php_function! {
+    native_hash_hmac_algos() |ctx| {
+        let algos = ["md2", "md4", "md5", "sha1", "sha224", "sha256", "sha384", "sha512", "ripemd128", "ripemd160", "ripemd256", "ripemd320", "whirlpool", "tiger128,3", "tiger160,3", "tiger192,3", "tiger128,4", "tiger160,4", "tiger192,4", "snefru", "snefru256", "gost", "gost-crypto", "adler32", "crc32", "crc32b", "crc32c", "fnv132", "fnv1a32", "fnv164", "fnv1a64", "joaat", "murmur3a", "murmur3c", "murmur3f", "xxh32", "xxh64", "xxh3", "xxh128"];
+        let mut arr = PhpArray::new();
+        for algo in algos {
+            let s = php_string_helper(ctx, algo);
+            arr.push(s);
+        }
+        let arr_ptr = ctx.get_arena().alloc_and_track(arr);
+        Ok(Value::new_array_ptr(arr_ptr as *mut ()))
+    }
+}
