@@ -219,7 +219,12 @@ pub fn execute_http(
     // Required CGI environment variables
     cmd.env("REDIRECT_STATUS", "200");
     cmd.env("REQUEST_METHOD", method);
-    cmd.env("SCRIPT_FILENAME", script_path);
+    let abs_script_path = if Path::new(script_path).is_absolute() {
+        PathBuf::from(script_path)
+    } else {
+        Path::new(docroot).join(script_path)
+    };
+    cmd.env("SCRIPT_FILENAME", &abs_script_path);
 
     let script_name = if let Some(pos) = uri.find('?') {
         &uri[..pos]
@@ -354,6 +359,17 @@ pub fn execute_http(
 /// Helper to detect if a file contains PHP 8.4 specific syntax or extensions
 /// that require the Zend engine.
 pub fn file_requires_php84(file_path: &str) -> bool {
+    // If the docroot or project root has wp-config.php or wp-load.php, or file is part of WordPress:
+    if std::path::Path::new("wp-config.php").is_file() 
+        || std::path::Path::new("wp-load.php").is_file()
+        || std::path::Path::new("../wp-config.php").is_file()
+        || file_path.contains("wp-admin")
+        || file_path.contains("wp-includes")
+        || file_path.contains("wp-login")
+        || file_path.contains("wp-") {
+        return true;
+    }
+
     if let Ok(content) = std::fs::read_to_string(file_path) {
         // PHP 8.4 Property Hooks
         if content.contains("get =>") || content.contains("set =>") || content.contains("get {") || content.contains("set {") {

@@ -68,6 +68,24 @@ fn sqlite_value_to_sql_value(v: ValueRef<'_>) -> SqlValue {
     }
 }
 
+fn mysql_value_to_sql_value(v: Option<&mysql::Value>) -> SqlValue {
+    match v {
+        Some(mysql::Value::NULL) | None => SqlValue::Null,
+        Some(mysql::Value::Bytes(b)) => SqlValue::Text(String::from_utf8_lossy(b).into_owned()),
+        Some(mysql::Value::Int(n)) => SqlValue::Text(n.to_string()),
+        Some(mysql::Value::UInt(u)) => SqlValue::Text(u.to_string()),
+        Some(mysql::Value::Float(f)) => SqlValue::Text(f.to_string()),
+        Some(mysql::Value::Double(d)) => SqlValue::Text(d.to_string()),
+        Some(mysql::Value::Date(y, m, d, h, min, s, _)) => {
+            SqlValue::Text(format!("{:04}-{:02}-{:02} {:02}:{:02}:{:02}", y, m, d, h, min, s))
+        }
+        Some(mysql::Value::Time(neg, d, h, m, s, _)) => {
+            let sign = if *neg { "-" } else { "" };
+            SqlValue::Text(format!("{}{:02}:{:02}:{:02}", sign, d * 24 + *h as u32, m, s))
+        }
+    }
+}
+
 fn sql_value_into_php_value(v: SqlValue, ctx: &mut dyn hyperion_core::types::function::NativeContext) -> Value {
     match v {
         SqlValue::Null => Value::null(),
@@ -88,7 +106,10 @@ fn sql_value_into_php_value(v: SqlValue, ctx: &mut dyn hyperion_core::types::fun
 
 pub enum DbConnection {
     Sqlite(rusqlite::Connection),
-    Mysql(mysql::Pool),
+    Mysql {
+        pool: mysql::Pool,
+        current_db: Arc<Mutex<String>>,
+    },
 }
 
 pub struct PreparedStatement {
@@ -163,12 +184,38 @@ fn get_or_create_connection(dsn_str: &str, username: Option<&Value>, password: O
                 None
             }
         }).unwrap_or_default();
-        let url = format!("mysql://{}:{}@localhost:3306/test", user_str, pass_str);
+        let mut host = "127.0.0.1".to_string();
+        let mut port = 3306u16;
+        let mut dbname = "test".to_string();
+
+        let params_part = if dsn_str.len() > 6 { &dsn_str[6..] } else { "" };
+        for pair in params_part.split(';') {
+            let mut kv = pair.splitn(2, '=');
+            if let (Some(k), Some(v)) = (kv.next(), kv.next()) {
+                let k = k.trim().to_lowercase();
+                let v = v.trim();
+                match k.as_str() {
+                    "host" => {
+                        host = if v == "localhost" { "127.0.0.1".to_string() } else { v.to_string() };
+                    }
+                    "port" => {
+                        if let Ok(p) = v.parse::<u16>() {
+                            port = p;
+                        }
+                    }
+                    "dbname" => dbname = v.to_string(),
+                    _ => {}
+                }
+            }
+        }
+        let url = format!("mysql://{}:{}@{}:{}/{}", user_str, pass_str, host, port, dbname);
         let opts = mysql::Opts::from_url(&url)
             .map_err(|e| format!("PDOException: MySQL connection error: {}", e))?;
         let pool = mysql::Pool::new(opts)
             .map_err(|e| format!("PDOException: MySQL pool error: {}", e))?;
-        Arc::new(Mutex::new(DbConnection::Mysql(pool)))
+        let current_db_str = if dbname != "test" && !dbname.is_empty() { dbname.clone() } else { String::new() };
+        let current_db = Arc::new(Mutex::new(current_db_str));
+        Arc::new(Mutex::new(DbConnection::Mysql { pool, current_db }))
     } else {
         let conn = rusqlite::Connection::open_in_memory()
             .map_err(|e| format!("PDOException: SQLite connection error: {}", e))?;
@@ -293,20 +340,25 @@ php_function! {
                         Err(e) => return Err(format!("PDOException: SQL error: {}", e)),
                     }
                 }
-                DbConnection::Mysql(pool) => {
-                    let pool = pool.clone();
-                    DB_POOL.execute(move || {
-                        use mysql::prelude::Queryable;
-                        let res = match pool.get_conn() {
-                            Ok(mut conn) => match conn.query_drop(&sql) {
-                                Ok(_) => Ok(Value::new_int(conn.affected_rows() as i32)),
-                                Err(e) => Err(format!("PDOException: MySQL query error: {}", e)),
-                            },
-                            Err(e) => Err(format!("PDOException: MySQL conn error: {}", e)),
-                        };
-                        callback(task_id, res);
-                    });
-                    return Ok(Value::new_yield(task_id));
+                DbConnection::Mysql { pool, current_db } => {
+                    use mysql::prelude::Queryable;
+                    let trimmed = sql.trim();
+                    let upper = trimmed.to_uppercase();
+                    if upper.starts_with("USE ") {
+                        let db_target = trimmed[4..].trim().trim_matches(';').trim().trim_matches('`').trim_matches('\'').trim_matches('"');
+                        if !db_target.is_empty() {
+                            *current_db.lock().unwrap() = db_target.to_string();
+                        }
+                    }
+                    let mut conn = pool.get_conn().map_err(|e| format!("PDOException: MySQL conn error: {}", e))?;
+                    let db = current_db.lock().unwrap().clone();
+                    if !db.is_empty() {
+                        let _ = conn.query_drop(format!("USE `{}`", db));
+                    }
+                    conn.query_drop(&sql).map_err(|e| format!("PDOException: MySQL query error: {}", e))?;
+                    hyperion_core::DB_MUTATION_VERSION.fetch_add(1, std::sync::atomic::Ordering::Release);
+                    let affected = conn.affected_rows();
+                    return Ok(Value::new_int(affected as i32));
                 }
             }
         } else {
@@ -380,60 +432,52 @@ php_function! {
 
                     return Ok(stmt_val);
                 }
-                DbConnection::Mysql(pool) => {
-                    let pool = pool.clone();
-                    let sql_clone = sql.clone();
-                    DB_POOL.execute(move || {
-                        use mysql::prelude::Queryable;
-                        let res = match pool.get_conn() {
-                            Ok(mut conn) => {
-                                match conn.query_iter(&sql_clone) {
-                                    Ok(result) => {
-                                        let mut col_names = Vec::new();
-                                        let mut rows_data = Vec::new();
-                                        for (row_idx, row) in result.flatten().enumerate() {
-                                            if row_idx == 0 {
-                                                col_names = row.columns_ref().iter().map(|c| c.name_str().into_owned()).collect();
-                                            }
-                                            let mut row_items = Vec::with_capacity(col_names.len());
-                                            for i in 0..col_names.len() {
-                                                let val_opt: Option<String> = row.get(i);
-                                                let sql_val = match val_opt {
-                                                    Some(s) => SqlValue::Text(s),
-                                                    None => SqlValue::Null,
-                                                };
-                                                row_items.push(sql_val);
-                                            }
-                                            rows_data.push(row_items);
-                                        }
-                                        let col_key_ids = col_names.iter().map(|s| intern_string(s)).collect();
-                                        let affected = rows_data.len();
-                                        insert_statement(stmt_id, PreparedStatement {
-                                            conn_id,
-                                            query: sql_clone,
-                                            bound_params: HashMap::new(),
-                                            bound_positional: HashMap::new(),
-                                            cached_rows: Some(CachedResultSet {
-                                                col_names: Arc::new(col_names),
-                                                col_key_ids: Arc::new(col_key_ids),
-                                                rows: rows_data,
-                                            }),
-                                            affected_rows: affected,
-                                            current_cursor: 0,
-                                            fetch_mode: default_fetch_mode,
-                                        });
-
-                                        Ok(stmt_val)
-                                    }
-                                    Err(e) => Err(format!("PDOException: {}", e)),
-                                }
-                            }
-                            Err(e) => Err(format!("PDOException: {}", e)),
-                        };
-                        callback(task_id, res);
+                DbConnection::Mysql { pool, current_db } => {
+                    use mysql::prelude::Queryable;
+                    let trimmed = sql.trim();
+                    let upper = trimmed.to_uppercase();
+                    if upper.starts_with("USE ") {
+                        let db_target = trimmed[4..].trim().trim_matches(';').trim().trim_matches('`').trim_matches('\'').trim_matches('"');
+                        if !db_target.is_empty() {
+                            *current_db.lock().unwrap() = db_target.to_string();
+                        }
+                    }
+                    let mut conn = pool.get_conn().map_err(|e| format!("PDOException: MySQL conn error: {}", e))?;
+                    let db = current_db.lock().unwrap().clone();
+                    if !db.is_empty() {
+                        let _ = conn.query_drop(format!("USE `{}`", db));
+                    }
+                    let result = conn.query_iter(&sql).map_err(|e| format!("PDOException: MySQL query error: {}", e))?;
+                    let mut col_names = Vec::new();
+                    let mut rows_data = Vec::new();
+                    for (row_idx, row) in result.flatten().enumerate() {
+                        if row_idx == 0 {
+                            col_names = row.columns_ref().iter().map(|c| c.name_str().into_owned()).collect();
+                        }
+                        let mut row_items = Vec::with_capacity(col_names.len());
+                        for i in 0..col_names.len() {
+                            row_items.push(mysql_value_to_sql_value(row.as_ref(i)));
+                        }
+                        rows_data.push(row_items);
+                    }
+                    let col_key_ids = col_names.iter().map(|s| intern_string(s)).collect();
+                    let affected = rows_data.len();
+                    insert_statement(stmt_id, PreparedStatement {
+                        conn_id,
+                        query: sql,
+                        bound_params: HashMap::new(),
+                        bound_positional: HashMap::new(),
+                        cached_rows: Some(CachedResultSet {
+                            col_names: Arc::new(col_names),
+                            col_key_ids: Arc::new(col_key_ids),
+                            rows: rows_data,
+                        }),
+                        affected_rows: affected,
+                        current_cursor: 0,
+                        fetch_mode: default_fetch_mode,
                     });
 
-                    return Ok(Value::new_yield(task_id));
+                    return Ok(stmt_val);
                 }
             }
         } else {
@@ -490,7 +534,7 @@ php_function! {
                     let ptr = ctx.get_arena().alloc_and_track(id.to_string());
                     Ok(Value::new_string_ptr(ptr as *mut ()))
                 }
-                DbConnection::Mysql(pool) => {
+                DbConnection::Mysql { pool, .. } => {
                     if let Ok(conn) = pool.get_conn() {
                         let id = conn.last_insert_id();
                         let ptr = ctx.get_arena().alloc_and_track(id.to_string());
@@ -526,9 +570,13 @@ php_function! {
                     }
                     Ok(Value::new_bool(true))
                 }
-                DbConnection::Mysql(pool) => {
+                DbConnection::Mysql { pool, current_db } => {
                     use mysql::prelude::Queryable;
                     if let Ok(mut conn) = pool.get_conn() {
+                        let db = current_db.lock().unwrap().clone();
+                        if !db.is_empty() {
+                            let _ = conn.query_drop(format!("USE `{}`", db));
+                        }
                         let _ = conn.query_drop("START TRANSACTION");
                         Ok(Value::new_bool(true))
                     } else {
@@ -560,9 +608,13 @@ php_function! {
                     }
                     Ok(Value::new_bool(true))
                 }
-                DbConnection::Mysql(pool) => {
+                DbConnection::Mysql { pool, current_db } => {
                     use mysql::prelude::Queryable;
                     if let Ok(mut conn) = pool.get_conn() {
+                        let db = current_db.lock().unwrap().clone();
+                        if !db.is_empty() {
+                            let _ = conn.query_drop(format!("USE `{}`", db));
+                        }
                         let _ = conn.query_drop("COMMIT");
                         Ok(Value::new_bool(true))
                     } else {
@@ -594,9 +646,13 @@ php_function! {
                     }
                     Ok(Value::new_bool(true))
                 }
-                DbConnection::Mysql(pool) => {
+                DbConnection::Mysql { pool, current_db } => {
                     use mysql::prelude::Queryable;
                     if let Ok(mut conn) = pool.get_conn() {
+                        let db = current_db.lock().unwrap().clone();
+                        if !db.is_empty() {
+                            let _ = conn.query_drop(format!("USE `{}`", db));
+                        }
                         let _ = conn.query_drop("ROLLBACK");
                         Ok(Value::new_bool(true))
                     } else {
@@ -657,7 +713,7 @@ php_function! {
                         let conn_guard = conn_arc.lock().unwrap();
                         match &*conn_guard {
                             DbConnection::Sqlite(_) => rusqlite::version().to_string(),
-                            DbConnection::Mysql(_) => "8.0.32".to_string(),
+                            DbConnection::Mysql { .. } => "8.0.32".to_string(),
                         }
                     } else {
                         rusqlite::version().to_string()
@@ -670,7 +726,7 @@ php_function! {
                         let conn_guard = conn_arc.lock().unwrap();
                         match &*conn_guard {
                             DbConnection::Sqlite(_) => "sqlite".to_string(),
-                            DbConnection::Mysql(_) => "mysql".to_string(),
+                            DbConnection::Mysql { .. } => "mysql".to_string(),
                         }
                     } else {
                         "sqlite".to_string()
@@ -832,24 +888,54 @@ php_function! {
                         Err(e) => Err(format!("PDOException: Statement prepare error: {}", e)),
                     }
                 }
-                DbConnection::Mysql(pool) => {
-                    let pool = pool.clone();
-                    let callback = ctx.get_db_completion_callback();
-                    drop(conn_guard);
-                    DB_POOL.execute(move || {
-                        use mysql::prelude::Queryable;
-                        let res = match pool.get_conn() {
-                            Ok(mut conn) => {
-                                match conn.query_drop(&query) {
-                                    Ok(_) => Ok(Value::new_bool(true)),
-                                    Err(e) => Err(format!("PDOException: {}", e)),
-                                }
+                DbConnection::Mysql { pool, current_db } => {
+                    use mysql::prelude::Queryable;
+                    let mut conn = pool.get_conn().map_err(|e| format!("PDOException: MySQL conn error: {}", e))?;
+                    let db = current_db.lock().unwrap().clone();
+                    if !db.is_empty() {
+                        let _ = conn.query_drop(format!("USE `{}`", db));
+                    }
+                    let is_select = {
+                        let trimmed = query.trim_start().to_uppercase();
+                        trimmed.starts_with("SELECT") || trimmed.starts_with("SHOW") || trimmed.starts_with("DESCRIBE") || trimmed.starts_with("EXPLAIN")
+                    };
+                    if is_select {
+                        let result = conn.query_iter(&query).map_err(|e| format!("PDOException: MySQL query error: {}", e))?;
+                        let mut col_names = Vec::new();
+                        let mut rows_data = Vec::new();
+                        for (row_idx, row) in result.flatten().enumerate() {
+                            if row_idx == 0 {
+                                col_names = row.columns_ref().iter().map(|c| c.name_str().into_owned()).collect();
                             }
-                            Err(e) => Err(format!("PDOException: {}", e)),
-                        };
-                        callback(task_id, res);
-                    });
-                    Ok(Value::new_yield(task_id))
+                            let mut row_items = Vec::with_capacity(col_names.len());
+                            for i in 0..col_names.len() {
+                                row_items.push(mysql_value_to_sql_value(row.as_ref(i)));
+                            }
+                            rows_data.push(row_items);
+                        }
+                        let col_key_ids = col_names.iter().map(|s| intern_string(s)).collect();
+                        let total = rows_data.len();
+                        if let Some(mut stmt) = STATEMENTS.get_mut(&stmt_id) {
+                            stmt.cached_rows = Some(CachedResultSet {
+                                col_names: Arc::new(col_names),
+                                col_key_ids: Arc::new(col_key_ids),
+                                rows: rows_data,
+                            });
+                            stmt.affected_rows = total;
+                            stmt.current_cursor = 0;
+                        }
+                        Ok(Value::new_bool(true))
+                    } else {
+                        conn.query_drop(&query).map_err(|e| format!("PDOException: MySQL query error: {}", e))?;
+                        hyperion_core::DB_MUTATION_VERSION.fetch_add(1, std::sync::atomic::Ordering::Release);
+                        let affected = conn.affected_rows() as usize;
+                        if let Some(mut stmt) = STATEMENTS.get_mut(&stmt_id) {
+                            stmt.cached_rows = None;
+                            stmt.affected_rows = affected;
+                            stmt.current_cursor = 0;
+                        }
+                        Ok(Value::new_bool(true))
+                    }
                 }
             }
         } else {

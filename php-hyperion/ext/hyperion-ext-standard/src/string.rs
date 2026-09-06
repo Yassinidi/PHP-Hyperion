@@ -768,9 +768,12 @@ fn perform_str_replace(
         };
         if case_insensitive {
             let lower_s = s.to_lowercase();
+            let lower_subj = subj.to_lowercase();
+            if !lower_subj.contains(&lower_s) {
+                continue;
+            }
             let mut result = String::with_capacity(subj.len());
             let mut last = 0;
-            let lower_subj = subj.to_lowercase();
             for (start, _) in lower_subj.match_indices(&lower_s) {
                 result.push_str(&subj[last..start]);
                 result.push_str(r);
@@ -779,6 +782,9 @@ fn perform_str_replace(
             result.push_str(&subj[last..]);
             subj = result;
         } else {
+            if !subj.contains(s.as_str()) {
+                continue;
+            }
             subj = subj.replace(s.as_str(), r);
         }
     }
@@ -2309,6 +2315,81 @@ php_function! {
             Ok(Value::new_int(res))
         } else {
             Err("strcasecmp() expects exactly 2 parameters".to_string())
+        }
+    }
+}
+
+fn natural_cmp(s1: &str, s2: &str, case_insensitive: bool) -> std::cmp::Ordering {
+    let mut i1 = s1.chars().peekable();
+    let mut i2 = s2.chars().peekable();
+
+    while let (Some(&c1), Some(&c2)) = (i1.peek(), i2.peek()) {
+        if c1.is_ascii_digit() && c2.is_ascii_digit() {
+            let mut num1: u64 = 0;
+            while let Some(&d) = i1.peek() {
+                if d.is_ascii_digit() {
+                    num1 = num1.saturating_mul(10).saturating_add(d.to_digit(10).unwrap() as u64);
+                    i1.next();
+                } else {
+                    break;
+                }
+            }
+            let mut num2: u64 = 0;
+            while let Some(&d) = i2.peek() {
+                if d.is_ascii_digit() {
+                    num2 = num2.saturating_mul(10).saturating_add(d.to_digit(10).unwrap() as u64);
+                    i2.next();
+                } else {
+                    break;
+                }
+            }
+            if num1 != num2 {
+                return num1.cmp(&num2);
+            }
+        } else {
+            let ch1 = if case_insensitive { c1.to_ascii_lowercase() } else { c1 };
+            let ch2 = if case_insensitive { c2.to_ascii_lowercase() } else { c2 };
+            if ch1 != ch2 {
+                return ch1.cmp(&ch2);
+            }
+            i1.next();
+            i2.next();
+        }
+    }
+
+    match (i1.next(), i2.next()) {
+        (Some(_), None) => std::cmp::Ordering::Greater,
+        (None, Some(_)) => std::cmp::Ordering::Less,
+        _ => std::cmp::Ordering::Equal,
+    }
+}
+
+php_function! {
+    native_strnatcmp(str1: String, str2: String) {
+        if let (Some(s1), Some(s2)) = (str1, str2) {
+            let res = match natural_cmp(&s1, &s2, false) {
+                std::cmp::Ordering::Less => -1,
+                std::cmp::Ordering::Equal => 0,
+                std::cmp::Ordering::Greater => 1,
+            };
+            Ok(Value::new_int(res))
+        } else {
+            Err("strnatcmp() expects exactly 2 parameters".to_string())
+        }
+    }
+}
+
+php_function! {
+    native_strnatcasecmp(str1: String, str2: String) {
+        if let (Some(s1), Some(s2)) = (str1, str2) {
+            let res = match natural_cmp(&s1, &s2, true) {
+                std::cmp::Ordering::Less => -1,
+                std::cmp::Ordering::Equal => 0,
+                std::cmp::Ordering::Greater => 1,
+            };
+            Ok(Value::new_int(res))
+        } else {
+            Err("strnatcasecmp() expects exactly 2 parameters".to_string())
         }
     }
 }

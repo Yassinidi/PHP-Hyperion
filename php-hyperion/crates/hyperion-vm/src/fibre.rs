@@ -1889,29 +1889,38 @@ impl Fibre {
             server_arr.insert_string_id(keys.key_argv, Value::new_array_ptr(argv_ptr as *mut ()));
             server_arr.insert_string_id(keys.key_argc, Value::new_int(0));
 
-            static SCRIPT_INFO: std::sync::OnceLock<(String, String)> = std::sync::OnceLock::new();
-            let (script_filename, doc_root) = SCRIPT_INFO.get_or_init(|| {
-                let sfn = std::path::Path::new(script_path)
-                    .canonicalize()
-                    .map(|p| p.to_string_lossy().into_owned())
-                    .unwrap_or_else(|_| script_path.to_string());
-                let dr = std::path::Path::new(&sfn)
-                    .parent()
-                    .map(|p| p.to_string_lossy().into_owned())
-                    .unwrap_or_else(|| ".".to_string());
-                (sfn, dr)
-            });
+            let script_filename = std::path::Path::new(script_path)
+                .canonicalize()
+                .map(|p| p.to_string_lossy().into_owned())
+                .unwrap_or_else(|_| script_path.to_string());
 
-            let sfn_ptr = self.arena.alloc_and_track(script_filename.clone());
+            let doc_root = std::env::current_dir()
+                .map(|p| p.to_string_lossy().into_owned())
+                .unwrap_or_else(|_| {
+                    std::path::Path::new(&script_filename)
+                        .parent()
+                        .map(|p| p.to_string_lossy().into_owned())
+                        .unwrap_or_else(|| ".".to_string())
+                });
+
+            let script_rel = if let Ok(rel) = std::path::Path::new(&script_filename).strip_prefix(&doc_root) {
+                format!("/{}", rel.to_string_lossy())
+            } else if script_path.starts_with('/') {
+                script_path.to_string()
+            } else {
+                format!("/{}", script_path)
+            };
+
+            let sfn_ptr = self.arena.alloc_and_track(script_filename);
             server_arr.insert_string_id(keys.key_script_filename, Value::new_string_ptr(sfn_ptr as *mut ()));
 
-            let sn_ptr = self.arena.alloc_and_track("/index.php".to_string());
+            let sn_ptr = self.arena.alloc_and_track(script_rel.clone());
             server_arr.insert_string_id(keys.key_script_name, Value::new_string_ptr(sn_ptr as *mut ()));
 
-            let ps_ptr = self.arena.alloc_and_track("/index.php".to_string());
+            let ps_ptr = self.arena.alloc_and_track(script_rel);
             server_arr.insert_string_id(keys.key_php_self, Value::new_string_ptr(ps_ptr as *mut ()));
 
-            let dr_ptr = self.arena.alloc_and_track(doc_root.clone());
+            let dr_ptr = self.arena.alloc_and_track(doc_root);
             server_arr.insert_string_id(keys.key_document_root, Value::new_string_ptr(dr_ptr as *mut ()));
 
             // Request URI & Method

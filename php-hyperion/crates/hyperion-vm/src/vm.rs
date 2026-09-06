@@ -772,12 +772,7 @@ impl VM {
                         continue;
                     }
                     let plain = raw.deref();
-                    let bound = if plain.is_array() {
-                        Self::deep_copy_value(fibre, plain)
-                    } else {
-                        plain
-                    };
-                    fibre.stack[slot] = bound;
+                    fibre.stack[slot] = plain;
                 }
                 arity = var_idx + 1;
             } else {
@@ -793,12 +788,7 @@ impl VM {
                         continue;
                     }
                     let plain = raw.deref();
-                    let bound = if plain.is_array() {
-                        Self::deep_copy_value(fibre, plain)
-                    } else {
-                        plain
-                    };
-                    fibre.stack[slot] = bound;
+                    fibre.stack[slot] = plain;
                 }
 
                 // 2. Pad missing non-variadic parameters if arity < var_idx
@@ -851,12 +841,7 @@ impl VM {
                     continue;
                 }
                 let plain = raw.deref();
-                let bound = if plain.is_array() {
-                    Self::deep_copy_value(fibre, plain)
-                } else {
-                    plain
-                };
-                fibre.stack[slot] = bound;
+                fibre.stack[slot] = plain;
             }
 
             let expected_arity = func.arity.max(func.params.len());

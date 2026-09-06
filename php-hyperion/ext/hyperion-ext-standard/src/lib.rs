@@ -96,6 +96,8 @@ register_native_functions! {
     "str_contains" => string::native_str_contains,
     "strcmp" => string::native_strcmp,
     "strcasecmp" => string::native_strcasecmp,
+    "strnatcmp" => string::native_strnatcmp,
+    "strnatcasecmp" => string::native_strnatcasecmp,
     "strncmp" => string::native_strncmp,
     "strncasecmp" => string::native_strncasecmp,
     "substr_compare" => string::native_substr_compare,

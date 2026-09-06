@@ -552,6 +552,14 @@ where
     }
 
     pub fn parse_statement(&mut self) -> Option<Stmt> {
+        while let Some(record) = self.peek() {
+            if record.token == Token::OpenTag || record.token == Token::CloseTag {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+
         let attributes = self.parse_attributes();
         
         if let Some(record) = self.peek() {
@@ -569,11 +577,17 @@ where
                     self.advance();
                     let mut stmts = Vec::new();
                     while let Some(peek_record) = self.peek() {
+                        if peek_record.token == Token::OpenTag || peek_record.token == Token::CloseTag {
+                            self.advance();
+                            continue;
+                        }
                         if peek_record.token == Token::CloseBrace || peek_record.token == Token::Eof {
                             break;
                         }
                         if let Some(stmt) = self.parse_statement() {
                             stmts.push(stmt);
+                        } else {
+                            self.advance();
                         }
                     }
                     self.match_token(Token::CloseBrace);
@@ -1198,11 +1212,17 @@ where
                     self.function_depth += 1;
                     let mut body = Vec::new();
                     while let Some(peek_record) = self.peek() {
+                        if peek_record.token == Token::OpenTag || peek_record.token == Token::CloseTag {
+                            self.advance();
+                            continue;
+                        }
                         if peek_record.token == Token::CloseBrace || peek_record.token == Token::Eof {
                             break;
                         }
                         if let Some(stmt) = self.parse_statement() {
                             body.push(stmt);
+                        } else {
+                            self.advance();
                         }
                     }
                     self.function_depth -= 1;
@@ -1519,6 +1539,10 @@ where
                             let mut uses = Vec::new();
                             let mut trait_aliases = Vec::new();
                             while let Some(peek_record) = self.peek() {
+                                if peek_record.token == Token::OpenTag || peek_record.token == Token::CloseTag {
+                                    self.advance();
+                                    continue;
+                                }
                                 if peek_record.token == Token::CloseBrace || peek_record.token == Token::Eof {
                                     break;
                                 }
@@ -1584,11 +1608,17 @@ where
                                 self.match_token(Token::OpenBrace);
                                 self.function_depth += 1;
                                 while let Some(peek_record) = self.peek() {
+                                    if peek_record.token == Token::OpenTag || peek_record.token == Token::CloseTag {
+                                        self.advance();
+                                        continue;
+                                    }
                                     if peek_record.token == Token::CloseBrace || peek_record.token == Token::Eof {
                                         break;
                                     }
                                     if let Some(stmt) = self.parse_statement() {
                                         body.push(stmt);
+                                    } else {
+                                        self.advance();
                                     }
                                 }
                                 self.function_depth -= 1;
@@ -2336,6 +2366,11 @@ Token::Try => {
     }
 
     fn parse_prefix(&mut self) -> Option<Expr> {
+        if let Some(peek) = self.peek() {
+            if matches!(peek.token, Token::CloseBrace | Token::CloseParen | Token::CloseBracket | Token::Semicolon | Token::Eof) {
+                return None;
+            }
+        }
         let record = self.advance()?;
         match &record.token {
             Token::Ampersand => {
@@ -3134,4 +3169,41 @@ mod tests {
             panic!("Expected ExprStmt(Assignment) statement");
         }
     }
+
+    #[test]
+    fn test_inline_html_class() {
+        let source = r#"<?php
+class TestEmbed {
+	public function maybe_run_ajax_cache() {
+		?>
+<script>
+	jQuery( function($) {
+		$.get("<?php echo 'foo'; ?>");
+	} );
+</script>
+		<?php
+	}
+
+	public function register_handler() {
+		return 123;
+	}
 }
+"#;
+        let lexer = Lexer::new(source);
+        let mut parser = Parser::new(lexer);
+        let program = parser.parse_program();
+        assert_eq!(program.len(), 1);
+        if let Stmt::Class { methods, .. } = &program[0] {
+            assert_eq!(methods.len(), 2);
+            if let Stmt::Function { name, .. } = &methods[0] {
+                assert_eq!(name, "maybe_run_ajax_cache");
+            }
+            if let Stmt::Function { name, .. } = &methods[1] {
+                assert_eq!(name, "register_handler");
+            }
+        } else {
+            panic!("Expected Class");
+        }
+    }
+}
+
