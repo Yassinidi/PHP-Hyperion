@@ -19,12 +19,6 @@ fn main() {
         let mut act: libc::sigaction = std::mem::zeroed();
         act.sa_sigaction = libc::SIG_IGN;
         libc::sigaction(libc::SIGPIPE, &act, std::ptr::null_mut());
-
-        extern "C" fn on_exit() {
-            eprintln!("🔥 ATEXIT HOOK FIRED! Process is exiting!");
-            eprintln!("{:?}", std::backtrace::Backtrace::capture());
-        }
-        libc::atexit(on_exit);
     }
 
     let builder = std::thread::Builder::new()
@@ -33,8 +27,7 @@ fn main() {
     let handler = builder.spawn(|| {
         real_main();
     }).unwrap();
-    handler.join().unwrap();
-    eprintln!("[MAIN THREAD] handler.join finished! Exiting main()");
+    let _ = handler.join();
 }
 
 fn real_main() {
@@ -52,10 +45,27 @@ fn real_main() {
     let mut docroot: Option<String> = None;
     let mut print_ast = false;
     let mut worker_mode = false;
+    let mut engine_mode = std::env::var("HYPERION_ENGINE").unwrap_or_else(|_| "auto".to_string()).to_lowercase();
     
     let mut i = 1;
     let mut script_args = Vec::new();
     while i < args.len() {
+        if args[i] == "--engine" || args[i] == "-E" {
+            if i + 1 < args.len() {
+                engine_mode = args[i + 1].to_lowercase();
+                i += 2;
+                continue;
+            } else {
+                eprintln!("Error: --engine requires a mode: vm, php84, zend, or auto");
+                return;
+            }
+        }
+        if args[i].starts_with("--engine=") {
+            engine_mode = args[i]["--engine=".len()..].to_lowercase();
+            i += 1;
+            continue;
+        }
+
         if args[i] == "--server" || args[i] == "-S" {
             if i + 1 < args.len() {
                 server_addr = Some(args[i + 1].clone());
@@ -85,7 +95,6 @@ fn real_main() {
             continue;
         }
 
-        
         if args[i] == "-t" {
             if i + 1 < args.len() {
                 docroot = Some(args[i + 1].clone());
@@ -117,6 +126,8 @@ fn real_main() {
         }
         i += 1;
     }
+
+    std::env::set_var("HYPERION_ENGINE", &engine_mode);
 
     if let Some(ref dr) = docroot {
         let _ = std::env::set_current_dir(dr);
@@ -279,9 +290,29 @@ fn real_main() {
         }
 
     } else {
+        let use_zend = engine_mode == "php84" || engine_mode == "zend" || engine_mode == "php"
+            || (engine_mode == "auto" && hyperion_vm::zend_sapi::file_requires_php84(&file_path));
+
+        if use_zend {
+            let pass_args = if script_args.len() > 1 { &script_args[1..] } else { &[] };
+            match hyperion_vm::zend_sapi::execute_cli(&file_path, pass_args, docroot.as_deref()) {
+                Ok(code) => std::process::exit(code),
+                Err(e) => {
+                    eprintln!("Zend CLI Error: {}", e);
+                    std::process::exit(1);
+                }
+            }
+        }
+
         let main_func = match engine_state.compile_and_load_script(&file_path) {
             Ok(f) => f,
             Err(e) => {
+                if engine_mode == "auto" {
+                    let pass_args = if script_args.len() > 1 { &script_args[1..] } else { &[] };
+                    if let Ok(code) = hyperion_vm::zend_sapi::execute_cli(&file_path, pass_args, docroot.as_deref()) {
+                        std::process::exit(code);
+                    }
+                }
                 eprintln!("Fatal error: Failed to compile '{}': {}", file_path, e);
                 std::process::exit(1);
             }

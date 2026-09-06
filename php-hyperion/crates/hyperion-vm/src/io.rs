@@ -434,6 +434,67 @@ impl Reactor {
             } else {
                 path_str.trim_start_matches('/').to_string()
             };
+
+            let engine_env = std::env::var("HYPERION_ENGINE").unwrap_or_else(|_| "auto".to_string()).to_lowercase();
+            let use_zend = engine_env == "php84" || engine_env == "zend" || engine_env == "php" 
+                || (engine_env == "auto" && crate::zend_sapi::file_requires_php84(&file_path));
+
+            if use_zend {
+                let peer_addr_str = stream.peer_addr().ok().map(|a| a.to_string());
+                let local_addr_str = stream.local_addr().ok().map(|a| a.to_string());
+                let query_str = path_str.split_once('?').map(|x| x.1).unwrap_or("");
+                let docroot = std::env::current_dir().map(|p| p.to_string_lossy().into_owned()).unwrap_or_else(|_| ".".to_string());
+                
+                let mut req_headers = Vec::new();
+                for h in req.headers.iter() {
+                    if !h.name.is_empty() {
+                        if let Ok(v) = std::str::from_utf8(h.value) {
+                            req_headers.push((h.name, v));
+                        }
+                    }
+                }
+                
+                let body = &buffer[body_offset..];
+                match crate::zend_sapi::execute_http(
+                    &file_path,
+                    &docroot,
+                    method_str,
+                    path_str,
+                    query_str,
+                    &req_headers,
+                    body,
+                    peer_addr_str.as_deref(),
+                    local_addr_str.as_deref(),
+                ) {
+                    Ok(resp) => {
+                        let resp_bytes = resp.to_http_bytes();
+                        use std::io::Write;
+                        let mut data = resp_bytes.as_slice();
+                        while !data.is_empty() {
+                            match stream.write(data) {
+                                Ok(0) => break,
+                                Ok(n) => data = &data[n..],
+                                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock || e.raw_os_error() == Some(35) || e.raw_os_error() == Some(11) => {
+                                    std::thread::yield_now();
+                                }
+                                Err(_) => break,
+                            }
+                        }
+                        let _ = stream.flush();
+                        let _ = stream.shutdown(std::net::Shutdown::Both);
+                        return;
+                    }
+                    Err(e) => {
+                        eprintln!("Zend SAPI Error: {}", e);
+                        use std::io::Write;
+                        let err_resp = format!("HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nZend Engine Error: {}\n", e);
+                        let _ = stream.write_all(err_resp.as_bytes());
+                        let _ = stream.flush();
+                        let _ = stream.shutdown(std::net::Shutdown::Both);
+                        return;
+                    }
+                }
+            }
             
             let func_ptr = if !file_path.is_empty() && std::path::Path::new(&file_path).is_file() {
                 match self.engine_state.compile_and_load_script(&file_path) {

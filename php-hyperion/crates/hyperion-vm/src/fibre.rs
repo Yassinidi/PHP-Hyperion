@@ -992,6 +992,23 @@ impl GlobalEngineState {
                 ("SIGTTOU", 22),
                 ("SIG_DFL", 0),
                 ("SIG_IGN", 1),
+                // MySQLi constants
+                ("MYSQLI_ASSOC", 1),
+                ("MYSQLI_NUM", 2),
+                ("MYSQLI_BOTH", 3),
+                ("MYSQLI_STORE_RESULT", 0),
+                ("MYSQLI_USE_RESULT", 1),
+                ("MYSQLI_REPORT_OFF", 0),
+                ("MYSQLI_REPORT_ERROR", 1),
+                ("MYSQLI_REPORT_STRICT", 2),
+                ("MYSQLI_REPORT_INDEX", 4),
+                ("MYSQLI_REPORT_ALL", 255),
+                ("MYSQLI_CLIENT_SSL", 2048),
+                ("MYSQLI_CLIENT_COMPRESS", 32),
+                ("MYSQLI_CLIENT_INTERACTIVE", 1024),
+                ("MYSQLI_CLIENT_IGNORE_SPACE", 256),
+                ("MYSQLI_OPT_CONNECT_TIMEOUT", 0),
+                ("MYSQLI_INIT_COMMAND", 3),
             ] {
                 constants.insert(
                     name.to_string(),

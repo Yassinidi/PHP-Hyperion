@@ -2648,3 +2648,610 @@ class NumberFormatter
     }
 }
 
+// -----------------------------------------------------------------------------
+// MySQLi Compatibility Layer (Powered by Hyperion PDO Engine)
+// -----------------------------------------------------------------------------
+
+class mysqli_result
+{
+    public $num_rows = 0;
+    public $field_count = 0;
+    public $current_field = 0;
+    private $rows = [];
+    private $cursor = 0;
+    private $fields = [];
+
+    public function __construct($stmt = null, $rows = [])
+    {
+        $this->rows = is_array($rows) ? $rows : [];
+        $this->num_rows = count($this->rows);
+        if ($this->num_rows > 0 && is_array($this->rows[0])) {
+            $this->field_count = count($this->rows[0]);
+            foreach (array_keys($this->rows[0]) as $k) {
+                $f = new stdClass();
+                $f->name = (string)$k;
+                $f->table = '';
+                $f->max_length = 255;
+                $f->type = 253;
+                $this->fields[] = $f;
+            }
+        } else {
+            $this->field_count = 0;
+            $this->fields = [];
+        }
+        $this->cursor = 0;
+        $this->current_field = 0;
+    }
+
+    public function fetch_object($class_name = 'stdClass', $params = [])
+    {
+        if ($this->cursor < $this->num_rows) {
+            $data = $this->rows[$this->cursor++];
+            if ($class_name === 'stdClass' || empty($class_name)) {
+                return (object)$data;
+            }
+            $obj = new $class_name();
+            foreach ($data as $k => $v) {
+                $obj->$k = $v;
+            }
+            return $obj;
+        }
+        return null;
+    }
+
+    public function fetch_assoc()
+    {
+        if ($this->cursor < $this->num_rows) {
+            return $this->rows[$this->cursor++];
+        }
+        return null;
+    }
+
+    public function fetch_row()
+    {
+        if ($this->cursor < $this->num_rows) {
+            return array_values($this->rows[$this->cursor++]);
+        }
+        return null;
+    }
+
+    public function fetch_array($mode = 3)
+    {
+        if ($this->cursor < $this->num_rows) {
+            $assoc = $this->rows[$this->cursor++];
+            if ($mode === 1) {
+                return $assoc;
+            }
+            $num = array_values($assoc);
+            if ($mode === 2) {
+                return $num;
+            }
+            $res = $assoc;
+            $i = 0;
+            foreach ($assoc as $v) {
+                $res[$i++] = $v;
+            }
+            return $res;
+        }
+        return null;
+    }
+
+    public function fetch_field()
+    {
+        if ($this->current_field < count($this->fields)) {
+            return $this->fields[$this->current_field++];
+        }
+        return false;
+    }
+
+    public function fetch_fields()
+    {
+        return $this->fields;
+    }
+
+    public function data_seek($offset)
+    {
+        $this->cursor = (int)$offset;
+        return true;
+    }
+
+    public function free()
+    {
+        $this->rows = [];
+        $this->num_rows = 0;
+        $this->cursor = 0;
+    }
+
+    public function close()
+    {
+        $this->free();
+    }
+
+    public function free_result()
+    {
+        $this->free();
+    }
+}
+
+class mysqli
+{
+    public $client_info = 'mysqlnd 8.4.1';
+    public $client_version = 80401;
+    public $connect_errno = 0;
+    public $connect_error = null;
+    public $errno = 0;
+    public $error = '';
+    public $error_list = [];
+    public $field_count = 0;
+    public $host_info = '';
+    public $info = null;
+    public $insert_id = 0;
+    public $server_info = '8.4.1-Hyperion';
+    public $server_version = 80401;
+    public $sqlstate = '00000';
+    public $protocol_version = 10;
+    public $thread_id = 1;
+    public $warning_count = 0;
+    public $affected_rows = 0;
+    public $pdo = null;
+    private $current_db = '';
+    private $charset = 'utf8mb4';
+
+    public function __construct($host = null, $user = null, $password = null, $database = null, $port = null, $socket = null)
+    {
+        if ($host !== null) {
+            $this->real_connect($host, $user, $password, $database, $port, $socket);
+        }
+    }
+
+    public function init()
+    {
+        return true;
+    }
+
+    public function real_connect($host = null, $user = null, $password = null, $database = null, $port = null, $socket = null, $flags = 0)
+    {
+        $host_str = (string)$host;
+        $port_num = !empty($port) ? (int)$port : 3306;
+        if (strpos($host_str, ':') !== false) {
+            $parts = explode(':', $host_str, 2);
+            $host_str = $parts[0];
+            if (is_numeric($parts[1])) {
+                $port_num = (int)$parts[1];
+            }
+        }
+        if (empty($host_str) || $host_str === 'localhost') {
+            $host_str = '127.0.0.1';
+        }
+
+        $this->current_db = (string)$database;
+        $dsn = "mysql:host=" . $host_str . ";port=" . $port_num;
+        if (!empty($database)) {
+            $dsn .= ";dbname=" . $database;
+        }
+        $dsn .= ";charset=" . $this->charset;
+
+        try {
+            $this->pdo = new PDO($dsn, (string)$user, (string)$password);
+            $this->connect_errno = 0;
+            $this->connect_error = null;
+            $this->errno = 0;
+            $this->error = '';
+            $GLOBALS['__mysqli_last_connect_errno'] = 0;
+            $GLOBALS['__mysqli_last_connect_error'] = null;
+            return true;
+        } catch (Throwable $e) {
+            $msg = $e->getMessage();
+            $this->connect_errno = 2002;
+            $this->connect_error = $msg;
+            $this->errno = 2002;
+            $this->error = $msg;
+            $GLOBALS['__mysqli_last_connect_errno'] = 2002;
+            $GLOBALS['__mysqli_last_connect_error'] = $msg;
+            return false;
+        }
+    }
+
+    public function select_db($database)
+    {
+        $this->current_db = (string)$database;
+        if ($this->pdo) {
+            $res = $this->pdo->exec("USE `" . str_replace("`", "``", $database) . "`");
+            return $res !== false;
+        }
+        return true;
+    }
+
+    public function set_charset($charset)
+    {
+        $this->charset = (string)$charset;
+        if ($this->pdo) {
+            $this->pdo->exec("SET NAMES '" . $this->real_escape_string($charset) . "'");
+        }
+        return true;
+    }
+
+    public function character_set_name()
+    {
+        return $this->charset;
+    }
+
+    public function query($query, $result_mode = 0)
+    {
+        if (!$this->pdo) {
+            $this->errno = 2006;
+            $this->error = 'MySQL server has gone away';
+            return false;
+        }
+
+        $trimmed = trim((string)$query);
+        $upper = strtoupper(substr($trimmed, 0, 8));
+
+        $is_select = (
+            strpos($upper, 'SELECT') === 0 ||
+            strpos($upper, 'SHOW') === 0 ||
+            strpos($upper, 'DESCRIBE') === 0 ||
+            strpos($upper, 'EXPLAIN') === 0
+        );
+
+        if ($is_select) {
+            try {
+                $stmt = $this->pdo->query($query);
+                if (!$stmt) {
+                    $this->errno = 1064;
+                    $this->error = 'Query error';
+                    return false;
+                }
+                $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $this->affected_rows = count($rows);
+                $this->errno = 0;
+                $this->error = '';
+                return new mysqli_result($stmt, $rows);
+            } catch (Throwable $e) {
+                $this->errno = 1064;
+                $this->error = $e->getMessage();
+                return false;
+            }
+        } else {
+            try {
+                $affected = $this->pdo->exec($query);
+                if ($affected === false) {
+                    $this->errno = 1064;
+                    $this->error = 'Execution error';
+                    return false;
+                }
+                $this->affected_rows = (int)$affected;
+                $this->insert_id = (int)$this->pdo->lastInsertId();
+                $this->errno = 0;
+                $this->error = '';
+                return true;
+            } catch (Throwable $e) {
+                $this->errno = 1064;
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+    }
+
+    public function real_escape_string($string)
+    {
+        if ($string === null) {
+            return '';
+        }
+        return str_replace(
+            ["\\", "\0", "\n", "\r", "'", '"', "\x1a"],
+            ["\\\\", "\\0", "\\n", "\\r", "\\'", '\\"', "\\Z"],
+            (string)$string
+        );
+    }
+
+    public function escape_string($string)
+    {
+        return $this->real_escape_string($string);
+    }
+
+    public function close()
+    {
+        $this->pdo = null;
+        return true;
+    }
+
+    public function ping()
+    {
+        return !empty($this->pdo);
+    }
+
+    public function options($option, $value)
+    {
+        return true;
+    }
+
+    public function ssl_set($key, $certificate, $ca_certificate, $ca_path, $cipher_algos)
+    {
+        return true;
+    }
+
+    public function autocommit($mode)
+    {
+        return true;
+    }
+
+    public function begin_transaction($flags = 0, $name = null)
+    {
+        return $this->pdo ? $this->pdo->beginTransaction() : false;
+    }
+
+    public function commit($flags = 0, $name = null)
+    {
+        return $this->pdo ? $this->pdo->commit() : false;
+    }
+
+    public function rollback($flags = 0, $name = null)
+    {
+        return $this->pdo ? $this->pdo->rollBack() : false;
+    }
+
+    public function get_server_info()
+    {
+        return $this->server_info;
+    }
+}
+
+class mysqli_driver
+{
+    public $report_mode = 0;
+}
+
+function mysqli_init()
+{
+    return new mysqli();
+}
+
+function mysqli_connect($host = null, $user = null, $password = null, $database = null, $port = null, $socket = null)
+{
+    $link = new mysqli();
+    if ($host !== null) {
+        $link->real_connect($host, $user, $password, $database, $port, $socket);
+    }
+    return $link;
+}
+
+function mysqli_real_connect($link, $host = null, $user = null, $password = null, $database = null, $port = null, $socket = null, $flags = 0)
+{
+    if ($link instanceof mysqli) {
+        return $link->real_connect($host, $user, $password, $database, $port, $socket, $flags);
+    }
+    return false;
+}
+
+function mysqli_connect_errno()
+{
+    return isset($GLOBALS['__mysqli_last_connect_errno']) ? (int)$GLOBALS['__mysqli_last_connect_errno'] : 0;
+}
+
+function mysqli_connect_error()
+{
+    return isset($GLOBALS['__mysqli_last_connect_error']) ? (string)$GLOBALS['__mysqli_last_connect_error'] : null;
+}
+
+function mysqli_query($link, $query, $result_mode = 0)
+{
+    if ($link instanceof mysqli) {
+        return $link->query($query, $result_mode);
+    }
+    return false;
+}
+
+function mysqli_fetch_object($result, $class_name = 'stdClass', $params = [])
+{
+    if ($result instanceof mysqli_result) {
+        return $result->fetch_object($class_name, $params);
+    }
+    return null;
+}
+
+function mysqli_fetch_assoc($result)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->fetch_assoc();
+    }
+    return null;
+}
+
+function mysqli_fetch_array($result, $mode = 3)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->fetch_array($mode);
+    }
+    return null;
+}
+
+function mysqli_fetch_row($result)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->fetch_row();
+    }
+    return null;
+}
+
+function mysqli_fetch_field($result)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->fetch_field();
+    }
+    return false;
+}
+
+function mysqli_fetch_fields($result)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->fetch_fields();
+    }
+    return [];
+}
+
+function mysqli_num_rows($result)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->num_rows;
+    }
+    return 0;
+}
+
+function mysqli_num_fields($result)
+{
+    if ($result instanceof mysqli_result) {
+        return $result->field_count;
+    }
+    return 0;
+}
+
+function mysqli_free_result($result)
+{
+    if ($result instanceof mysqli_result) {
+        $result->free();
+    }
+}
+
+function mysqli_more_results($link)
+{
+    return false;
+}
+
+function mysqli_next_result($link)
+{
+    return false;
+}
+
+function mysqli_errno($link)
+{
+    return ($link instanceof mysqli) ? $link->errno : 0;
+}
+
+function mysqli_error($link)
+{
+    return ($link instanceof mysqli) ? $link->error : '';
+}
+
+function mysqli_insert_id($link)
+{
+    return ($link instanceof mysqli) ? $link->insert_id : 0;
+}
+
+function mysqli_affected_rows($link)
+{
+    return ($link instanceof mysqli) ? $link->affected_rows : 0;
+}
+
+function mysqli_set_charset($link, $charset)
+{
+    if ($link instanceof mysqli) {
+        return $link->set_charset($charset);
+    }
+    return false;
+}
+
+function mysqli_character_set_name($link)
+{
+    if ($link instanceof mysqli) {
+        return $link->character_set_name();
+    }
+    return 'utf8mb4';
+}
+
+function mysqli_select_db($link, $database)
+{
+    if ($link instanceof mysqli) {
+        return $link->select_db($database);
+    }
+    return false;
+}
+
+function mysqli_real_escape_string($link, $string)
+{
+    if ($link instanceof mysqli) {
+        return $link->real_escape_string($string);
+    }
+    return (string)$string;
+}
+
+function mysqli_escape_string($link, $string)
+{
+    return mysqli_real_escape_string($link, $string);
+}
+
+function mysqli_close($link)
+{
+    if ($link instanceof mysqli) {
+        return $link->close();
+    }
+    return true;
+}
+
+function mysqli_report($flags)
+{
+    return true;
+}
+
+function mysqli_get_server_info($link)
+{
+    if ($link instanceof mysqli) {
+        return $link->server_info;
+    }
+    return '8.4.1-Hyperion';
+}
+
+function mysqli_ping($link)
+{
+    if ($link instanceof mysqli) {
+        return $link->ping();
+    }
+    return false;
+}
+
+function mysqli_options($link, $option, $value)
+{
+    if ($link instanceof mysqli) {
+        return $link->options($option, $value);
+    }
+    return true;
+}
+
+function mysqli_ssl_set($link, $key, $certificate, $ca_certificate, $ca_path, $cipher_algos)
+{
+    return true;
+}
+
+function mysqli_autocommit($link, $mode)
+{
+    if ($link instanceof mysqli) {
+        return $link->autocommit($mode);
+    }
+    return true;
+}
+
+function mysqli_begin_transaction($link, $flags = 0, $name = null)
+{
+    if ($link instanceof mysqli) {
+        return $link->begin_transaction($flags, $name);
+    }
+    return false;
+}
+
+function mysqli_commit($link, $flags = 0, $name = null)
+{
+    if ($link instanceof mysqli) {
+        return $link->commit($flags, $name);
+    }
+    return false;
+}
+
+function mysqli_rollback($link, $flags = 0, $name = null)
+{
+    if ($link instanceof mysqli) {
+        return $link->rollback($flags, $name);
+    }
+    return false;
+}
+
+

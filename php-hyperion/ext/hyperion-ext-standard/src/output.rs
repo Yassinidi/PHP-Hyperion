@@ -313,7 +313,7 @@ php_function! {
             "mbstring", "hash", "openssl", "filter", "random", "reflection",
             "tokenizer", "session", "pdo", "pdo_sqlite", "pdo_mysql", "pdo_pgsql",
             "iconv", "curl", "zlib", "zip", "gd", "pcntl", "posix", "redis", "intl",
-            "dom", "libxml", "xmlwriter", "simplexml", "xml", "xmlreader",
+            "dom", "libxml", "xmlwriter", "simplexml", "xml", "xmlreader", "mysqli", "mysqlnd",
         ];
         let Some(n) = name.and_then(|v| v.deref().as_string_ptr()) else {
             return Ok(Value::new_bool(false));
@@ -330,7 +330,7 @@ php_function! {
             "mbstring", "hash", "openssl", "filter", "random", "Reflection",
             "tokenizer", "session", "PDO", "pdo_sqlite", "pdo_mysql", "pdo_pgsql",
             "iconv", "curl", "zlib", "zip", "gd", "pcntl", "posix", "redis", "intl",
-            "dom", "libxml", "xmlwriter", "SimpleXML", "xml", "xmlreader",
+            "dom", "libxml", "xmlwriter", "SimpleXML", "xml", "xmlreader", "mysqli", "mysqlnd",
         ];
         let mut arr = hyperion_core::types::array::PhpArray::new();
         for &ext in LOADED {

@@ -36,7 +36,6 @@ pub fn register_core_classes(classes: &dashmap::DashMap<usize, PhpClass>, curren
     }
 
     if let Some(mut gen) = classes.iter_mut().find(|c| c.value().name == "Generator") {
-        eprintln!("FOUND GENERATOR! Current methods: {}", gen.methods.len());
         gen.implements("Iterator");
         gen.implements("Traversable");
         gen.add_native_method("rewind".to_string(), 0, "native_generator_rewind".to_string());

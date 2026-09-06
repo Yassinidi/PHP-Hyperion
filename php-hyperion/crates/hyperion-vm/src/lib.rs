@@ -7,3 +7,4 @@ pub mod types;
 pub mod worker;
 pub mod core_classes;
 pub mod route_trie;
+pub mod zend_sapi;
