@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="../../laravel-crud/vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="../../laravel-crud/vendor/autoload.php"
+         xsi:noNamespaceSchemaLocation="../../frameworks/laravel-full/vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="../../frameworks/laravel-full/vendor/autoload.php"
          colors="true"
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"

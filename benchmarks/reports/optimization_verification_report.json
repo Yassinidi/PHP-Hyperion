@@ -1,0 +1,44 @@
+{
+  "symfony": {
+    "php": {
+      "success": 500,
+      "total": 500,
+      "rps": 10145.49,
+      "mean_ms": 0.99,
+      "p50_ms": 1,
+      "p95_ms": 2,
+      "wall_s": 0.049
+    },
+    "hyperion": {
+      "success": 10000,
+      "total": 10000,
+      "rps": 53104.77,
+      "mean_ms": 1.88,
+      "p50_ms": 2,
+      "p95_ms": 4,
+      "wall_s": 0.188
+    },
+    "speedup": 5.23
+  },
+  "laravel-complex": {
+    "php": {
+      "success": 500,
+      "total": 500,
+      "rps": 246.09,
+      "mean_ms": 40.64,
+      "p50_ms": 35,
+      "p95_ms": 74,
+      "wall_s": 2.032
+    },
+    "hyperion": {
+      "success": 10000,
+      "total": 10000,
+      "rps": 991.24,
+      "mean_ms": 100.88,
+      "p50_ms": 81,
+      "p95_ms": 232,
+      "wall_s": 10.088
+    },
+    "speedup": 4.03
+  }
+}

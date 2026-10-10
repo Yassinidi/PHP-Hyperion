@@ -1,0 +1,81 @@
+{
+  "title": "Laravel 11 E-Commerce",
+  "php_rss_mb": 0.0,
+  "hyperion_rss_mb": 0.0,
+  "products_api": [
+    {
+      "concurrency": 10,
+      "requests": 2000,
+      "php_rps": 2351.04,
+      "php_ms": 4.253,
+      "hyperion_rps": 4235.04,
+      "hyperion_ms": 2.361,
+      "speedup": 1.8
+    },
+    {
+      "concurrency": 50,
+      "requests": 2000,
+      "php_rps": 2330.82,
+      "php_ms": 21.452,
+      "hyperion_rps": 5110.96,
+      "hyperion_ms": 9.783,
+      "speedup": 2.19
+    },
+    {
+      "concurrency": 100,
+      "requests": 2000,
+      "php_rps": 2380.36,
+      "php_ms": 42.01,
+      "hyperion_rps": 5439.62,
+      "hyperion_ms": 18.384,
+      "speedup": 2.29
+    },
+    {
+      "concurrency": 200,
+      "requests": 2000,
+      "php_rps": 0.0,
+      "php_ms": 0.0,
+      "hyperion_rps": 4776.92,
+      "hyperion_ms": 41.868,
+      "speedup": 0.0
+    }
+  ],
+  "storefront_home": [
+    {
+      "concurrency": 10,
+      "requests": 2000,
+      "php_rps": 2308.81,
+      "php_ms": 4.331,
+      "hyperion_rps": 3980.74,
+      "hyperion_ms": 2.512,
+      "speedup": 1.72
+    },
+    {
+      "concurrency": 50,
+      "requests": 2000,
+      "php_rps": 2365.84,
+      "php_ms": 21.134,
+      "hyperion_rps": 3839.83,
+      "hyperion_ms": 13.021,
+      "speedup": 1.62
+    },
+    {
+      "concurrency": 100,
+      "requests": 2000,
+      "php_rps": 2411.25,
+      "php_ms": 41.472,
+      "hyperion_rps": 3625.13,
+      "hyperion_ms": 27.585,
+      "speedup": 1.5
+    },
+    {
+      "concurrency": 200,
+      "requests": 2000,
+      "php_rps": 0.0,
+      "php_ms": 0.0,
+      "hyperion_rps": 3348.52,
+      "hyperion_ms": 59.728,
+      "speedup": 0.0
+    }
+  ]
+}

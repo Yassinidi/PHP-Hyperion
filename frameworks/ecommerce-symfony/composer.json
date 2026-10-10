@@ -1,0 +1,20 @@
+{
+    "name": "hyperion/ecommerce-symfony",
+    "description": "Full E-Commerce project built with Symfony 7 from scratch for PHP-Hyperion benchmarks",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "symfony/http-foundation": "^7.1",
+        "symfony/http-kernel": "^7.1",
+        "symfony/routing": "^7.1",
+        "symfony/dependency-injection": "^7.1",
+        "symfony/event-dispatcher": "^7.1",
+        "symfony/error-handler": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}

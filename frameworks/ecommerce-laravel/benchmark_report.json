@@ -1,0 +1,25 @@
+{
+  "project": "ecommerce-laravel",
+  "concurrency": 50,
+  "total_requests": 3000,
+  "storefront_home": {
+    "standard_php_rps": 1911.38,
+    "hyperion_rps": 2130.27,
+    "speedup": "1.11x"
+  },
+  "products_api": {
+    "standard_php_rps": 1884.15,
+    "hyperion_rps": 2320.4,
+    "speedup": "1.23x"
+  },
+  "features_verified": {
+    "storefront_home": "PASS",
+    "banners": "PASS (3 banners)",
+    "categories": "PASS (4 categories)",
+    "products": "PASS (8 products)",
+    "product_detail": "PASS (ID 1)",
+    "cart_checkout": "PASS (Order #4)",
+    "admin_dashboard": "PASS ($12398.97 revenue)",
+    "admin_and_client_users": "PASS (2 users, roles: ['client', 'admin'])"
+  }
+}

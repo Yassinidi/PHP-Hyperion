@@ -1,7 +1,0 @@
-[package]
-name = "hyperion-bytecode"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-hyperion-core = { path = "../hyperion-core" }

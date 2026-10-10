@@ -1,0 +1,197 @@
+[
+  {
+    "scenario": "1. Micro JSON Status (GET /)",
+    "requests": 5000,
+    "concurrency": 50,
+    "standard_php": {
+      "success": true,
+      "rps": 16698.95,
+      "mean_ms": 2.994,
+      "p50_ms": 3.0,
+      "p95_ms": 5.0,
+      "p99_ms": 10.0,
+      "max_ms": 26.0,
+      "failed": 0,
+      "wall_time_s": 0.305
+    },
+    "hyperion_hybrid": {
+      "success": true,
+      "rps": 11249.1,
+      "mean_ms": 4.445,
+      "p50_ms": 4.0,
+      "p95_ms": 5.0,
+      "p99_ms": 5.0,
+      "max_ms": 6.0,
+      "failed": 0,
+      "wall_time_s": 0.449
+    },
+    "hyperion_pure_vm": {
+      "success": true,
+      "rps": 26920.07,
+      "mean_ms": 1.857,
+      "p50_ms": 1.0,
+      "p95_ms": 5.0,
+      "p99_ms": 7.0,
+      "max_ms": 19.0,
+      "failed": 0,
+      "wall_time_s": 0.19
+    },
+    "speedup_factor": 1.61
+  },
+  {
+    "scenario": "2. Models & Serialization (GET /api/users)",
+    "requests": 3000,
+    "concurrency": 25,
+    "standard_php": {
+      "success": true,
+      "rps": 17329.52,
+      "mean_ms": 1.443,
+      "p50_ms": 1.0,
+      "p95_ms": 2.0,
+      "p99_ms": 5.0,
+      "max_ms": 10.0,
+      "failed": 0,
+      "wall_time_s": 0.178
+    },
+    "hyperion_hybrid": {
+      "success": true,
+      "rps": 10959.99,
+      "mean_ms": 2.281,
+      "p50_ms": 2.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "max_ms": 3.0,
+      "failed": 0,
+      "wall_time_s": 0.278
+    },
+    "hyperion_pure_vm": {
+      "success": true,
+      "rps": 37348.74,
+      "mean_ms": 0.669,
+      "p50_ms": 0.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "max_ms": 32.0,
+      "failed": 0,
+      "wall_time_s": 0.085
+    },
+    "speedup_factor": 2.16
+  },
+  {
+    "scenario": "3. Pricing & Tax Calculations (GET /api/products?tax=0.15&discount=0.10)",
+    "requests": 3000,
+    "concurrency": 25,
+    "standard_php": {
+      "success": true,
+      "rps": 17623.32,
+      "mean_ms": 1.419,
+      "p50_ms": 1.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "max_ms": 6.0,
+      "failed": 0,
+      "wall_time_s": 0.175
+    },
+    "hyperion_hybrid": {
+      "success": true,
+      "rps": 10469.52,
+      "mean_ms": 2.388,
+      "p50_ms": 2.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "max_ms": 3.0,
+      "failed": 0,
+      "wall_time_s": 0.291
+    },
+    "hyperion_pure_vm": {
+      "success": true,
+      "rps": 16358.67,
+      "mean_ms": 1.528,
+      "p50_ms": 2.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "max_ms": 12.0,
+      "failed": 0,
+      "wall_time_s": 0.188
+    },
+    "speedup_factor": 0.93
+  },
+  {
+    "scenario": "4. Extreme Concurrency Stress (GET /)",
+    "requests": 10000,
+    "concurrency": 100,
+    "standard_php": {
+      "success": true,
+      "rps": 18795.05,
+      "mean_ms": 5.321,
+      "p50_ms": 5.0,
+      "p95_ms": 7.0,
+      "p99_ms": 7.0,
+      "max_ms": 11.0,
+      "failed": 0,
+      "wall_time_s": 0.539
+    },
+    "hyperion_hybrid": {
+      "success": true,
+      "rps": 11288.39,
+      "mean_ms": 8.859,
+      "p50_ms": 9.0,
+      "p95_ms": 9.0,
+      "p99_ms": 18.0,
+      "max_ms": 26.0,
+      "failed": 0,
+      "wall_time_s": 0.891
+    },
+    "hyperion_pure_vm": {
+      "success": true,
+      "rps": 46185.75,
+      "mean_ms": 2.165,
+      "p50_ms": 1.0,
+      "p95_ms": 8.0,
+      "p99_ms": 13.0,
+      "max_ms": 104.0,
+      "failed": 0,
+      "wall_time_s": 0.222
+    },
+    "speedup_factor": 2.46
+  },
+  {
+    "scenario": "5. Crypto & Array Transformation (GET /api/compute?n=100)",
+    "requests": 2000,
+    "concurrency": 20,
+    "standard_php": {
+      "success": true,
+      "rps": 14253.44,
+      "mean_ms": 1.403,
+      "p50_ms": 1.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "max_ms": 4.0,
+      "failed": 201,
+      "wall_time_s": 0.145
+    },
+    "hyperion_hybrid": {
+      "success": true,
+      "rps": 7249.77,
+      "mean_ms": 2.759,
+      "p50_ms": 3.0,
+      "p95_ms": 3.0,
+      "p99_ms": 3.0,
+      "max_ms": 5.0,
+      "failed": 209,
+      "wall_time_s": 0.28
+    },
+    "hyperion_pure_vm": {
+      "success": true,
+      "rps": 12773.76,
+      "mean_ms": 1.566,
+      "p50_ms": 1.0,
+      "p95_ms": 3.0,
+      "p99_ms": 3.0,
+      "max_ms": 76.0,
+      "failed": 1826,
+      "wall_time_s": 0.161
+    },
+    "speedup_factor": 0.9
+  }
+]

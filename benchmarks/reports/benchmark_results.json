@@ -1,0 +1,184 @@
+{
+  "http_benchmarks": [
+    {
+      "name": "1. API Health / Ingress Pipeline",
+      "path": "/health",
+      "requests": 500,
+      "concurrency": 25,
+      "php": {
+        "success": true,
+        "rps": 254.68,
+        "mean_ms": 98.163,
+        "p50_ms": 95.0,
+        "p90_ms": 100.0,
+        "p99_ms": 143.0,
+        "failed": 0,
+        "wall_time": 1.97
+      },
+      "php_rss": 47.22,
+      "hyperion": {
+        "success": true,
+        "rps": 56986.55,
+        "mean_ms": 0.439,
+        "p50_ms": 0.0,
+        "p90_ms": 1.0,
+        "p99_ms": 2.0,
+        "failed": 0,
+        "wall_time": 0.01
+      },
+      "hyperion_rss": 204.67
+    },
+    {
+      "name": "2. Eloquent Catalog API",
+      "path": "/api/v1/products",
+      "requests": 300,
+      "concurrency": 15,
+      "php": {
+        "success": true,
+        "rps": 141.98,
+        "mean_ms": 105.646,
+        "p50_ms": 100.0,
+        "p90_ms": 118.0,
+        "p99_ms": 140.0,
+        "failed": 0,
+        "wall_time": 2.12
+      },
+      "php_rss": 49.55,
+      "hyperion": {
+        "success": true,
+        "rps": 37726.36,
+        "mean_ms": 0.398,
+        "p50_ms": 0.0,
+        "p90_ms": 1.0,
+        "p99_ms": 2.0,
+        "failed": 0,
+        "wall_time": 0.02
+      },
+      "hyperion_rss": 204.67
+    },
+    {
+      "name": "3. Window Functions & Complex SQL",
+      "path": "/api/v1/queries/window-rankings",
+      "requests": 300,
+      "concurrency": 15,
+      "php": {
+        "success": true,
+        "rps": 259.92,
+        "mean_ms": 57.71,
+        "p50_ms": 55.0,
+        "p90_ms": 58.0,
+        "p99_ms": 98.0,
+        "failed": 0,
+        "wall_time": 1.16
+      },
+      "php_rss": 49.64,
+      "hyperion": {
+        "success": true,
+        "rps": 42900.04,
+        "mean_ms": 0.35,
+        "p50_ms": 0.0,
+        "p90_ms": 0.0,
+        "p99_ms": 1.0,
+        "failed": 0,
+        "wall_time": 0.01
+      },
+      "hyperion_rss": 204.67
+    },
+    {
+      "name": "4. Subquery Joins (joinSub)",
+      "path": "/api/v1/queries/joinsub-performance",
+      "requests": 300,
+      "concurrency": 15,
+      "php": {
+        "success": true,
+        "rps": 267.25,
+        "mean_ms": 56.127,
+        "p50_ms": 54.0,
+        "p90_ms": 57.0,
+        "p99_ms": 97.0,
+        "failed": 0,
+        "wall_time": 1.13
+      },
+      "php_rss": 49.67,
+      "hyperion": {
+        "success": true,
+        "rps": 55422.13,
+        "mean_ms": 0.271,
+        "p50_ms": 0.0,
+        "p90_ms": 0.0,
+        "p99_ms": 0.0,
+        "failed": 0,
+        "wall_time": 0.01
+      },
+      "hyperion_rss": 204.67
+    },
+    {
+      "name": "5. Full Blade View Rendering (/complex)",
+      "path": "/complex",
+      "requests": 200,
+      "concurrency": 10,
+      "php": {
+        "success": true,
+        "rps": 146.95,
+        "mean_ms": 68.051,
+        "p50_ms": 65.0,
+        "p90_ms": 71.0,
+        "p99_ms": 106.0,
+        "failed": 0,
+        "wall_time": 1.36
+      },
+      "php_rss": 50.69,
+      "hyperion": {
+        "success": true,
+        "rps": 29962.55,
+        "mean_ms": 0.334,
+        "p50_ms": 0.0,
+        "p90_ms": 1.0,
+        "p99_ms": 1.0,
+        "failed": 0,
+        "wall_time": 0.01
+      },
+      "hyperion_rss": 204.67
+    },
+    {
+      "name": "6. Storefront Catalog View (/)",
+      "path": "/",
+      "requests": 200,
+      "concurrency": 10,
+      "php": {
+        "success": true,
+        "rps": 112.21,
+        "mean_ms": 89.122,
+        "p50_ms": 85.0,
+        "p90_ms": 103.0,
+        "p99_ms": 131.0,
+        "failed": 0,
+        "wall_time": 1.79
+      },
+      "php_rss": 50.84,
+      "hyperion": {
+        "success": true,
+        "rps": 57653.5,
+        "mean_ms": 0.173,
+        "p50_ms": 0.0,
+        "p90_ms": 0.0,
+        "p99_ms": 0.0,
+        "failed": 0,
+        "wall_time": 0.01
+      },
+      "hyperion_rss": 204.67
+    }
+  ],
+  "cli_benchmarks": {
+    "php": {
+      "min_time": 0.1287,
+      "avg_time": 0.1478,
+      "max_time": 0.1822
+    },
+    "hyperion": {
+      "min_time": 0.1416,
+      "avg_time": 0.1498,
+      "max_time": 0.1795
+    }
+  }
+}

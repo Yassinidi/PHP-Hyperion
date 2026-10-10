@@ -1,0 +1,414 @@
+{
+  "timestamp": "2026-10-10 21:20:26",
+  "target": "frameworks/laravel-complex",
+  "cpu_cores": 10,
+  "tuning": {
+    "hyperion": "PHP_CLI_SERVER_WORKERS=16, HYPERION_REACTORS=8, HYPERION_MAX_FIBRES=128",
+    "php84": "PHP_CLI_SERVER_WORKERS=8"
+  },
+  "http_head_to_head": [
+    {
+      "category": "Kernel & Ingress",
+      "name": "Framework Ingress & Health Check",
+      "path": "/health",
+      "requests": 500,
+      "concurrency": 25,
+      "php": {
+        "success": true,
+        "rps": 333.39,
+        "mean_ms": 74.988,
+        "concurrent_ms": 3.0,
+        "p50_ms": 73.0,
+        "p90_ms": 86.0,
+        "p95_ms": 89.0,
+        "p99_ms": 97.0,
+        "max_ms": 101.0,
+        "failed": 0,
+        "wall_time_s": 1.505
+      },
+      "php_rss": 330.22,
+      "hyperion": {
+        "success": true,
+        "rps": 70791.45,
+        "mean_ms": 0.353,
+        "concurrent_ms": 0.014,
+        "p50_ms": 0.0,
+        "p90_ms": 1.0,
+        "p95_ms": 1.0,
+        "p99_ms": 1.0,
+        "max_ms": 1.0,
+        "failed": 0,
+        "wall_time_s": 0.011
+      },
+      "hyperion_rss": 169.0,
+      "speedup": 212.34
+    },
+    {
+      "category": "Eloquent ORM",
+      "name": "Eloquent Catalog with Relations",
+      "path": "/api/v1/products",
+      "requests": 300,
+      "concurrency": 20,
+      "php": {
+        "success": true,
+        "rps": 290.59,
+        "mean_ms": 68.826,
+        "concurrent_ms": 3.441,
+        "p50_ms": 66.0,
+        "p90_ms": 79.0,
+        "p95_ms": 86.0,
+        "p99_ms": 96.0,
+        "max_ms": 97.0,
+        "failed": 0,
+        "wall_time_s": 1.037
+      },
+      "php_rss": 354.72,
+      "hyperion": {
+        "success": true,
+        "rps": 936.87,
+        "mean_ms": 21.348,
+        "concurrent_ms": 1.067,
+        "p50_ms": 17.0,
+        "p90_ms": 41.0,
+        "p95_ms": 54.0,
+        "p99_ms": 85.0,
+        "max_ms": 89.0,
+        "failed": 15,
+        "wall_time_s": 0.324
+      },
+      "hyperion_rss": 169.73,
+      "speedup": 3.22
+    },
+    {
+      "category": "Advanced SQL",
+      "name": "Window Functions (ROW_NUMBER & AVG OVER)",
+      "path": "/api/v1/queries/window-rankings",
+      "requests": 300,
+      "concurrency": 20,
+      "php": {
+        "success": true,
+        "rps": 337.6,
+        "mean_ms": 59.241,
+        "concurrent_ms": 2.962,
+        "p50_ms": 57.0,
+        "p90_ms": 68.0,
+        "p95_ms": 74.0,
+        "p99_ms": 83.0,
+        "max_ms": 86.0,
+        "failed": 0,
+        "wall_time_s": 0.893
+      },
+      "php_rss": 356.38,
+      "hyperion": {
+        "success": true,
+        "rps": 3514.07,
+        "mean_ms": 5.691,
+        "concurrent_ms": 0.285,
+        "p50_ms": 5.0,
+        "p90_ms": 9.0,
+        "p95_ms": 9.0,
+        "p99_ms": 10.0,
+        "max_ms": 14.0,
+        "failed": 0,
+        "wall_time_s": 0.089
+      },
+      "hyperion_rss": 170.12,
+      "speedup": 10.41
+    },
+    {
+      "category": "Advanced SQL",
+      "name": "Subquery Joins (joinSub)",
+      "path": "/api/v1/queries/joinsub-performance",
+      "requests": 300,
+      "concurrency": 20,
+      "php": {
+        "success": true,
+        "rps": 352.78,
+        "mean_ms": 56.692,
+        "concurrent_ms": 2.835,
+        "p50_ms": 54.0,
+        "p90_ms": 66.0,
+        "p95_ms": 69.0,
+        "p99_ms": 80.0,
+        "max_ms": 80.0,
+        "failed": 0,
+        "wall_time_s": 0.855
+      },
+      "php_rss": 356.55,
+      "hyperion": {
+        "success": true,
+        "rps": 4567.25,
+        "mean_ms": 4.379,
+        "concurrent_ms": 0.219,
+        "p50_ms": 4.0,
+        "p90_ms": 6.0,
+        "p95_ms": 7.0,
+        "p99_ms": 8.0,
+        "max_ms": 12.0,
+        "failed": 0,
+        "wall_time_s": 0.069
+      },
+      "hyperion_rss": 170.44,
+      "speedup": 12.95
+    },
+    {
+      "category": "Advanced SQL",
+      "name": "Correlated Subqueries (addSelect)",
+      "path": "/api/v1/queries/correlated-customers",
+      "requests": 300,
+      "concurrency": 20,
+      "php": {
+        "success": true,
+        "rps": 330.89,
+        "mean_ms": 60.443,
+        "concurrent_ms": 3.022,
+        "p50_ms": 57.0,
+        "p90_ms": 70.0,
+        "p95_ms": 74.0,
+        "p99_ms": 78.0,
+        "max_ms": 85.0,
+        "failed": 0,
+        "wall_time_s": 0.911
+      },
+      "php_rss": 359.42,
+      "hyperion": {
+        "success": true,
+        "rps": 3454.71,
+        "mean_ms": 5.789,
+        "concurrent_ms": 0.289,
+        "p50_ms": 5.0,
+        "p90_ms": 8.0,
+        "p95_ms": 13.0,
+        "p99_ms": 19.0,
+        "max_ms": 24.0,
+        "failed": 0,
+        "wall_time_s": 0.09
+      },
+      "hyperion_rss": 170.72,
+      "speedup": 10.44
+    },
+    {
+      "category": "Advanced SQL",
+      "name": "Cohort Spending Aggregates (HAVING)",
+      "path": "/api/v1/queries/cohort-spending",
+      "requests": 300,
+      "concurrency": 20,
+      "php": {
+        "success": true,
+        "rps": 344.59,
+        "mean_ms": 58.039,
+        "concurrent_ms": 2.902,
+        "p50_ms": 56.0,
+        "p90_ms": 67.0,
+        "p95_ms": 72.0,
+        "p99_ms": 79.0,
+        "max_ms": 112.0,
+        "failed": 0,
+        "wall_time_s": 0.875
+      },
+      "php_rss": 359.47,
+      "hyperion": {
+        "success": true,
+        "rps": 5655.15,
+        "mean_ms": 3.537,
+        "concurrent_ms": 0.177,
+        "p50_ms": 3.0,
+        "p90_ms": 5.0,
+        "p95_ms": 6.0,
+        "p99_ms": 8.0,
+        "max_ms": 10.0,
+        "failed": 0,
+        "wall_time_s": 0.057
+      },
+      "hyperion_rss": 170.92,
+      "speedup": 16.41
+    },
+    {
+      "category": "Blade & SSR",
+      "name": "Complex Dashboard Blade View",
+      "path": "/complex",
+      "requests": 200,
+      "concurrency": 15,
+      "php": {
+        "success": true,
+        "rps": 279.7,
+        "mean_ms": 53.629,
+        "concurrent_ms": 3.575,
+        "p50_ms": 51.0,
+        "p90_ms": 74.0,
+        "p95_ms": 80.0,
+        "p99_ms": 92.0,
+        "max_ms": 94.0,
+        "failed": 0,
+        "wall_time_s": 0.719
+      },
+      "php_rss": 372.75,
+      "hyperion": {
+        "success": true,
+        "rps": 1243.23,
+        "mean_ms": 12.065,
+        "concurrent_ms": 0.804,
+        "p50_ms": 9.0,
+        "p90_ms": 19.0,
+        "p95_ms": 26.0,
+        "p99_ms": 100.0,
+        "max_ms": 109.0,
+        "failed": 0,
+        "wall_time_s": 0.164
+      },
+      "hyperion_rss": 171.55,
+      "speedup": 4.44
+    },
+    {
+      "category": "Blade & SSR",
+      "name": "Storefront Catalog Blade View",
+      "path": "/",
+      "requests": 200,
+      "concurrency": 15,
+      "php": {
+        "success": true,
+        "rps": 243.72,
+        "mean_ms": 61.545,
+        "concurrent_ms": 4.103,
+        "p50_ms": 61.0,
+        "p90_ms": 84.0,
+        "p95_ms": 87.0,
+        "p99_ms": 96.0,
+        "max_ms": 101.0,
+        "failed": 0,
+        "wall_time_s": 0.825
+      },
+      "php_rss": 375.08,
+      "hyperion": {
+        "success": true,
+        "rps": 908.38,
+        "mean_ms": 16.513,
+        "concurrent_ms": 1.101,
+        "p50_ms": 12.0,
+        "p90_ms": 32.0,
+        "p95_ms": 43.0,
+        "p99_ms": 59.0,
+        "max_ms": 64.0,
+        "failed": 0,
+        "wall_time_s": 0.224
+      },
+      "hyperion_rss": 171.73,
+      "speedup": 3.73
+    }
+  ],
+  "concurrency_escalation_ladder": [
+    {
+      "concurrency": 10,
+      "requests": 500,
+      "rps": 95093.19,
+      "mean_ms": 0.105,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "p99_ms": 0.0,
+      "failed": 0,
+      "rss_mb": 171.73
+    },
+    {
+      "concurrency": 25,
+      "requests": 1000,
+      "rps": 91274.19,
+      "mean_ms": 0.274,
+      "p50_ms": 0.0,
+      "p95_ms": 1.0,
+      "p99_ms": 1.0,
+      "failed": 0,
+      "rss_mb": 171.73
+    },
+    {
+      "concurrency": 50,
+      "requests": 1500,
+      "rps": 90079.27,
+      "mean_ms": 0.555,
+      "p50_ms": 1.0,
+      "p95_ms": 1.0,
+      "p99_ms": 1.0,
+      "failed": 0,
+      "rss_mb": 171.73
+    },
+    {
+      "concurrency": 100,
+      "requests": 2000,
+      "rps": 133609.46,
+      "mean_ms": 0.748,
+      "p50_ms": 0.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "failed": 0,
+      "rss_mb": 171.73
+    },
+    {
+      "concurrency": 200,
+      "requests": 3000,
+      "rps": 209234.2,
+      "mean_ms": 0.956,
+      "p50_ms": 1.0,
+      "p95_ms": 2.0,
+      "p99_ms": 3.0,
+      "failed": 0,
+      "rss_mb": 171.78
+    },
+    {
+      "concurrency": 400,
+      "requests": 4000,
+      "rps": 186619.39,
+      "mean_ms": 2.143,
+      "p50_ms": 1.0,
+      "p95_ms": 5.0,
+      "p99_ms": 6.0,
+      "failed": 0,
+      "rss_mb": 171.83
+    }
+  ],
+  "cli_benchmarks": [
+    {
+      "name": "1. 12-Feature Dual-Engine Verification Battery",
+      "desc": "File I/O, WebSockets Reverb, Window SQL, CTEs, Savepoints, PHP 8.4 Syntax",
+      "php": {
+        "min_ms": 143.86,
+        "avg_ms": 144.98,
+        "max_ms": 146.77
+      },
+      "hyperion": {
+        "min_ms": 154.92,
+        "avg_ms": 158.34,
+        "max_ms": 162.12
+      },
+      "speedup": 0.92
+    },
+    {
+      "name": "2. Artisan Inventory Audit (store:audit-inventory)",
+      "desc": "Symfony Console Table, Eloquent models, stock thresholds",
+      "php": {
+        "min_ms": 139.33,
+        "avg_ms": 146.04,
+        "max_ms": 168.19
+      },
+      "hyperion": {
+        "min_ms": 152.64,
+        "avg_ms": 154.12,
+        "max_ms": 155.44
+      },
+      "speedup": 0.95
+    },
+    {
+      "name": "3. Artisan Route Listing (route:list)",
+      "desc": "Reflection, controller bindings, middleware introspection",
+      "php": {
+        "min_ms": 136.08,
+        "avg_ms": 138.35,
+        "max_ms": 140.16
+      },
+      "hyperion": {
+        "min_ms": 151.52,
+        "avg_ms": 151.98,
+        "max_ms": 152.81
+      },
+      "speedup": 0.91
+    }
+  ]
+}

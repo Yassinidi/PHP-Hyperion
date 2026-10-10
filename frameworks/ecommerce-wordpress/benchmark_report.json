@@ -1,0 +1,25 @@
+{
+  "project": "ecommerce-wordpress",
+  "concurrency": 50,
+  "total_requests": 3000,
+  "storefront_home": {
+    "standard_php_rps": 9213.42,
+    "hyperion_rps": 37010.08,
+    "speedup": "4.02x"
+  },
+  "products_api": {
+    "standard_php_rps": 9956.19,
+    "hyperion_rps": 75853.35,
+    "speedup": "7.62x"
+  },
+  "features_verified": {
+    "storefront_home": "PASS",
+    "banners": "PASS (3 banners)",
+    "categories": "PASS (4 categories)",
+    "products": "PASS (8 products)",
+    "product_detail": "PASS (ID 1)",
+    "cart_checkout": "PASS (Order #4)",
+    "admin_dashboard": "PASS ($12398.97 revenue)",
+    "admin_and_client_users": "PASS (2 users, roles: ['client', 'admin'])"
+  }
+}
