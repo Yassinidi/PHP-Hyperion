@@ -232,6 +232,27 @@ HYPERION_REACTORS=8 ./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8000
 
 ---
 
+## 📋 System & Production Requirements
+
+For full, detailed hardware, kernel, and framework tuning, see the [Production Requirements Guide](docs/REQUIREMENTS.md).
+
+| Requirement Category | Minimum Specification | Recommended for 100k+ Req/s |
+| :--- | :--- | :--- |
+| **Operating System** | Linux 5.4+ or macOS Darwin 22+ | Linux Kernel 6.x (Ubuntu 24.04 / Debian 12) |
+| **CPU Architecture** | 2 Cores (ARM64 / x86_64) | 8–16+ Cores (Apple Silicon or AMD EPYC / Intel Xeon) |
+| **Memory (RAM)** | 512 MB | 4 GB – 16 GB |
+| **PHP Runtime** | PHP 8.2+ CLI | **PHP 8.4 CLI** with OPcache JIT (`tracing`) |
+| **Mandatory Extensions** | `pcntl`, `posix`, `pdo`, `mbstring`, `openssl` | `redis`, `igbinary`, `intl` |
+| **Socket Descriptors** | `ulimit -n 4096` | `ulimit -n 65535` & `net.core.somaxconn = 65535` |
+| **Session & Cache** | In-memory / Cookie | **Redis** (avoid blocking `file` session locks) |
+
+Automated preflight certification command:
+```bash
+./bin/hyperion-doctor --project /path/to/laravel-app --strict
+```
+
+---
+
 ## 🧪 Running Benchmarks
 
 Reproduce the official benchmarks on your own machine using ApacheBench (`ab`) or `k6`:

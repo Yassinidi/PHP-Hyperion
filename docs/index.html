@@ -47,6 +47,7 @@
                 <ul class="sidebar-menu">
                     <li class="sidebar-item"><a href="#hero" class="sidebar-link active">Overview</a></li>
                     <li class="sidebar-item"><a href="#quickstart" class="sidebar-link">Quick Start</a></li>
+                    <li class="sidebar-item"><a href="#requirements" class="sidebar-link">Requirements <span class="badge-pill">Peak Perf</span></a></li>
                     <li class="sidebar-item"><a href="#comparison-matrix" class="sidebar-link">Runtime Matrix</a></li>
                     <li class="sidebar-item"><a href="#benchmarks" class="sidebar-link">Benchmarks <span class="badge-pill">208k r/s</span></a></li>
                     <li class="sidebar-item"><a href="#github-shootout" class="sidebar-link">GitHub Shootout <span class="badge-pill">5 Projects</span></a></li>
@@ -373,6 +374,190 @@ hyperion -S 0.0.0.0:8000 -t public public/index.php</code></pre>
                             <li><strong>How it works:</strong> You can define custom <code>cleanup</code> hooks, switch tenant databases per request, and override entrypoints.</li>
                             <li><strong>Command:</strong> <code>hyperion -S 127.0.0.1:8000 -W hyperion_worker.php</code></li>
                         </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System & Production Requirements Section -->
+            <section class="doc-section" id="requirements">
+                <div class="section-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    Production Blueprint
+                </div>
+                <h2 class="section-heading">System & Runtime Requirements: Peak Performance Blueprint</h2>
+                <p class="section-desc">
+                    The exact hardware, operating system, kernel socket settings, PHP runtime extensions, and framework pre-caching required for Hyperion to operate at peak efficiency (&gt;100,000 req/s, sub-millisecond latency, zero memory leaks).
+                </p>
+
+                <!-- Quick Preflight Matrix Table -->
+                <div class="table-wrapper" style="margin-bottom: 2rem;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subsystem / Resource</th>
+                                <th>Minimum Specification</th>
+                                <th>Recommended for 100k+ Req/s</th>
+                                <th>Validation Command</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Operating System</strong></td>
+                                <td>Linux Kernel 5.4+ or macOS Darwin 22+</td>
+                                <td>Linux Kernel 6.x+ (Ubuntu 24.04 / Debian 12 / RHEL 9)</td>
+                                <td><code>uname -r</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CPU Architecture</strong></td>
+                                <td>2 Cores (ARM64 or x86_64)</td>
+                                <td>8 to 16+ Cores (Apple Silicon M-Series, AMD EPYC, Intel Xeon)</td>
+                                <td><code>nproc</code> / <code>sysctl -n hw.ncpu</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>System RAM</strong></td>
+                                <td>512 MB</td>
+                                <td>4 GB to 16 GB (Allocates ~32 MB per persistent worker)</td>
+                                <td><code>free -m</code> / <code>top</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>PHP Runtime</strong></td>
+                                <td>PHP 8.2 CLI</td>
+                                <td><strong>PHP 8.4 CLI</strong> with OPcache JIT (<code>opcache.jit=tracing</code>)</td>
+                                <td><code>php -v</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>File Descriptors</strong></td>
+                                <td><code>ulimit -n 4096</code></td>
+                                <td><code>ulimit -n 65535</code> (or <code>1,048,576</code>)</td>
+                                <td><code>ulimit -n</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Socket Backlog</strong></td>
+                                <td><code>somaxconn = 128</code></td>
+                                <td><code>net.core.somaxconn = 65535</code> &amp; <code>tcp_tw_reuse = 1</code></td>
+                                <td><code>sysctl net.core.somaxconn</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Session Storage</strong></td>
+                                <td><code>cookie</code> / <code>array</code></td>
+                                <td><strong>Redis</strong> (bypasses file locking under concurrent load)</td>
+                                <td><code>grep SESSION_DRIVER .env</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Database Pool</strong></td>
+                                <td>Direct PDO connections</td>
+                                <td><strong>PgBouncer</strong> / MySQL Proxy (for 500+ concurrency)</td>
+                                <td><code>pgbouncer --version</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 4 Production Pillar Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Card 1: OS & Memory Sizing -->
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <h4 style="font-size: 1.1rem; font-weight: 700; color: #22d3ee; margin: 0;">
+                                🖥️ 1. OS & Memory Formula
+                            </h4>
+                            <span class="badge-pill" style="font-size: 0.7rem; border-color: rgba(34, 211, 238, 0.4); color: #22d3ee;">Hardware</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                            Hyperion workers are isolated OS processes. Memory usage scales predictably with the number of persistent workers:
+                        </p>
+                        <div style="background: rgba(15, 23, 42, 0.7); padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-family: monospace; font-size: 0.8rem; color: #38bdf8; margin-bottom: 0.75rem;">
+                            RAM = (Workers × 32MB) + Gateway Cache (256MB) + OS Buffer (512MB)
+                        </div>
+                        <ul style="font-size: 0.8rem; color: var(--text-muted); padding-left: 1.2rem; line-height: 1.7; margin: 0;">
+                            <li><strong>16 Workers:</strong> ~1.25 GB RAM required</li>
+                            <li><strong>32 Workers:</strong> ~1.80 GB RAM required</li>
+                            <li><strong>64 Workers:</strong> ~2.80 GB RAM required</li>
+                        </ul>
+                    </div>
+
+                    <!-- Card 2: PHP Extensions & OPcache JIT -->
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <h4 style="font-size: 1.1rem; font-weight: 700; color: #c084fc; margin: 0;">
+                                🐘 2. PHP & OPcache JIT
+                            </h4>
+                            <span class="badge-pill" style="font-size: 0.7rem; border-color: rgba(192, 132, 252, 0.4); color: #c084fc;">Runtime</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                            Ensure mandatory CLI extensions and the JIT compiler are enabled in <code>php.ini</code>:
+                        </p>
+                        <div class="code-block" style="margin: 0;">
+                            <pre><code># Required extensions (php -m):
+pcntl, posix, pdo, mbstring, openssl, curl
+
+# OPcache JIT in php.ini:
+opcache.enable_cli=1
+opcache.jit=tracing
+opcache.jit_buffer_size=128M</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Linux Kernel Tuning -->
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <h4 style="font-size: 1.1rem; font-weight: 700; color: #10b981; margin: 0;">
+                                🐧 3. Kernel TCP Sockets
+                            </h4>
+                            <span class="badge-pill" style="font-size: 0.7rem; border-color: rgba(16, 185, 129, 0.4); color: #10b981;">Network</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                            Default Linux socket queues choke at 128 connections. Apply kernel sysctl parameters:
+                        </p>
+                        <div class="code-block" style="margin: 0;">
+                            <pre><code># Apply high-concurrency socket tuning:
+sudo sysctl -p deploy/sysctl.conf
+
+# Set file descriptors limit:
+ulimit -n 65535</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Framework Warmup -->
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <h4 style="font-size: 1.1rem; font-weight: 700; color: #f59e0b; margin: 0;">
+                                ⚡ 4. Framework Pre-Warmup
+                            </h4>
+                            <span class="badge-pill" style="font-size: 0.7rem; border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">Zero I/O</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                            Eliminate dynamic disk parsing by compiling route tables and views prior to boot:
+                        </p>
+                        <div class="code-block" style="margin: 0;">
+                            <pre><code># Laravel (Execute in app root):
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# Set non-blocking sessions in .env:
+SESSION_DRIVER=redis</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- One-Line Preflight Certification Box -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: var(--radius-md); padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="font-weight: 700; color: #f8fafc; font-size: 1rem;">
+                            🩺 Automated 2-Second Preflight Verification
+                        </div>
+                        <span class="badge-pill-brand">One-Line Diagnosis</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        Run the repository's built-in certification doctor to test all 7 production pillars in a single command before deploying to production:
+                    </p>
+                    <div class="code-wrapper" style="margin: 0;">
+                        <div class="code-header">
+                            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+                            <span>terminal — Preflight Certification</span>
+                            <button class="btn-code-copy">Copy</button>
+                        </div>
+                        <pre><code>./bin/hyperion-doctor --project /path/to/your-laravel-app --strict</code></pre>
                     </div>
                 </div>
             </section>
