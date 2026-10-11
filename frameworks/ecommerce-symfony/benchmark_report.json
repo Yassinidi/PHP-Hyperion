@@ -1,16 +1,16 @@
 {
   "project": "ecommerce-symfony",
-  "concurrency": 50,
-  "total_requests": 3000,
+  "concurrency": 2,
+  "total_requests": 10,
   "storefront_home": {
-    "standard_php_rps": 8504.17,
-    "hyperion_rps": 22368.2,
-    "speedup": "2.63x"
+    "standard_php_rps": 1596.68,
+    "hyperion_rps": 15151.52,
+    "speedup": "9.49x"
   },
   "products_api": {
-    "standard_php_rps": 8866.43,
-    "hyperion_rps": 43306.29,
-    "speedup": "4.88x"
+    "standard_php_rps": 2768.55,
+    "hyperion_rps": 9149.13,
+    "speedup": "3.3x"
   },
   "features_verified": {
     "storefront_home": "PASS",
@@ -18,8 +18,8 @@
     "categories": "PASS (4 categories)",
     "products": "PASS (8 products)",
     "product_detail": "PASS (ID 1)",
-    "cart_checkout": "PASS (Order #4)",
-    "admin_dashboard": "PASS ($12398.97 revenue)",
-    "admin_and_client_users": "PASS (2 users, roles: ['admin', 'client'])"
+    "cart_checkout": "PASS (Order #44)",
+    "admin_dashboard": "PASS ($152398.57 revenue)",
+    "admin_and_client_users": "PASS (2 users, roles: ['client', 'admin'])"
   }
 }

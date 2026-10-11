@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Hyperion Laravel Pro Doctor & Guarantee CLI
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+python3 "$DIR/tools/hyperion_laravel_doctor.py" "$@"

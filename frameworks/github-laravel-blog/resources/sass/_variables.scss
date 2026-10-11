@@ -1,0 +1,14 @@
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+
+$fa-font-display: swap;
+$fa-font-path: "@fortawesome/fontawesome-free/webfonts";
+
+:root {
+  // Sidebar
+  --sidenav-base-width: 250px;
+  --sidenav-collapsed-width: 55px;
+  --navbar-base-height: 56px;
+}
+
+$link-decoration: none;

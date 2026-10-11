@@ -1,0 +1,14 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
+parameters:
+
+    paths:
+        - app
+
+    level: 8
+
+    ignoreErrors:
+    - '#Cannot access property \$[a-zA-Z0-9\\_]+ on App\\Models\\User\|null#'
+    - '#Cannot call method [a-zA-Z0-9\\_]+\(\) on App\\Models\\User\|null#'

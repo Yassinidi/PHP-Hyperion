@@ -57,8 +57,9 @@ class AdminController
                 'total_clients'   => $totalClients,
                 'low_stock_count' => count($lowStock),
             ],
-            'low_stock_items' => $lowStock,
-            'recent_orders'   => $recentOrders,
+            'low_stock_items'  => $lowStock,
+            'low_stock_alerts' => $lowStock,
+            'recent_orders'    => $recentOrders,
         ];
     }
 }

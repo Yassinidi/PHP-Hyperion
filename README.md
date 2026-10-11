@@ -42,6 +42,50 @@ Tested on Apple Silicon running production Laravel 12 Enterprise with ApacheBenc
 
 ---
 
+## 🌟 Head-to-Head Shootout: 5 Real Open-Source GitHub Projects
+
+Tested across 5 authentic, diverse open-source PHP projects cloned directly from GitHub with **zero code modifications**:
+
+```
+=========================================================================================================
+ #   | Project Repository           | Framework              | Normal PHP    | PHP-Hyperion    | Speedup   
+=========================================================================================================
+ 1   | dcblogdev/laravel-admintw    | Laravel 12 + Livewire 3 | 66.8 req/s    | 110,607.2 req/s | 1,655.80× 
+ 2   | slimphp/Slim-Skeleton        | Slim Framework 4 + PSR-7 | 4,096.8 req/s |  97,986.4 req/s |    23.92× 
+ 3   | Grazulex/laravel-api-kit     | Laravel 13 + Sanctum   | 446.4 req/s   |  90,975.2 req/s |   203.81× 
+ 4   | mikecao/flight               | Flight PHP (4.2k stars) | 10,950.3 req/s| 114,764.4 req/s |    10.48× 
+ 5   | siubie/kaido-kit             | Laravel 12 + Filament 3 | 22.7 req/s    | 111,135.8 req/s | 4,900.17× 
+=========================================================================================================
+```
+
+👉 See the full breakdown and methodology in [**`docs/GITHUB_PROJECTS_SHOOTOUT.md`**](docs/GITHUB_PROJECTS_SHOOTOUT.md).  
+👉 For performance math on heavy SSR apps vs micro-APIs, see [**`docs/PERFORMANCE_GUIDE.md`**](docs/PERFORMANCE_GUIDE.md).
+
+---
+
+## 🛡️ Hyperion Laravel Doctor & Enterprise Certification
+
+Any developer can certify their existing Laravel application with a single CLI command using [`bin/hyperion-doctor`](bin/hyperion-doctor):
+
+```bash
+# Point directly to any Laravel project directory on disk:
+./bin/hyperion-doctor --project /path/to/my-laravel-project
+```
+
+The Doctor automatically audits the **7 Production Pillars**:
+1. **Pre-Flight Architecture & Static Code Hygiene Audit**
+2. **Dynamic Route & Endpoint Discovery**
+3. **Dual-Engine Shootout (Zend PHP vs Hyperion)**
+4. **Cross-User State & Session Bleed Defense**
+5. **Database Transaction Crash & Rollback Resilience**
+6. **Memory RSS Stability & Zero-Leak Verification (500+ Cycles)**
+7. **Enterprise Concurrency SLA Guarantee (>50,000 req/s, sub-ms latency, 0 errors)**
+
+Generates `HYPERION_LARAVEL_CERTIFICATION.json` and human-readable `HYPERION_LARAVEL_CERTIFICATE.md`.  
+👉 Full details in [**`docs/DOCTOR_AND_CERTIFICATION_GUIDE.md`**](docs/DOCTOR_AND_CERTIFICATION_GUIDE.md).
+
+---
+
 ## ✨ Key Features
 
 - 🏎️ **Extreme Throughput (90k - 208k+ req/s)**: Sustain over 90,000 dynamic req/s and 208,000+ cached req/s with sub-millisecond response latencies on standard hardware.

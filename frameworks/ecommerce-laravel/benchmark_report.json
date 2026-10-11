@@ -3,14 +3,14 @@
   "concurrency": 50,
   "total_requests": 3000,
   "storefront_home": {
-    "standard_php_rps": 1911.38,
-    "hyperion_rps": 2130.27,
-    "speedup": "1.11x"
+    "standard_php_rps": 2237.25,
+    "hyperion_rps": 95023.91,
+    "speedup": "42.47x"
   },
   "products_api": {
-    "standard_php_rps": 1884.15,
-    "hyperion_rps": 2320.4,
-    "speedup": "1.23x"
+    "standard_php_rps": 2319.91,
+    "hyperion_rps": 139918.85,
+    "speedup": "60.31x"
   },
   "features_verified": {
     "storefront_home": "PASS",
@@ -18,8 +18,8 @@
     "categories": "PASS (4 categories)",
     "products": "PASS (8 products)",
     "product_detail": "PASS (ID 1)",
-    "cart_checkout": "PASS (Order #4)",
-    "admin_dashboard": "PASS ($12398.97 revenue)",
+    "cart_checkout": "PASS (Order #6)",
+    "admin_dashboard": "PASS ($19398.95 revenue)",
     "admin_and_client_users": "PASS (2 users, roles: ['client', 'admin'])"
   }
 }

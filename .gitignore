@@ -42,7 +42,6 @@ vendor/
 
 # Excluded from upload as requested by user
 php-hyperion/
-docs/
 *.log
 **/*.log
 

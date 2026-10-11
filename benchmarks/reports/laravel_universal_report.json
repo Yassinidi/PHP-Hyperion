@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-10-11 20:39:29",
+  "results": [
+    {
+      "workload_id": "banners",
+      "workload_name": "Cached / Fast-Path Read (/api/banners)",
+      "standard_php": {
+        "mean": 453.0,
+        "min": 449.1,
+        "max": 456.9,
+        "stddev": 3.42,
+        "cv_pct": 0.75
+      },
+      "hyperion": {
+        "mean": 71883.4,
+        "min": 60860.6,
+        "max": 97885.7,
+        "stddev": 15127.96,
+        "cv_pct": 21.05
+      },
+      "gain_multiplier": 158.68,
+      "hyperion_mean_lat_ms": 0.58
+    },
+    {
+      "workload_id": "products",
+      "workload_name": "Eloquent Catalog Database Query (/api/products)",
+      "standard_php": {
+        "mean": 414.4,
+        "min": 409.8,
+        "max": 421.6,
+        "stddev": 4.73,
+        "cv_pct": 1.14
+      },
+      "hyperion": {
+        "mean": 97692.7,
+        "min": 64401.9,
+        "max": 144430.4,
+        "stddev": 33662.04,
+        "cv_pct": 34.46
+      },
+      "gain_multiplier": 235.74,
+      "hyperion_mean_lat_ms": 0.29
+    },
+    {
+      "workload_id": "product_detail",
+      "workload_name": "Eloquent Single Model Query (/api/products/1)",
+      "standard_php": {
+        "mean": 479.4,
+        "min": 474.3,
+        "max": 482.5,
+        "stddev": 3.07,
+        "cv_pct": 0.64
+      },
+      "hyperion": {
+        "mean": 62962.1,
+        "min": 62310.2,
+        "max": 64092.3,
+        "stddev": 675.55,
+        "cv_pct": 1.07
+      },
+      "gain_multiplier": 131.34,
+      "hyperion_mean_lat_ms": 0.4
+    },
+    {
+      "workload_id": "checkout",
+      "workload_name": "ACID Order Checkout Transaction (/api/cart/checkout)",
+      "standard_php": {
+        "mean": 425.1,
+        "min": 421.4,
+        "max": 430.9,
+        "stddev": 3.53,
+        "cv_pct": 0.83
+      },
+      "hyperion": {
+        "mean": 2084.6,
+        "min": 1090.8,
+        "max": 2903.4,
+        "stddev": 702.65,
+        "cv_pct": 33.71
+      },
+      "gain_multiplier": 4.9,
+      "hyperion_mean_lat_ms": 8.3
+    }
+  ]
+}

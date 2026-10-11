@@ -1,0 +1,102 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "grazulex/laravel-api-kit",
+    "type": "project",
+    "description": "Laravel REST API starter kit with Sanctum, Spatie packages, Scramble docs, and Pest testing.",
+    "keywords": ["laravel", "api", "rest", "starter-kit", "sanctum"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "dedoc/scramble": "^0.12|^0.13",
+        "grazulex/laravel-apiroute": "^2.0",
+        "laravel/framework": "^13.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^3.0",
+        "spatie/laravel-data": "^4.0",
+        "spatie/laravel-query-builder": "^7.0"
+    },
+    "require-dev": {
+        "driftingly/rector-laravel": "^2.0",
+        "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.7",
+        "laravel/pail": "^1.2.2",
+        "laravel/pint": "^1.24",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "rector/rector": "^2.2"
+    },
+    "suggest": {
+        "grazulex/laravel-api-idempotency": "RFC-compliant API idempotency with response caching and multiple storage drivers",
+        "grazulex/laravel-api-throttle-smart": "Plan-aware smart rate limiting with quotas, multiple algorithms and multi-tenant support"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint": [
+            "rector",
+            "pint"
+        ],
+        "test:lint": [
+            "pint --test",
+            "rector --dry-run"
+        ],
+        "test:types": [
+            "phpstan"
+        ],
+        "test:unit": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test"
+        ],
+        "test": [
+            "@test:lint",
+            "@test:types",
+            "@test:unit"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.4.0"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

@@ -1,0 +1,13 @@
+.content-wrapper {
+  overflow-x: hidden;
+  min-height: calc(100vh - var(--navbar-base-height));
+  padding: 1rem 0;
+
+  @include media-breakpoint-up(lg) {
+    margin-left: var(--sidenav-base-width);
+
+    .sidenav-toggled & {
+      margin-left: var(--sidenav-collapsed-width);
+    }
+  }
+}

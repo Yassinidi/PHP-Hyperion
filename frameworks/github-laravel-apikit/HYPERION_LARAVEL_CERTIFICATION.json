@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-10-11T21:43:16.554690Z",
+  "project_path": "/Users/elidinaili/Desktop/PHP-H/frameworks/github-laravel-apikit",
+  "laravel_version": "Laravel Framework 13.2.0",
+  "php_version": "PHP 8.2.33 (cli) (built: Jul 28 2026 10:09:14) (NTS)",
+  "checks": {
+    "preflight": {
+      "passed": true,
+      "laravel": "Laravel Framework 13.2.0",
+      "php": "PHP 8.2.33 (cli) (built: Jul 28 2026 10:09:14) (NTS)",
+      "db": "sqlite"
+    },
+    "route_discovery": {
+      "passed": true,
+      "endpoints": {
+        "health_path": "/health",
+        "web_path": "/up",
+        "api_path": "/up",
+        "mutation_path": null
+      }
+    },
+    "session_bleed": {
+      "passed": true
+    },
+    "transaction_resilience": {
+      "passed": true,
+      "recovery_latency_ms": 0.22912025451660156
+    },
+    "memory_stability": {
+      "passed": true,
+      "initial_mb": 174.21875,
+      "final_mb": 174.21875,
+      "growth_mb": 0.0,
+      "slope_per_100": 0.0
+    },
+    "concurrency_sla": {
+      "requests_per_sec": 19796.88,
+      "mean_latency_ms": 1.01,
+      "p99_latency_ms": 13.0,
+      "failed_requests": 0,
+      "raw_output": "This is ApacheBench, Version 2.3 <$Revision: 1923142 $>\nCopyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/\nLicensed to The Apache Software Foundation, http://www.apache.org/\n\nBenchmarking 127.0.0.1 (be patient)\n\n\nServer Software:        \nServer Hostname:        127.0.0.1\nServer Port:            8150\n\nDocument Path:          /up\nDocument Length:        1829 bytes\n\nConcurrency Level:      20\nTime taken for tests:   0.051 seconds\nComplete requests:      1000\nFailed requests:        0\nKeep-Alive requests:    1000\nTotal transferred:      2005000 bytes\nHTML transferred:       1829000 bytes\nRequests per second:    19796.88 [#/sec] (mean)\nTime per request:       1.010 [ms] (mean)\nTime per request:       0.051 [ms] (mean, across all concurrent requests)\nTransfer rate:          38762.45 [Kbytes/sec] received\n\nConnection Times (ms)\n              min  mean[+/-sd] median   max\nConnect:        0    0   0.0      0       0\nProcessing:     0    1   2.2      0      13\nWaiting:        0    1   2.2      0      13\nTotal:          0    1   2.2      0      13\n\nPercentage of the requests served within a certain time (ms)\n  50%      0\n  66%      0\n  75%      1\n  80%      1\n  90%      3\n  95%      5\n  98%     11\n  99%     13\n 100%     13 (longest request)\n",
+      "passed": true
+    }
+  },
+  "benchmarks": {
+    "shootout": {
+      "zend_rps": 402.46,
+      "zend_latency_ms": 62.119,
+      "hyperion_rps": 66764.59,
+      "hyperion_latency_ms": 0.374,
+      "speedup_multiplier": 165.89124385032054,
+      "passed": true
+    }
+  },
+  "verdict": "CERTIFIED PRODUCTION READY",
+  "routes": {
+    "health_path": "/health",
+    "web_path": "/up",
+    "api_path": "/up",
+    "mutation_path": null
+  }
+}

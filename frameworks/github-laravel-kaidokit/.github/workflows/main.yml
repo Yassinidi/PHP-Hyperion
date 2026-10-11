@@ -1,0 +1,24 @@
+name: Auto Deploy
+#on: workflow_dispatch
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          username: ${{ secrets.SSH_USERNAME }}
+          script: |
+            cd /var/www/kaido.dosenngoding.com/
+            git pull
+            composer install
+            php artisan migrate:fresh --seed --force
+            php artisan shield:generate --all --panel=admin
+            php artisan shield:super-admin --user=11
+            php artisan filament:optimize

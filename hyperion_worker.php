@@ -22,33 +22,33 @@ if (!defined('HYPERION_PERSISTENT')) {
 }
 
 // ============================================================================
-// 1. USER CONFIGURATION OVERRIDES
+// 1. UNIVERSAL CONFIGURATION & ENVIRONMENT OVERRIDES
 // ============================================================================
-// You can customize settings below, or leave them as 'auto' / null for auto-detection:
+// 100% Zero-Config by default. Automatically adapts to ANY PHP project.
+// Optional settings can be overridden via ENV or a local 'hyperion.config.php':
 $hyperionConfig = [
-    // Engine mode: 'auto', 'laravel', 'symfony', 'slim', 'wordpress', or 'plain'
-    'framework'   => 'auto',
+    // Engine mode: 'auto' (default), 'laravel', 'symfony', 'slim', 'wordpress', or 'plain'
+    'framework'   => getenv('HYPERION_FRAMEWORK') ?: 'auto',
 
     // Project root directory (null = auto-detect from working dir / vendor / parent)
-    'base_path'   => null,
+    'base_path'   => getenv('HYPERION_BASE_PATH') ?: null,
 
     // Public / Document root directory ('public', 'web', 'html', or '.' / null)
-    'public_dir'  => null,
+    'public_dir'  => getenv('HYPERION_PUBLIC_DIR') ?: null,
 
     // Custom entrypoint script (e.g. 'public/index.php')
-    'entrypoint'  => null,
+    'entrypoint'  => getenv('HYPERION_ENTRYPOINT') ?: null,
 
     // Automatically flush database query logs & clear transactions between requests
-    'reset_db'    => true,
+    'reset_db'    => getenv('HYPERION_RESET_DB') !== false ? filter_var(getenv('HYPERION_RESET_DB') ?: 'true', FILTER_VALIDATE_BOOLEAN) : true,
 
     // Reset authentication guards, sessions, and queued cookies per request
-    'reset_auth'  => true,
+    'reset_auth'  => getenv('HYPERION_RESET_AUTH') !== false ? filter_var(getenv('HYPERION_RESET_AUTH') ?: 'true', FILTER_VALIDATE_BOOLEAN) : true,
 
     // Register application routes directly into Hyperion kernel routing table
-    'fast_route'  => true,
+    'fast_route'  => getenv('HYPERION_FAST_ROUTE') !== false ? filter_var(getenv('HYPERION_FAST_ROUTE') ?: 'true', FILTER_VALIDATE_BOOLEAN) : true,
 
     // Optional user-defined callback for custom per-request state cleanup:
-    // 'cleanup'  => function($app, $request, $response) { ... },
     'cleanup'     => null,
 ];
 
@@ -102,43 +102,74 @@ final class HyperionIpc {
             return false;
         }
 
-        $magic = self::readExact(4);
-        if ($magic === false || $magic !== "\x48\x59\x50\x01") { // HYP\x01
+        // 1. Read 8-byte frame header (MAGIC: 4B + PAYLOAD_LEN: 4B)
+        $header = self::readExact(8);
+        if ($header === false || strlen($header) < 8) {
             return false;
         }
 
-        $methodLen = self::readUint16();
-        if ($methodLen === false) return false;
-        $method = $methodLen > 0 ? (self::readExact($methodLen) ?: 'GET') : 'GET';
+        if (substr($header, 0, 4) !== "\x48\x59\x50\x03") { // HYP\x03
+            return false;
+        }
 
-        $uriLen = self::readUint16();
-        if ($uriLen === false) return false;
-        $uri = $uriLen > 0 ? (self::readExact($uriLen) ?: '/') : '/';
+        $payloadLen = unpack('N', substr($header, 4, 4))[1];
+        if ($payloadLen > 67108864) { // 64 MB defensive limit
+            return false;
+        }
 
-        $pathLen = self::readUint16();
-        if ($pathLen === false) return false;
-        $path = $pathLen > 0 ? (self::readExact($pathLen) ?: '/') : '/';
+        // 2. Read entire frame payload in a single batched socket read
+        $payload = $payloadLen > 0 ? self::readExact($payloadLen) : '';
+        if ($payload === false || strlen($payload) !== $payloadLen) {
+            return false;
+        }
 
-        $queryLen = self::readUint16();
-        if ($queryLen === false) return false;
-        $query = $queryLen > 0 ? (self::readExact($queryLen) ?: '') : '';
+        // 3. In-memory zero-syscall unpack
+        $offset = 0;
 
-        $headerCount = self::readUint16();
-        if ($headerCount === false || $headerCount > 2000) return false;
+        $methodLen = unpack('n', substr($payload, $offset, 2))[1];
+        $offset += 2;
+        $method = $methodLen > 0 ? substr($payload, $offset, $methodLen) : 'GET';
+        $offset += $methodLen;
+
+        $uriLen = unpack('n', substr($payload, $offset, 2))[1];
+        $offset += 2;
+        $uri = $uriLen > 0 ? substr($payload, $offset, $uriLen) : '/';
+        $offset += $uriLen;
+
+        $pathLen = unpack('n', substr($payload, $offset, 2))[1];
+        $offset += 2;
+        $path = $pathLen > 0 ? substr($payload, $offset, $pathLen) : '/';
+        $offset += $pathLen;
+
+        $queryLen = unpack('n', substr($payload, $offset, 2))[1];
+        $offset += 2;
+        $query = $queryLen > 0 ? substr($payload, $offset, $queryLen) : '';
+        $offset += $queryLen;
+
+        $headerCount = unpack('n', substr($payload, $offset, 2))[1];
+        $offset += 2;
+        if ($headerCount > 2000) {
+            return false;
+        }
+
         $headers = [];
         for ($i = 0; $i < $headerCount; $i++) {
-            $kLen = self::readUint16();
-            if ($kLen === false) return false;
-            $k = $kLen > 0 ? (self::readExact($kLen) ?: '') : '';
-            $vLen = self::readUint16();
-            if ($vLen === false) return false;
-            $v = $vLen > 0 ? (self::readExact($vLen) ?: '') : '';
+            $kLen = unpack('n', substr($payload, $offset, 2))[1];
+            $offset += 2;
+            $k = $kLen > 0 ? substr($payload, $offset, $kLen) : '';
+            $offset += $kLen;
+
+            $vLen = unpack('n', substr($payload, $offset, 2))[1];
+            $offset += 2;
+            $v = $vLen > 0 ? substr($payload, $offset, $vLen) : '';
+            $offset += $vLen;
+
             $headers[$k] = $v;
         }
 
-        $bodyLen = self::readUint32();
-        if ($bodyLen === false || $bodyLen > 67108864) return false; // 64 MB defensive limit
-        $body = $bodyLen > 0 ? (self::readExact($bodyLen) ?: '') : '';
+        $bodyLen = unpack('N', substr($payload, $offset, 4))[1];
+        $offset += 4;
+        $body = $bodyLen > 0 ? substr($payload, $offset, $bodyLen) : '';
         self::$rawBody = $body;
 
         self::populateSuperglobals($method, $uri, $path, $query, $headers, $body);
@@ -208,17 +239,61 @@ final class HyperionIpc {
             return;
         }
 
-        $out = "\x48\x59\x50\x02"; // HYP\x02
-        $out .= pack('n', $statusCode);
-        $out .= pack('n', count($headers));
+        // 1. Pack response payload in memory
+        $payload = pack('n', $statusCode);
+        $payload .= pack('n', count($headers));
         foreach ($headers as [$k, $v]) {
             $kStr = (string)$k;
             $vStr = (string)$v;
-            $out .= pack('n', strlen($kStr)) . $kStr . pack('n', strlen($vStr)) . $vStr;
+            $payload .= pack('n', strlen($kStr)) . $kStr . pack('n', strlen($vStr)) . $vStr;
         }
-        $out .= pack('N', strlen($content)) . $content;
+        $payload .= pack('N', strlen($content)) . $content;
 
-        self::writeAll($out);
+        // 2. Prepend 8-byte frame header: [MAGIC: 4B "HYP\x04"][PAYLOAD_LEN: 4B uint32 BE]
+        $frame = "\x48\x59\x50\x04" . pack('N', strlen($payload)) . $payload;
+
+        // 3. Single syscall write
+        self::writeAll($frame);
+        self::rollbackActiveTransactions();
+        self::cleanupTempFiles();
+    }
+
+    public static array $trackedPdoInstances = [];
+
+    public static function tunePdo(mixed $pdo): void {
+        if (!($pdo instanceof \PDO)) {
+            return;
+        }
+        self::$trackedPdoInstances[spl_object_id($pdo)] = $pdo;
+        try {
+            $driver = @$pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+            if ($driver === 'sqlite') {
+                @$pdo->exec("PRAGMA journal_mode = WAL;");
+                @$pdo->exec("PRAGMA synchronous = NORMAL;");
+                @$pdo->exec("PRAGMA busy_timeout = 5000;");
+                @$pdo->exec("PRAGMA temp_store = MEMORY;");
+                @$pdo->exec("PRAGMA mmap_size = 268435456;");
+            } elseif ($driver === 'mysql') {
+                @$pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+                @$pdo->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            }
+        } catch (\Throwable $e) {}
+    }
+
+    public static function rollbackActiveTransactions(): void {
+        foreach (self::$trackedPdoInstances as $id => $pdo) {
+            try {
+                if ($pdo instanceof \PDO && $pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+            } catch (\Throwable $e) {}
+        }
+    }
+
+    public static function drainOutputBuffers(): void {
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
     }
 
     public static function sendOutputResponse(string $content, int $status = 200, array $headers = []): void {
@@ -244,6 +319,8 @@ final class HyperionIpc {
             header_remove();
         }
         self::sendRawResponse($statusCode, $outHeaders, $content);
+        self::rollbackActiveTransactions();
+        self::cleanupTempFiles();
     }
 
     public static array $tempFiles = [];
@@ -353,6 +430,10 @@ final class HyperionIpc {
         if (isset($_SESSION)) {
             $_SESSION = [];
         }
+
+        self::drainOutputBuffers();
+        self::rollbackActiveTransactions();
+        self::cleanupTempFiles();
 
         $host = $headers['Host'] ?? $headers['host'] ?? 'localhost';
         $remoteAddr = $headers['Remote-Addr'] ?? '127.0.0.1';
@@ -533,6 +614,14 @@ $realBasePath = realpath($basePath);
 $basePath = $realBasePath !== false ? $realBasePath : $basePath;
 $basePath = rtrim(str_replace('\\', '/', (string)$basePath), '/');
 
+// Load optional project-local configuration without needing to edit this worker file
+if (file_exists($basePath . '/hyperion.config.php')) {
+    $localCfg = require $basePath . '/hyperion.config.php';
+    if (is_array($localCfg)) {
+        $hyperionConfig = array_merge($hyperionConfig, $localCfg);
+    }
+}
+
 // 2. Resolve Public / Document Root:
 $publicDir = $hyperionConfig['public_dir']
     ?? (getenv('HYPERION_PUBLIC_DIR') ?: null)
@@ -637,6 +726,10 @@ switch ($framework) {
         $app = require $bootstrapFile;
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
+        // Pre-warm and bind initial request context prior to bootstrapping so all service providers succeed
+        $warmupReq = \Illuminate\Http\Request::create('/', 'GET');
+        $app->instance('request', $warmupReq);
+
         try {
             $kernel->bootstrap();
         } catch (\Throwable $e) {
@@ -646,8 +739,6 @@ switch ($framework) {
         // Pre-warm the application pipeline into boot memory arena
         try {
             error_log("[WARMUP] Starting pre-warmup request");
-            $warmupReq = \Illuminate\Http\Request::create('/', 'GET');
-            $app->instance('request', $warmupReq);
             $warmupRes = $kernel->handle($warmupReq);
             $kernel->terminate($warmupReq, $warmupRes);
             if (method_exists($app, 'forgetInstance')) {
@@ -695,6 +786,18 @@ switch ($framework) {
         // Snapshot clean container instance keys before request processing loop
         $bootedInstanceKeys = array_keys((function() { return $this->instances; })->call($app));
         $bootedResolvedKeys = array_keys((function() { return $this->resolved; })->call($app));
+
+        // Auto-tune database connections for concurrent WAL and memory-mapped performance
+        if ($app->has('db')) {
+            try {
+                $db = $app->make('db');
+                foreach ($db->getConnections() as $conn) {
+                    if (method_exists($conn, 'getPdo')) {
+                        HyperionIpc::tunePdo($conn->getPdo());
+                    }
+                }
+            } catch (\Throwable $e) {}
+        }
 
         // Persistent Request Processing Loop
         $reqNum = 0;
@@ -791,6 +894,9 @@ switch ($framework) {
                         $conn->flushQueryLog();
                         if (method_exists($conn, 'transactionLevel') && $conn->transactionLevel() > 0) {
                             $conn->rollBack();
+                        }
+                        if (method_exists($conn, 'getPdo')) {
+                            HyperionIpc::tunePdo($conn->getPdo());
                         }
                     }
                 } catch (\Throwable $e) {}
@@ -933,6 +1039,17 @@ switch ($framework) {
             $debug = (bool)($_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? false);
             $kernel = new $kernelClass($env, $debug);
             $kernel->boot();
+
+            if ($kernel->getContainer()->has('doctrine')) {
+                try {
+                    $doctrine = $kernel->getContainer()->get('doctrine');
+                    foreach ($doctrine->getConnections() as $conn) {
+                        if (method_exists($conn, 'getNativeConnection')) {
+                            HyperionIpc::tunePdo($conn->getNativeConnection());
+                        }
+                    }
+                } catch (\Throwable $e) {}
+            }
         }
 
         $routes = null;
@@ -943,10 +1060,25 @@ switch ($framework) {
             ob_start();
             $returned = require_once $entrypoint;
             ob_end_clean();
-            if (is_array($returned) && isset($returned['routes'], $returned['matcher'])) {
+            if ($returned instanceof \Symfony\Component\HttpKernel\HttpKernelInterface) {
+                $kernel = $returned;
+            } elseif (is_array($returned) && isset($returned['routes'], $returned['matcher'])) {
                 $routes = $returned['routes'];
                 $matcher = $returned['matcher'];
             }
+        }
+
+        if ($kernel !== null) {
+            if (class_exists('App\\Database') && method_exists('App\\Database', 'get')) {
+                try {
+                    HyperionIpc::tunePdo(\App\Database::get());
+                } catch (\Throwable $e) {}
+            }
+            try {
+                $warmupReq = \Symfony\Component\HttpFoundation\Request::create('/', 'GET');
+                $warmupRes = $kernel->handle($warmupReq);
+                $kernel->terminate($warmupReq, $warmupRes);
+            } catch (\Throwable $e) {}
         }
 
         while (hyperion_accept_request()) {
@@ -1026,6 +1158,19 @@ switch ($framework) {
         if (class_exists('\Slim\Factory\ServerRequestCreatorFactory')) {
             try {
                 $serverRequestCreator = \Slim\Factory\ServerRequestCreatorFactory::create();
+            } catch (\Throwable $e) {}
+        }
+
+        if (class_exists('EcommerceSlim\\Database') && method_exists('EcommerceSlim\\Database', 'get')) {
+            try {
+                HyperionIpc::tunePdo(\EcommerceSlim\Database::get());
+            } catch (\Throwable $e) {}
+        }
+
+        if ($slimApp instanceof \Slim\App && $serverRequestCreator !== null) {
+            try {
+                $warmupReq = $serverRequestCreator->createServerRequestFromGlobals();
+                $warmupRes = $slimApp->handle($warmupReq);
             } catch (\Throwable $e) {}
         }
 
@@ -1129,6 +1274,36 @@ switch ($framework) {
     default:
     case 'plain':
         $entrypoint = $hyperionConfig['entrypoint'] ?? $entrypoint;
+
+        // Universal Dynamic Database & Connection Auto-Tuning
+        // Automatically discovers and tunes any PDO connections in any user project
+        $discoverAndTuneDatabases = function() {
+            $commonDbMethods = ['getConnection', 'getPdo', 'get', 'instance', 'getInstance', 'connection', 'db'];
+            foreach (get_declared_classes() as $cls) {
+                if (str_ends_with($cls, 'Database') || str_ends_with($cls, 'DB') || str_contains($cls, 'Connection') || str_contains($cls, '\\Database')) {
+                    if (method_exists($cls, 'getAllPartitionConnections')) {
+                        try {
+                            foreach ($cls::getAllPartitionConnections() as $shardedPdo) {
+                                HyperionIpc::tunePdo($shardedPdo);
+                            }
+                        } catch (\Throwable $e) {}
+                    }
+                    foreach ($commonDbMethods as $mth) {
+                        if (method_exists($cls, $mth)) {
+                            try {
+                                $conn = $cls::$mth();
+                                if ($conn instanceof \PDO) {
+                                    HyperionIpc::tunePdo($conn);
+                                } elseif (is_object($conn) && method_exists($conn, 'getPdo')) {
+                                    HyperionIpc::tunePdo($conn->getPdo());
+                                }
+                            } catch (\Throwable $e) {}
+                        }
+                    }
+                }
+            }
+        };
+        $discoverAndTuneDatabases();
 
         while (hyperion_accept_request()) {
             ob_start();
@@ -1248,6 +1423,9 @@ switch ($framework) {
                     echo $notFoundMsg;
                 }
             }
+
+            // Dynamically tune any database connections initialized during request
+            $discoverAndTuneDatabases();
 
             if (is_callable($hyperionConfig['cleanup'])) {
                 ($hyperionConfig['cleanup'])();

@@ -1,0 +1,136 @@
+name: Automated Installation
+
+on:
+  push:
+    branches:
+      - main
+      - 3.x
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  installer-automatic:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+    
+    - name: Create test directory
+      run: mkdir project_folder
+
+    - name: Download tarball of current commit
+      run: |
+        TARBALL_URL=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                      -H "Accept: application/vnd.github.v3+json" \
+                      https://api.github.com/repos/${{ github.repository }}/tarball/${{ github.sha }} \
+                      -I | grep -i "location:" | cut -d " " -f 2 | tr -d '\r')
+        curl -L -o wave.tar.gz $TARBALL_URL
+
+    - name: Extract tarball to test directory
+      run: tar -xzf wave.tar.gz -C project_folder --strip-components=1
+
+    - name: Debug - List contents of test directory
+      run: |
+        echo "Contents of project_folder directory:"
+        ls -la project_folder
+        echo "Contents of project_folder/public directory (if it exists):"
+        ls -la project_folder/public || echo "Public directory not found"
+
+    - name: Run PHP built-in server
+      run: |
+        cd project_folder
+        php -S localhost:8000 -t public &
+        echo $! > php_server.pid
+
+    - name: Wait for server to start
+      run: sleep 10
+
+    - name: Check if installer page is accessible
+      run: |
+        response=$(curl -sS -o response.html -w "%{http_code}" http://localhost:8000)
+        if [ $response -eq 200 ]; then
+          echo "Installer page is accessible"
+          cat response.html
+        else
+          echo "Installer page is not accessible. HTTP status code: $response"
+          cat response.html
+          exit 1
+        fi
+
+    - name: Navigate to install page and initiate installation
+      run: |
+        response=$(curl -sS -o install_page.html -w "%{http_code}" http://localhost:8000/install)
+        if [ $response -eq 200 ]; then
+          echo "Install page is accessible"
+          # Check if the page contains the "Install Wave" button
+          if grep -q "Install Wave" install_page.html; then
+            echo "Install Wave button found on the page"
+            # Attempt to initiate the installation by making a GET request
+            install_response=$(curl -sS -o install_response.html -w "%{http_code}" -L http://localhost:8000/install)
+            if [ $install_response -eq 200 ]; then
+              echo "Installation process initiated"
+              # Check if the response indicates successful installation
+              if grep -q "Successfully Installed" install_response.html; then
+                echo "Installation completed successfully"
+              else
+                echo "Installation may not have completed. Check install_response.html for details."
+                cat install_response.html
+              fi
+            else
+              echo "Failed to initiate installation. HTTP status code: $install_response"
+              cat install_response.html
+              exit 1
+            fi
+          else
+            echo "Install Wave button not found on the page"
+            cat install_page.html
+            exit 1
+          fi
+        else
+          echo "Install page is not accessible. HTTP status code: $response"
+          cat install_page.html
+          exit 1
+        fi
+
+    - name: Check installation complete page
+      run: |
+        response=$(curl -sS -o complete_page.html -w "%{http_code}" "http://localhost:8000/install?complete=true")
+        if [ $response -eq 200 ]; then
+          echo "Installation complete page is accessible"
+          if grep -q "Successfully Installed" complete_page.html; then
+            echo "Installation was successful"
+          else
+            echo "Installation complete page doesn't contain success message"
+            cat complete_page.html
+            exit 1
+          fi
+        else
+          echo "Installation complete page is not accessible. HTTP status code: $response"
+          cat complete_page.html
+          exit 1
+        fi
+
+    - name: Navigate to homepage and check content
+      run: |
+        response=$(curl -sS -o homepage.html -w "%{http_code}" http://localhost:8000)
+        if [ $response -eq 200 ]; then
+          echo "Homepage is accessible"
+          if grep -q "Ship in Days" homepage.html; then
+            echo "Homepage contains expected content"
+          else
+            echo "Homepage doesn't contain expected content"
+            echo "Content of homepage.html:"
+            cat homepage.html
+            exit 1
+          fi
+        else
+          echo "Homepage is not accessible. HTTP status code: $response"
+          echo "Content of homepage.html:"
+          cat homepage.html
+          exit 1
+        fi

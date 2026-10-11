@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 // Dynamic Framework Path Discovery
 $candidatePaths = [
+    __DIR__ . '/../../frameworks/ecommerce-laravel',
+    dirname(__DIR__, 2) . '/frameworks/ecommerce-laravel',
     __DIR__ . '/../../frameworks/laravel-full',
     __DIR__ . '/../frameworks/laravel-full',
     dirname(__DIR__, 2) . '/frameworks/laravel-full',

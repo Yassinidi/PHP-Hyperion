@@ -1,0 +1,72 @@
+[
+  {
+    "id": "laravel-admintw",
+    "name": "dcblogdev/laravel-admintw",
+    "category": "Admin Dashboard",
+    "framework": "Laravel 12 + Livewire 3",
+    "endpoint": "/",
+    "zend_rps": 66.8,
+    "zend_latency_ms": 224.544,
+    "hyperion_rps": 110607.23,
+    "hyperion_latency_ms": 0.271,
+    "hyperion_failed": 0,
+    "speedup_multiplier": 1655.7968562874253,
+    "latency_reduction_pct": 99.87931095909933
+  },
+  {
+    "id": "slim-skeleton",
+    "name": "slimphp/Slim-Skeleton",
+    "category": "REST Microframework",
+    "framework": "Slim Framework 4 + PSR-7",
+    "endpoint": "/users",
+    "zend_rps": 4096.75,
+    "zend_latency_ms": 4.882,
+    "hyperion_rps": 97986.38,
+    "hyperion_latency_ms": 0.408,
+    "hyperion_failed": 0,
+    "speedup_multiplier": 23.918076524073964,
+    "latency_reduction_pct": 91.64276935682098
+  },
+  {
+    "id": "laravel-apikit",
+    "name": "Grazulex/laravel-api-kit",
+    "category": "Modern REST API",
+    "framework": "Laravel 13 + Sanctum + Scramble",
+    "endpoint": "/up",
+    "zend_rps": 446.37,
+    "zend_latency_ms": 33.605,
+    "hyperion_rps": 90975.25,
+    "hyperion_latency_ms": 0.33,
+    "hyperion_failed": 0,
+    "speedup_multiplier": 203.8113000425656,
+    "latency_reduction_pct": 99.01800327332242
+  },
+  {
+    "id": "flight-app",
+    "name": "mikecao/flight",
+    "category": "High-Perf Microframework",
+    "framework": "Flight PHP (4.2k stars)",
+    "endpoint": "/users",
+    "zend_rps": 10950.26,
+    "zend_latency_ms": 1.826,
+    "hyperion_rps": 114764.45,
+    "hyperion_latency_ms": 0.349,
+    "hyperion_failed": 0,
+    "speedup_multiplier": 10.480522836900676,
+    "latency_reduction_pct": 80.88718510405258
+  },
+  {
+    "id": "laravel-kaidokit",
+    "name": "siubie/kaido-kit",
+    "category": "Admin Panel & Filament",
+    "framework": "Laravel 12 + Filament 3",
+    "endpoint": "/up",
+    "zend_rps": 22.68,
+    "zend_latency_ms": 661.419,
+    "hyperion_rps": 111135.81,
+    "hyperion_latency_ms": 0.27,
+    "hyperion_failed": 0,
+    "speedup_multiplier": 4900.16798941799,
+    "latency_reduction_pct": 99.95917867493979
+  }
+]

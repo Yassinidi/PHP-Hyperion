@@ -1,16 +1,16 @@
 {
   "project": "ecommerce-native",
-  "concurrency": 50,
-  "total_requests": 3000,
+  "concurrency": 10,
+  "total_requests": 100,
   "storefront_home": {
-    "standard_php_rps": 7481.93,
-    "hyperion_rps": 32529.14,
-    "speedup": "4.35x"
+    "standard_php_rps": 5206.44,
+    "hyperion_rps": 27397.26,
+    "speedup": "5.26x"
   },
   "products_api": {
-    "standard_php_rps": 7828.79,
-    "hyperion_rps": 64897.14,
-    "speedup": "8.29x"
+    "standard_php_rps": 6186.97,
+    "hyperion_rps": 31289.11,
+    "speedup": "5.06x"
   },
   "features_verified": {
     "storefront_home": "PASS",
@@ -18,8 +18,8 @@
     "categories": "PASS (4 categories)",
     "products": "PASS (8 products)",
     "product_detail": "PASS (ID 1)",
-    "cart_checkout": "PASS (Order #4)",
-    "admin_dashboard": "PASS ($7799.95 revenue)",
-    "admin_and_client_users": "PASS (2 users, roles: ['admin', 'client'])"
+    "cart_checkout": "PASS (Order #6)",
+    "admin_dashboard": "PASS ($11599.93 revenue)",
+    "admin_and_client_users": "PASS (2 users, roles: ['client', 'admin'])"
   }
 }

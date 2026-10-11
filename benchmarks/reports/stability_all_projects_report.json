@@ -1,0 +1,217 @@
+{
+  "timestamp": "2026-10-11 20:24:54",
+  "projects_tested": 5,
+  "rounds": 4,
+  "results": [
+    {
+      "project_id": "bank-native",
+      "project_name": "Bank Money Transfer & Ledger",
+      "read_workload": {
+        "endpoint": "/api/accounts",
+        "php": {
+          "mean": 2263.2,
+          "min": 2223.6,
+          "max": 2311.9,
+          "stddev": 31.74,
+          "cv_pct": 1.4
+        },
+        "hyperion": {
+          "mean": 61714.2,
+          "min": 57743.4,
+          "max": 66671.1,
+          "stddev": 3261.59,
+          "cv_pct": 5.28
+        },
+        "gain_multiplier": 27.27,
+        "hyperion_mean_lat_ms": 0.81
+      },
+      "write_workload": {
+        "endpoint": "/api/transfer",
+        "php": {
+          "mean": 4846.2,
+          "min": 4246.0,
+          "max": 5624.1,
+          "stddev": 590.05,
+          "cv_pct": 12.18
+        },
+        "hyperion": {
+          "mean": 56949.7,
+          "min": 24067.4,
+          "max": 74589.8,
+          "stddev": 19670.84,
+          "cv_pct": 34.54
+        },
+        "gain_multiplier": 11.75,
+        "hyperion_mean_lat_ms": 0.32
+      }
+    },
+    {
+      "project_id": "analytics-telemetry",
+      "project_name": "Analytics & Time-Series Quantiles",
+      "read_workload": {
+        "endpoint": "/api/metrics/summary",
+        "php": {
+          "mean": 750.5,
+          "min": 728.2,
+          "max": 766.5,
+          "stddev": 14.66,
+          "cv_pct": 1.95
+        },
+        "hyperion": {
+          "mean": 61228.1,
+          "min": 55997.3,
+          "max": 63475.9,
+          "stddev": 3036.11,
+          "cv_pct": 4.96
+        },
+        "gain_multiplier": 81.58,
+        "hyperion_mean_lat_ms": 0.82
+      },
+      "write_workload": {
+        "endpoint": "/api/telemetry/ingest",
+        "php": {
+          "mean": 5360.6,
+          "min": 5256.1,
+          "max": 5489.5,
+          "stddev": 101.83,
+          "cv_pct": 1.9
+        },
+        "hyperion": {
+          "mean": 19897.7,
+          "min": 13310.9,
+          "max": 24883.9,
+          "stddev": 4226.95,
+          "cv_pct": 21.24
+        },
+        "gain_multiplier": 3.71,
+        "hyperion_mean_lat_ms": 0.8
+      }
+    },
+    {
+      "project_id": "auth-rbac",
+      "project_name": "Auth, HMAC-SHA256 & RBAC Matrix",
+      "read_workload": {
+        "endpoint": "/api/rbac/roles",
+        "php": {
+          "mean": 6106.4,
+          "min": 5553.0,
+          "max": 6373.4,
+          "stddev": 323.51,
+          "cv_pct": 5.3
+        },
+        "hyperion": {
+          "mean": 290781.1,
+          "min": 287273.8,
+          "max": 295683.0,
+          "stddev": 3464.52,
+          "cv_pct": 1.19
+        },
+        "gain_multiplier": 47.62,
+        "hyperion_mean_lat_ms": 0.17
+      },
+      "write_workload": {
+        "endpoint": "/api/auth/token",
+        "php": {
+          "mean": 17.9,
+          "min": 17.8,
+          "max": 17.9,
+          "stddev": 0.05,
+          "cv_pct": 0.26
+        },
+        "hyperion": {
+          "mean": 158.6,
+          "min": 156.7,
+          "max": 159.3,
+          "stddev": 1.08,
+          "cv_pct": 0.68
+        },
+        "gain_multiplier": 8.86,
+        "hyperion_mean_lat_ms": 94.6
+      }
+    },
+    {
+      "project_id": "cms-markdown",
+      "project_name": "CMS, Regex Markdown & Search",
+      "read_workload": {
+        "endpoint": "/article/hyperion-architectural-deep-dive",
+        "php": {
+          "mean": 5615.9,
+          "min": 5537.1,
+          "max": 5675.2,
+          "stddev": 50.97,
+          "cv_pct": 0.91
+        },
+        "hyperion": {
+          "mean": 252075.5,
+          "min": 153515.5,
+          "max": 292483.2,
+          "stddev": 57642.52,
+          "cv_pct": 22.87
+        },
+        "gain_multiplier": 44.89,
+        "hyperion_mean_lat_ms": 0.21
+      },
+      "write_workload": {
+        "endpoint": "/api/search?q=concurrency",
+        "php": {
+          "mean": 6085.9,
+          "min": 5985.8,
+          "max": 6155.9,
+          "stddev": 62.56,
+          "cv_pct": 1.03
+        },
+        "hyperion": {
+          "mean": 238243.1,
+          "min": 129199.0,
+          "max": 278810.4,
+          "stddev": 63011.86,
+          "cv_pct": 26.45
+        },
+        "gain_multiplier": 39.15,
+        "hyperion_mean_lat_ms": 0.07
+      }
+    },
+    {
+      "project_id": "queue-workflow",
+      "project_name": "Queue, FSM & Atomic Leases",
+      "read_workload": {
+        "endpoint": "/api/queue/stats",
+        "php": {
+          "mean": 1658.2,
+          "min": 1630.9,
+          "max": 1680.0,
+          "stddev": 19.97,
+          "cv_pct": 1.2
+        },
+        "hyperion": {
+          "mean": 61487.0,
+          "min": 56160.8,
+          "max": 71973.5,
+          "stddev": 6157.66,
+          "cv_pct": 10.01
+        },
+        "gain_multiplier": 37.08,
+        "hyperion_mean_lat_ms": 0.82
+      },
+      "write_workload": {
+        "endpoint": "/api/queue/push",
+        "php": {
+          "mean": 5526.4,
+          "min": 5180.5,
+          "max": 5817.8,
+          "stddev": 231.83,
+          "cv_pct": 4.2
+        },
+        "hyperion": {
+          "mean": 13812.1,
+          "min": 12150.7,
+          "max": 15320.2,
+          "stddev": 1162.19,
+          "cv_pct": 8.41
+        },
+        "gain_multiplier": 2.5,
+        "hyperion_mean_lat_ms": 1.09
+      }
+    }
+  ]
+}
