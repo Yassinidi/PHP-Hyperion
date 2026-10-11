@@ -99,6 +99,7 @@
             <div class="sidebar-group">
                 <div class="sidebar-title">Reference & Tooling</div>
                 <ul class="sidebar-menu">
+                    <li class="sidebar-item"><a href="#workspace-manual" class="sidebar-link">Workspace Manual <span class="badge-pill-brand">All Tools</span></a></li>
                     <li class="sidebar-item"><a href="#configuration" class="sidebar-link">Config (hyperion.json)</a></li>
                     <li class="sidebar-item"><a href="#cli-reference" class="sidebar-link">CLI Flags & Envs</a></li>
                     <li class="sidebar-item"><a href="#troubleshooting" class="sidebar-link">Troubleshooting & Errors</a></li>
@@ -3036,6 +3037,986 @@ hyperion_worker_memory_bytes{worker="0"} 12451840</code></pre>
                     </table>
                 </div>
             </section>
+
+            <!-- Complete Workspace Manual Section -->
+                        <!-- Complete Workspace Manual Section -->
+            <section class="doc-section" id="workspace-manual">
+                <div class="section-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+                    Master Repository Encyclopedia
+                </div>
+                <h2 class="section-heading">The Complete Workspace Manual: Using Everything in This Project</h2>
+                <p class="section-desc">
+                    An exhaustive, component-by-component operational manual explaining the exact commands, flags, environment variables, workflows, and use cases for every binary, tool, script, test suite, and framework in this repository.
+                </p>
+
+                <!-- Navigation Tabs / Quick Jump -->
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; margin-bottom: 2.5rem;">
+                    <a href="#manual-binaries" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">📦 1. Rust Engine & CLI</a>
+                    <a href="#manual-worker" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">🔄 2. Universal Worker</a>
+                    <a href="#manual-tools" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">🛠️ 3. Diagnostic & Doctor</a>
+                    <a href="#manual-tests" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">🧪 4. Enterprise Test Suites</a>
+                    <a href="#manual-benchmarks" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">⚡ 5. Benchmark Batteries</a>
+                    <a href="#manual-frameworks" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">📁 6. Framework Catalog (21 Apps)</a>
+                    <a href="#manual-deploy" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">🚀 7. DevOps, Systemd & Docker</a>
+                    <a href="#manual-guides" class="btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">📚 8. Architecture & Guides</a>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 1: The Rust Core Engine & CLI                                      -->
+                <!-- ========================================================================= -->
+                <div id="manual-binaries" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #22d3ee; margin: 0;">
+                            📦 Module 1: The Rust Core Engine & CLI (<code>php-hyperion/</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(34, 211, 238, 0.4); color: #22d3ee;">High-Performance Tokio Core</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        The core Rust runtime located in <code>php-hyperion/</code>. Consists of 9 specialized Rust crates delivering asynchronous multi-threaded epoll/kqueue socket management, sub-millisecond IPC framing, and standalone binary execution.
+                    </p>
+
+                    <!-- Crates Breakdown Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.9rem; margin-bottom: 0.25rem;">🦀 <code>hyperion-core</code></div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Asynchronous Tokio multi-reactor event loop, non-blocking epoll/kqueue I/O, RFC 9111 HTTP cache engine, and connection keep-alive supervisor.</p>
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.9rem; margin-bottom: 0.25rem;">🦀 <code>hyperion-cli</code></div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Entrypoint binary executable. Manages worker pool lifecycle, command-line argument parsing, signals (SIGTERM, SIGHUP), and daemon spawning.</p>
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.9rem; margin-bottom: 0.25rem;">🦀 <code>hyperion-vm</code></div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Register-based execution engine, garbage collector arena, call stack frame evaluators, and native memory management.</p>
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.9rem; margin-bottom: 0.25rem;">🦀 <code>hyperion-parser</code> & <code>ast</code></div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Zero-allocation lexer, AST builder, and visitor traits providing full PHP 8.2, 8.3, and 8.4 grammar parsing.</p>
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.9rem; margin-bottom: 0.25rem;">🦀 <code>hyperion-compiler</code> & <code>jit</code></div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Compiles AST nodes into Hyperion bytecode opcodes and emits native ARM64 / x86_64 JIT machine instructions.</p>
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+                            <div style="font-weight: 700; color: #38bdf8; font-size: 0.9rem; margin-bottom: 0.25rem;">🦀 <code>hyperion-bridge</code> & <code>ext</code></div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Ultra-fast C-FFI bridge connecting to Zend C-API, PDO drivers, OpenSSL, and native extension modules.</p>
+                        </div>
+                    </div>
+
+                    <!-- Compilation and Commands -->
+                    <div class="code-wrapper" style="margin-bottom: 1.5rem;">
+                        <div class="code-header">
+                            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+                            <span>bash — Compiling & Running the Rust Engine</span>
+                            <button class="btn-code-copy">Copy</button>
+                        </div>
+                        <pre><code><span class="token-comment"># 1. Compile release binary with maximum LTO optimizations</span>
+cd php-hyperion
+cargo build --release -p hyperion-cli
+
+<span class="token-comment"># 2. Run Rust unit & integration test suites</span>
+cargo test --workspace
+
+<span class="token-comment"># 3. Run Rust micro-benchmarks</span>
+cargo bench
+
+<span class="token-comment"># 4. Optional: Run tests via Makefile automation</span>
+make test-rust
+make test-php
+
+<span class="token-comment"># 5. Resulting binary location:</span>
+./target/release/hyperion-cli --version
+<span class="token-comment"># => ⚡ PHP-Hyperion v0.1.0 (Darwin ARM64 Apple Silicon)</span></code></pre>
+                    </div>
+
+                    <!-- CLI Reference Table -->
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>CLI Flag / Option</th>
+                                    <th>Type & Arguments</th>
+                                    <th>Description & Production Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>-S &lt;addr:port&gt;</code></td>
+                                    <td>Socket Address (e.g. <code>127.0.0.1:8000</code>)</td>
+                                    <td>Binds HTTP server listener. <code>./target/release/hyperion-cli -S 0.0.0.0:8000 -t public</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>-b &lt;addr:port&gt;</code></td>
+                                    <td>Socket Address (e.g. <code>127.0.0.1:9000</code>)</td>
+                                    <td>Binds FastCGI listener for upstream Nginx/HAProxy integration.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>-t &lt;directory&gt;</code></td>
+                                    <td>Directory Path (e.g. <code>public</code>)</td>
+                                    <td>Sets document root for static assets and front-controller dispatch.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>-W [worker.php]</code></td>
+                                    <td>Worker Script (Optional)</td>
+                                    <td>Activates persistent daemon worker pool. Defaults to internal auto-adapter or specified file.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--workers &lt;n&gt;</code></td>
+                                    <td>Integer (e.g. <code>16</code>, <code>32</code>)</td>
+                                    <td>Sets number of worker child processes in the persistent pool (defaults to CPU core count).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--engine &lt;mode&gt;</code></td>
+                                    <td><code>auto</code> | <code>php84</code> | <code>jit</code></td>
+                                    <td>Forces specific execution runtime mode for compatibility or peak performance.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--config &lt;path&gt;</code></td>
+                                    <td>File Path (e.g. <code>hyperion.json</code>)</td>
+                                    <td>Loads declarative JSON configuration for reactors, worker pools, and cache rules.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--watch</code></td>
+                                    <td>Flag</td>
+                                    <td>Enables hot-reloading: watches codebase and gracefully reloads workers on file modifications.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--max-requests &lt;n&gt;</code></td>
+                                    <td>Integer (e.g. <code>10000</code>)</td>
+                                    <td>Cycles worker process after N requests to prevent third-party library memory leaks.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 2: The Universal Persistent Worker Daemon                          -->
+                <!-- ========================================================================= -->
+                <div id="manual-worker" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #c084fc; margin: 0;">
+                            🔄 Module 2: The Universal Persistent Worker Daemon (<code>hyperion_worker.php</code>)
+                        </h3>
+                        <span class="badge-pill-brand">Zero-Config Memory Persistence</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Located at the root of the workspace (<code>hyperion_worker.php</code>). Boots any PHP framework (Laravel, Symfony, Slim, WordPress, Flight, or Vanilla) once into memory, stays resident, and processes binary IPC requests at 110,000+ req/s with zero cross-request state bleeding.
+                    </p>
+
+                    <!-- The 6-Stage Request Lifecycle -->
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="color: #f8fafc; font-size: 1rem; font-weight: 700; margin-bottom: 1rem;">
+                            ⚙️ Inside the 6-Stage Worker Execution Cycle
+                        </h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid #c084fc;">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: #c084fc;">1. Cold Boot & Snapshot</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Boots framework kernel, registers autoloader, warms up service providers, and freezes base container in memory.</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid #c084fc;">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: #c084fc;">2. Binary IPC Ingestion</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Unpacks 16-byte binary wire frame from STDIN containing URI, HTTP method, headers, and request body.</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid #c084fc;">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: #c084fc;">3. Superglobals Reconstitution</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Sanitizes and populates <code>$_SERVER</code>, <code>$_GET</code>, <code>$_POST</code>, <code>$_COOKIE</code>, <code>$_FILES</code> fresh for each request.</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid #c084fc;">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: #c084fc;">4. Kernel Pipeline Dispatch</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Dispatches request through framework middleware stack, controller, and returns HTTP response object.</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid #c084fc;">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: #c084fc;">5. Output Capture & Wire Framing</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Encodes status code, headers, and body into binary wire format and writes to STDOUT in a single sys-call.</div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid #c084fc;">
+                                <div style="font-weight: 700; font-size: 0.85rem; color: #c084fc;">6. State Sanitization & GC</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Rolls back uncommitted PDO transactions, clears Auth guards, flushes query logs, and runs <code>gc_collect_cycles()</code>.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environment Variables Reference Table -->
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Environment Variable</th>
+                                    <th>Accepted Values</th>
+                                    <th>Default</th>
+                                    <th>Operational Effect</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>HYPERION_PERSISTENT</code></td>
+                                    <td><code>1</code> | <code>0</code></td>
+                                    <td><code>1</code></td>
+                                    <td>Enables long-lived resident loop, skipping PHP process cold-boot overhead.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_FRAMEWORK</code></td>
+                                    <td><code>auto</code>, <code>laravel</code>, <code>symfony</code>, <code>slim</code>, <code>wordpress</code>, <code>flight</code>, <code>plain</code></td>
+                                    <td><code>auto</code></td>
+                                    <td>Forces explicit framework adapter, bypassing automatic directory file inspection.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_BASE_PATH</code></td>
+                                    <td>Absolute directory path</td>
+                                    <td>Current dir</td>
+                                    <td>Sets target project root containing <code>vendor/</code> and framework entrypoint.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_PUBLIC_DIR</code></td>
+                                    <td>Directory path</td>
+                                    <td><code>public</code> / <code>web</code></td>
+                                    <td>Specifies document root for static assets and front-controller index.php.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_RESET_DB</code></td>
+                                    <td><code>true</code> | <code>false</code></td>
+                                    <td><code>true</code></td>
+                                    <td>Automatically rolls back uncommitted PDO transactions and flushes query logs.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_RESET_AUTH</code></td>
+                                    <td><code>true</code> | <code>false</code></td>
+                                    <td><code>true</code></td>
+                                    <td>Flushes authentication guards, sessions, and cookies between requests.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_FAST_ROUTE</code></td>
+                                    <td><code>true</code> | <code>false</code></td>
+                                    <td><code>true</code></td>
+                                    <td>Registers framework route table into Hyperion's in-memory router for sub-microsecond matching.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>PHP_CLI_SERVER_WORKERS</code></td>
+                                    <td>Integer (e.g. <code>8</code>, <code>16</code>, <code>32</code>)</td>
+                                    <td><code>16</code></td>
+                                    <td>Controls the number of isolated OS worker processes in the persistent pool.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_MAX_REQUESTS</code></td>
+                                    <td>Integer (e.g. <code>5000</code>, <code>10000</code>)</td>
+                                    <td><code>10000</code></td>
+                                    <td>Maximum requests per worker before graceful recycling to guarantee flat RAM.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_MEMORY_LIMIT</code></td>
+                                    <td>String (e.g. <code>256M</code>, <code>512M</code>)</td>
+                                    <td><code>256M</code></td>
+                                    <td>Hard memory ceiling per worker process enforced by the supervisor.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>HYPERION_LOG_LEVEL</code></td>
+                                    <td><code>info</code> | <code>warn</code> | <code>error</code> | <code>debug</code></td>
+                                    <td><code>info</code></td>
+                                    <td>Controls granularity of worker lifecycle and IPC telemetry logging.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 3: Diagnostic & Verification Engines                               -->
+                <!-- ========================================================================= -->
+                <div id="manual-tools" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #34d399; margin: 0;">
+                            🛠️ Module 3: Verification, Fuzzing & Diagnostic Engines (<code>tools/</code> & <code>bin/</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(52, 211, 153, 0.4); color: #34d399;">Automated Certification</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        High-precision diagnostic and fuzzing tools located in <code>tools/</code> and exposed through <code>bin/hyperion-doctor</code>. Used to certify production readiness, prevent memory leaks, and guarantee dual-engine parity.
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <!-- hyperion-doctor -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h4 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin: 0;">
+                                    🩺 <code>bin/hyperion-doctor</code>
+                                </h4>
+                                <span class="badge-pill-brand" style="font-size: 0.7rem;">7 Pillars</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                Automated production certification tool (symlink to <code>tools/hyperion_laravel_doctor.py</code>). Analyzes any Laravel repository across Preflight, Route Discovery, Dual Shootout, State Isolation, Transaction Rollback, Memory Slope, and Concurrency SLA.
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Certify any Laravel project:
+./bin/hyperion-doctor --project /path/to/laravel-app
+
+# Run with custom parameters & strict mode:
+./bin/hyperion-doctor \
+    --project frameworks/github-laravel-admintw \
+    --endpoint / \
+    --workers 16 \
+    --cycles 500 \
+    --concurrency 40 \
+    --strict</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- differential_oracle.py -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h4 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin: 0;">
+                                    ⚖️ <code>differential_oracle.py</code>
+                                </h4>
+                                <span class="badge-pill" style="font-size: 0.7rem; border-color: rgba(52, 211, 153, 0.4); color: #34d399;">Parity Fuzzer</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                Dual-engine differential fuzzer. Simultaneously executes scripts on the Hyperion Rust VM and official Zend PHP CLI to verify 100% byte-for-byte parity across stdout, stderr, and exit codes.
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Run differential oracle across micro tests:
+python3 tools/differential_oracle.py \
+    --tests php-hyperion/tests/micro \
+    --fuzz-cycles 50 \
+    --timeout 5
+
+# Fuzz specific test directory:
+python3 tools/differential_oracle.py \
+    --tests tests/unit</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- soak_isolation_test.py -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <h4 style="font-size: 1.1rem; font-weight: 700; color: #f8fafc; margin: 0;">
+                                    🌊 <code>soak_isolation_test.py</code>
+                                </h4>
+                                <span class="badge-pill" style="font-size: 0.7rem; border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">Soak Test</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                Extended soak verification tool. Dispatches 1,000+ interleaved authenticated and guest requests while recording physical process RSS to verify zero session leaks and stable memory slopes.
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Run 1,000 soak cycles on running server:
+python3 tools/soak_isolation_test.py \
+    --url http://127.0.0.1:8000 \
+    --cycles 1000 \
+    --concurrency 30 \
+    --auth-header "Bearer test-token-123"</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 4: Enterprise Test Suites                                          -->
+                <!-- ========================================================================= -->
+                <div id="manual-tests" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #f59e0b; margin: 0;">
+                            🧪 Module 4: Enterprise Test Suites (<code>tests/</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(245, 158, 11, 0.4); color: #f59e0b;">6-Tier Test Suite</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Rigorous multi-tier verification covering language primitives, PHPUnit 11 architecture, Laravel core subsystems, defensive security invariants, and production SLAs.
+                    </p>
+
+                    <!-- Master Runner Code Block -->
+                    <div class="code-wrapper" style="margin-bottom: 1.5rem;">
+                        <div class="code-header">
+                            <div class="code-dots"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+                            <span>bash — Master Unified Test Runner (tests/run_all_tests.py)</span>
+                            <button class="btn-code-copy">Copy</button>
+                        </div>
+                        <pre><code><span class="token-comment"># Run all 6 test tiers sequentially (Full CI/CD verification):</span>
+python3 tests/run_all_tests.py --all
+
+<span class="token-comment"># Run specific tiers independently:</span>
+python3 tests/run_all_tests.py --unit         <span class="token-comment"># Tier 1: Language Primitives (Arrays, Strings, JSON, Regex)</span>
+python3 tests/run_all_tests.py --phpunit      <span class="token-comment"># Tier 2: PHPUnit 11 Architecture (Container, DB, Models)</span>
+python3 tests/run_all_tests.py --integration  <span class="token-comment"># Tier 3: Laravel 10 Core Subsystems</span>
+python3 tests/run_all_tests.py --security     <span class="token-comment"># Tier 4: Security Invariants (HYP-SEC-01 to 09)</span></code></pre>
+                    </div>
+
+                    <!-- Test Files Detailed Catalog -->
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Test Suite Script</th>
+                                    <th>Tier / Category</th>
+                                    <th>Execution Command</th>
+                                    <th>What It Verifies</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong><code>tests/run_all_tests.py</code></strong></td>
+                                    <td>Master Runner</td>
+                                    <td><code>python3 tests/run_all_tests.py</code></td>
+                                    <td>Executes all 6 test tiers back-to-back with unified timing, status reporting, and non-zero exit codes.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>security_and_compatibility_audit.py</code></strong></td>
+                                    <td>Security Invariants</td>
+                                    <td><code>python3 tests/security/security_and_compatibility_audit.py</code></td>
+                                    <td>Audits HYP-SEC-01 (Path Traversal), HYP-SEC-02 (64KB Header Limit), HYP-SEC-03 (RFC 9111 Set-Cookie Strip), HYP-SEC-04 (16MB Body Cap), and HYP-SEC-07 (HTTP Desync Defense).</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>test_laravel_production_guarantee.py</code></strong></td>
+                                    <td>Production Guarantee</td>
+                                    <td><code>python3 tests/integration/test_laravel_production_guarantee.py</code></td>
+                                    <td>Verifies Session Isolation, Transaction Rollback on Exception, Concurrent ACID Inventory Decrement, Memory RSS Slope, and Concurrency SLA.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>test_laravel_core.php</code></strong></td>
+                                    <td>Laravel Subsystems</td>
+                                    <td><code>php tests/integration/test_laravel_core.php</code></td>
+                                    <td>Validates 10 core subsystems: Service Container, Router, Eloquent ORM, Blade Compiler, Events, Cache, Session, Validation, Monolog, and Artisan.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>test_school_dual_engine.py</code></strong></td>
+                                    <td>Dual-Engine Parity</td>
+                                    <td><code>python3 tests/integration/test_school_dual_engine.py</code></td>
+                                    <td>Executes full school ERP workflows across both Zend PHP and Hyperion to assert identical database state and JSON responses.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>verify_memory_rss.py</code></strong></td>
+                                    <td>Memory RSS Slope</td>
+                                    <td><code>python3 tests/performance/verify_memory_rss.py</code></td>
+                                    <td>Dispatches 500 requests while recording physical process RSS to guarantee net memory growth is &lt; 1.0 MB.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>tests/unit/run_unit_tests.php</code></strong></td>
+                                    <td>Language Primitives</td>
+                                    <td><code>php tests/unit/run_unit_tests.php</code></td>
+                                    <td>Runs 14 primitive test files: arrays, string concatenation, date parsing, exceptions, explode/implode, JSON encoding, regex matching, substr.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>tests/phpunit/phpunit.xml</code></strong></td>
+                                    <td>PHPUnit Architecture</td>
+                                    <td><code>phpunit -c tests/phpunit/phpunit.xml tests/phpunit</code></td>
+                                    <td>Executes ContainerTest, DatabaseRepositoryTest, DomainModelTest, MockingSuiteTest, and ServiceIntegrationTest.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 5: Benchmark Batteries & Stress Tools                              -->
+                <!-- ========================================================================= -->
+                <div id="manual-benchmarks" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #f43f5e; margin: 0;">
+                            ⚡ Module 5: Benchmark Batteries & Stress Tools (<code>benchmarks/</code> & <code>scripts/</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(244, 63, 94, 0.4); color: #f43f5e;">110k+ Req/s Shootouts</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Automated dual-engine shootout runners, concurrency stress tests, Eloquent CRUD analyzers, and k6 load testing scenarios located in <code>benchmarks/</code> and <code>scripts/</code>.
+                    </p>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Benchmark Script</th>
+                                    <th>Target Workload</th>
+                                    <th>Execution Command</th>
+                                    <th>Output Generated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong><code>run_github_5_shootout.py</code></strong></td>
+                                    <td>5 Real GitHub Projects</td>
+                                    <td><code>python3 benchmarks/run_github_5_shootout.py</code></td>
+                                    <td>Interactive terminal table + JSON export to <code>github_5_shootout_results.json</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>run_benchmarks.py</code></strong></td>
+                                    <td>E-Commerce Frameworks</td>
+                                    <td><code>python3 benchmarks/run_benchmarks.py</code></td>
+                                    <td>Head-to-head comparison across Laravel, Symfony, Slim, WordPress, and Native PHP.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>benchmark_laravel_crud.py</code></strong></td>
+                                    <td>Eloquent Database CRUD</td>
+                                    <td><code>python3 benchmarks/benchmark_laravel_crud.py</code></td>
+                                    <td>Measures queries/sec and latency for Insert, Select, Update, and Delete operations.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>frameworks_concurrency.py</code></strong></td>
+                                    <td>Max Concurrency Scaling</td>
+                                    <td><code>python3 benchmarks/suites/frameworks_concurrency.py</code></td>
+                                    <td>Concurrency sweep from 10 to 500 parallel connections across all frameworks.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>ecommerce_concurrency.py</code></strong></td>
+                                    <td>Cart & Checkout Stress</td>
+                                    <td><code>python3 benchmarks/suites/ecommerce_concurrency.py</code></td>
+                                    <td>High-concurrency cart checkout and ACID inventory decrement under load.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>laravel_complex.py</code></strong></td>
+                                    <td>Complex Multi-Join Queries</td>
+                                    <td><code>python3 benchmarks/suites/laravel_complex.py</code></td>
+                                    <td>Stresses multi-table relational joins, eager loading, and heavy Blade rendering.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>benchmark_normal_php.py</code></strong></td>
+                                    <td>Zend PHP Baseline</td>
+                                    <td><code>python3 benchmarks/benchmark_normal_php.py</code></td>
+                                    <td>Baseline measurement of built-in PHP CLI server (<code>php -S</code>) for speedup comparison.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>stress_concurrency_and_ram.py</code></strong></td>
+                                    <td>RAM Saturation Stress</td>
+                                    <td><code>python3 benchmarks/stress/stress_concurrency_and_ram.py</code></td>
+                                    <td>Extreme saturation stress test measuring RAM plateau and process stability under load.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>verify_optimizations.py</code></strong></td>
+                                    <td>Kernel Optimizations</td>
+                                    <td><code>python3 benchmarks/stress/verify_optimizations.py</code></td>
+                                    <td>Validates zero-copy buffer, routing cache, and keep-alive optimizations.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>benchmark_stability_all_projects.py</code></strong></td>
+                                    <td>Multi-Project Stability</td>
+                                    <td><code>python3 scripts/benchmark_stability_all_projects.py</code></td>
+                                    <td>Measures 4 rounds of read/write load across 5 services with Jitter / CV% calculation.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>verify_and_benchmark_bank.py</code></strong></td>
+                                    <td>ACID Banking Ledger</td>
+                                    <td><code>python3 scripts/verify_and_benchmark_bank.py</code></td>
+                                    <td>High-concurrency financial balance transfers, debit/credit locks, and zero-sum verification.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>benchmark_laravel_universal.py</code></strong></td>
+                                    <td>Universal Laravel Runner</td>
+                                    <td><code>python3 scripts/benchmark_laravel_universal.py</code></td>
+                                    <td>Automated dual-engine benchmark pointable to any arbitrary Laravel project directory.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>seed_crm_laravel.php</code></strong></td>
+                                    <td>CRM Database Seeder</td>
+                                    <td><code>php scripts/seed_crm_laravel.php</code></td>
+                                    <td>Generates 1,000 realistic leads, deals, contacts, and pipeline stages in SQLite database.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>verify_ecommerce_project.py</code></strong></td>
+                                    <td>E-Commerce Verifier</td>
+                                    <td><code>python3 scripts/verify_ecommerce_project.py</code></td>
+                                    <td>Automated smoke test and health verification across all e-commerce endpoints.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><code>k6/load_test.js</code></strong></td>
+                                    <td>k6 Virtual Users</td>
+                                    <td><code>k6 run benchmarks/k6/load_test.js</code></td>
+                                    <td>k6 telemetry report with P95, P99 latencies, and HTTP error percentages.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 6: Full Catalog of Included Frameworks                             -->
+                <!-- ========================================================================= -->
+                <div id="manual-frameworks" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #38bdf8; margin: 0;">
+                            📁 Module 6: Full Catalog of Included Frameworks (<code>frameworks/</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">21 Ready-to-Run Applications</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        This repository contains 21 fully configured, self-contained PHP applications across e-commerce, banking, CRM, task queues, analytics, and popular open-source GitHub repositories. Each can be started instantly with Normal PHP or PHP-Hyperion:
+                    </p>
+
+                    <!-- Category 1: E-Commerce Suites -->
+                    <h4 style="color: #22d3ee; font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">
+                        🛒 1. E-Commerce Suites
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>ecommerce-laravel</code></div>
+                            <div style="font-size: 0.8rem; color: #22d3ee; margin-bottom: 0.5rem;">Laravel 12 + Blade + Eloquent ORM + ACID Checkout</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Full-featured store with category browsing, cart sessions, inventory reservation, and order history.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8000):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8000 -t frameworks/ecommerce-laravel/public -W
+
+# Test endpoint:
+curl http://127.0.0.1:8000/api/products</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>ecommerce-symfony</code></div>
+                            <div style="font-size: 0.8rem; color: #22d3ee; margin-bottom: 0.5rem;">Symfony 7 + HttpKernel + Dependency Injection</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Enterprise store architecture leveraging Symfony's EventDispatcher and compiled DI container.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8001):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8001 -t frameworks/ecommerce-symfony/public -W
+
+# Test endpoint:
+curl http://127.0.0.1:8001/api/catalog</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>ecommerce-slim</code></div>
+                            <div style="font-size: 0.8rem; color: #22d3ee; margin-bottom: 0.5rem;">Slim 4 + PSR-7 Request/Response + PHP-DI</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Lightweight REST microservice store optimized for low-latency JSON catalog dispatch.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8002):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8002 -t frameworks/ecommerce-slim/public -W
+
+# Test endpoint:
+curl http://127.0.0.1:8002/api/items</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>ecommerce-wordpress</code></div>
+                            <div style="font-size: 0.8rem; color: #22d3ee; margin-bottom: 0.5rem;">WordPress 6.7 + Headless REST API + MySQLi</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">WordPress CMS core handling post metadata, taxonomy queries, and REST API dispatch.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8003):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8003 -t frameworks/ecommerce-wordpress -W
+
+# Test endpoint:
+curl http://127.0.0.1:8003/wp-json/wp/v2/posts</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>ecommerce-native</code></div>
+                            <div style="font-size: 0.8rem; color: #22d3ee; margin-bottom: 0.5rem;">Native PHP 8.4 + Direct Threaded Kernel</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Zero-dependency vanilla PHP implementation delivering maximum theoretical throughput (208k+ req/s).</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8004):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8004 -t frameworks/ecommerce-native/public -W
+
+# Test endpoint:
+curl http://127.0.0.1:8004/api/products</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 2: Domain-Specific Engines -->
+                    <h4 style="color: #c084fc; font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">
+                        🏢 2. Domain-Specific Business Engines
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>bank-native</code></div>
+                            <div style="font-size: 0.8rem; color: #c084fc; margin-bottom: 0.5rem;">Financial ACID Ledger + Double-Entry Accounting</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Pessimistic balance locking, atomic transfer debit/credit pairs, and tamper-evident transaction logs.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8005):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8005 -t frameworks/bank-native/public -W
+
+# Run dedicated benchmark:
+python3 scripts/verify_and_benchmark_bank.py</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>crm-laravel</code></div>
+                            <div style="font-size: 0.8rem; color: #c084fc; margin-bottom: 0.5rem;">Enterprise CRM + Leads + Deals + Pipelines</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Relational CRM with customer tracking, deal staging, activity timelines, and SQLite storage.</p>
+                            <div class="code-block">
+                                <pre><code># Seed CRM database:
+php scripts/seed_crm_laravel.php
+
+# Start with Hyperion (Port 8006):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8006 -t frameworks/crm-laravel/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>queue-workflow</code></div>
+                            <div style="font-size: 0.8rem; color: #c084fc; margin-bottom: 0.5rem;">Atomic Task Queue + Row-Lease Job Worker</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">High-throughput queue dispatcher with job push, pop, retry backoffs, and FSM lifecycle transitions.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8007):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8007 -t frameworks/queue-workflow/public -W
+
+# Push job:
+curl -X POST http://127.0.0.1:8007/api/jobs/push -d '{"job":"send_email"}'</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>analytics-telemetry</code></div>
+                            <div style="font-size: 0.8rem; color: #c084fc; margin-bottom: 0.5rem;">Time-Series Event Ingestion & Quantile Aggregation</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">High-write event ingestion buffer calculating p50, p95, and p99 metrics with zero lock contention.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8008):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8008 -t frameworks/analytics-telemetry/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>auth-rbac</code></div>
+                            <div style="font-size: 0.8rem; color: #c084fc; margin-bottom: 0.5rem;">JWT / HMAC-SHA256 Token Auth + Hierarchical ACLs</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Role-based access control engine verifying cryptographic tokens and granular resource permissions.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8009):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8009 -t frameworks/auth-rbac/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>cms-markdown</code></div>
+                            <div style="font-size: 0.8rem; color: #c084fc; margin-bottom: 0.5rem;">High-Speed Regex Markdown & Table of Contents Engine</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Parses Markdown documentation files, extracts headings, builds navigation trees, and serves cached HTML.</p>
+                            <div class="code-block">
+                                <pre><code># Start with Hyperion (Port 8010):
+./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8010 -t frameworks/cms-markdown/public -W</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 3: Real-World GitHub Repositories -->
+                    <h4 style="color: #10b981; font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">
+                        ⭐ 3. Real-World GitHub Open-Source Repositories
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem;">
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-laravel-admintw</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">dcblogdev/laravel-admintw (1.2k★) — Laravel 12 + Livewire 3</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;"><strong>Performance:</strong> Normal PHP 66.8 req/s vs Hyperion <strong>110,607.2 req/s</strong> (<strong>1,655.80× FASTER</strong>).</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8011 -t frameworks/github-laravel-admintw/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-slim-skeleton</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">slimphp/Slim-Skeleton (3.1k★) — Slim 4 + PSR-7 + PHP-DI</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;"><strong>Performance:</strong> Normal PHP 4,096.8 req/s vs Hyperion <strong>97,986.4 req/s</strong> (<strong>23.92× FASTER</strong>).</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8012 -t frameworks/github-slim-skeleton/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-laravel-apikit</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">Grazulex/laravel-api-kit (200★) — Laravel 13 REST Starter</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;"><strong>Performance:</strong> Normal PHP 446.4 req/s vs Hyperion <strong>90,975.2 req/s</strong> (<strong>203.81× FASTER</strong>).</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8013 -t frameworks/github-laravel-apikit/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-flight-app</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">mikecao/flight (4.2k★) — Flight Microframework Router</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;"><strong>Performance:</strong> Normal PHP 10,950.3 req/s vs Hyperion <strong>114,764.4 req/s</strong> (<strong>10.48× FASTER</strong>).</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8014 -t frameworks/github-flight-app/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-laravel-kaidokit</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">siubie/kaido-kit (500★) — Laravel 12 + Filament 3 Admin</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;"><strong>Performance:</strong> Normal PHP 22.7 req/s vs Hyperion <strong>111,135.8 req/s</strong> (<strong>4,900.17× FASTER</strong>).</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8015 -t frameworks/github-laravel-kaidokit/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-wave-saas</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">thedevdojo/wave (4.5k★) — Filament 4 + Livewire 3 SaaS</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Heavy full-stack SSR SaaS kit (85.7 KB payload, 7 SQL queries, 30+ Blade components).</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8016 -t frameworks/github-wave-saas/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>github-laravel-blog</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">guillaumebriday/laravel-blog (2.8k★) — Turbo + Sanctum</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Full-featured blog application with Hotwire Turbo drive, comments, and media management.</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8017 -t frameworks/github-laravel-blog/public -W</code></pre>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.25rem;"><code>official-laravel</code></div>
+                            <div style="font-size: 0.8rem; color: #10b981; margin-bottom: 0.5rem;">laravel/laravel (32k★) — Official Laravel Starter</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">The official framework application skeleton with baseline routes and default middleware stack.</p>
+                            <div class="code-block">
+                                <pre><code>./php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8018 -t frameworks/official-laravel/public -W</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 7: Production DevOps, Deployment & OS Tuning                       -->
+                <!-- ========================================================================= -->
+                <div id="manual-deploy" style="margin-bottom: 3.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #10b981; margin: 0;">
+                            🚀 Module 7: Production DevOps, Deployment & OS Tuning (<code>deploy/</code> & <code>docker-compose.yml</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">Enterprise Production Ready</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        Production-grade orchestration configs, Linux kernel TCP socket tuning, and Docker multi-container stack:
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <!-- Systemd Unit -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                🐧 <code>deploy/hyperion.service</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Systemd service unit for enterprise Linux (Ubuntu, Debian, RHEL) providing <code>LimitNOFILE=65535</code>, <code>ProtectSystem=full</code>, and automatic process restarts:
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Install and start systemd service:
+sudo cp deploy/hyperion.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now hyperion
+sudo systemctl status hyperion</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Sysctl Tuning -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                ⚙️ <code>deploy/sysctl.conf</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Linux kernel TCP socket tuning for 200,000+ req/s: increases <code>somaxconn</code> to 65,535, enables <code>tcp_tw_reuse</code>, and expands port range to 1024-65535:
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Apply kernel socket optimizations:
+sudo cp deploy/sysctl.conf /etc/sysctl.d/99-hyperion.conf
+sudo sysctl -p /etc/sysctl.d/99-hyperion.conf</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Docker Compose -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                🐳 <code>docker-compose.yml</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Multi-container deployment orchestrating Hyperion App container, Redis cache, and Nginx edge reverse proxy with resource quotas:
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Start entire production stack in background:
+docker compose up -d
+
+# View live container logs:
+docker compose logs -f app
+
+# Run health check probe:
+docker compose exec app curl -I http://127.0.0.1:8000/api/categories</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- Module 8: Documentation Guides, Root Specs & Dependency Tools             -->
+                <!-- ========================================================================= -->
+                <div id="manual-guides">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h3 style="font-size: 1.35rem; font-weight: 700; color: #818cf8; margin: 0;">
+                            📚 Module 8: Architecture, Standards, Technical Guides & Composer (<code>docs/</code> & <code>bin/composer</code>)
+                        </h3>
+                        <span class="badge-pill" style="border-color: rgba(129, 140, 248, 0.4); color: #818cf8;">Complete Knowledge Base</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        In-depth technical guides, specifications, and dependency tools providing complete theoretical and practical documentation for the engine:
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+                        <!-- PERFORMANCE_GUIDE.md -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                📖 <code>docs/PERFORMANCE_GUIDE.md</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Deep architectural analysis on the physical laws of HTTP throughput: explains why heavy SSR applications (like Wave at 85.7 KB) max out at ~642.9 req/s due to network bandwidth saturation (pushing 53.8 MB/s) and CPU Blade hydration, and how edge micro-caching unlocks 95,000+ req/s.
+                            </p>
+                        </div>
+
+                        <!-- DOCTOR_AND_CERTIFICATION_GUIDE.md -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                📖 <code>docs/DOCTOR_AND_CERTIFICATION_GUIDE.md</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Complete operational guide for <code>bin/hyperion-doctor</code>. Covers the 7 Production Pillars: Preflight checks, route discovery, dual shootouts, session leak prevention, transaction rollbacks, memory slope plateau, and high-concurrency SLAs.
+                            </p>
+                        </div>
+
+                        <!-- GITHUB_PROJECTS_SHOOTOUT.md -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                📖 <code>docs/GITHUB_PROJECTS_SHOOTOUT.md</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Full benchmarking methodology, hardware specifications, and reproduction steps for the 5 real-world GitHub open-source repositories shootout.
+                            </p>
+                        </div>
+
+                        <!-- ARCHITECTURE.md & SECURITY.md -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                📖 <code>ARCHITECTURE.md</code> & <code>SECURITY.md</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Formal system topology, socket reactor schematics, binary IPC wire framing specifications, and the 9 defensive security invariants (HYP-SEC-01 to HYP-SEC-09).
+                            </p>
+                        </div>
+
+                        <!-- bin/composer -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                🎼 <code>bin/composer</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Self-contained Composer 2.x binary packaged directly inside the repository for offline dependency installation and autoloader optimization without host package manager conflicts:
+                            </p>
+                            <div class="code-block">
+                                <pre><code># Install dependencies for any framework:
+bin/composer install --working-dir=frameworks/crm-laravel --optimize-autoloader
+
+# Dump optimized classmap:
+bin/composer dump-autoload -o --working-dir=frameworks/ecommerce-laravel</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- CHANGELOG.md & LICENSE -->
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                            <h4 style="font-size: 1.05rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.5rem;">
+                                📜 <code>CHANGELOG.md</code> & <code>LICENSE</code>
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                                Complete version release history, migration notes from PHP-FPM / Swoole / RoadRunner, and open-source licensing compliance information.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
 
             <!-- Troubleshooting Section -->
             <section class="doc-section" id="troubleshooting">
