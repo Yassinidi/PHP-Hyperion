@@ -20,6 +20,8 @@ Thumbs.db
 .idea/
 *.sublime-project
 *.sublime-workspace
+*.swp
+.*.swp
 
 # Laravel Framework Files
 **/storage/logs/*.log
@@ -41,6 +43,7 @@ vendor/
 **/yarn-error.log*
 
 # Excluded from upload as requested by user
+php-hyperion/
 frameworks/
 docs/
 *.log
