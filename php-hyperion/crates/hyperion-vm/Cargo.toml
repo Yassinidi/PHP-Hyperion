@@ -1,0 +1,28 @@
+[package]
+name = "hyperion-vm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyperion-core = { path = "../../crates/hyperion-core" }
+hyperion-bytecode = { path = "../hyperion-bytecode" }
+hyperion-jit = { path = "../hyperion-jit" }
+
+hyperion-compiler = { path = "../../crates/hyperion-compiler" }
+hyperion-parser = { path = "../hyperion-parser" }
+
+hyperion-ext-standard = { path = "../../ext/hyperion-ext-standard" }
+crossbeam-deque = "0.8"
+crossbeam-utils = "0.8"
+dashmap = "6.0"
+mio = { version = "0.8", features = ["os-poll", "net"] }
+httparse = "1.8"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = { version = "1.0.150", features = ["preserve_order"] }
+indexmap = "2.14.0"
+regex = "1"
+crossbeam-channel = "0.5.15"
+chrono = "0.4"
+socket2 = "0.5"
+libc = "0.2"
+

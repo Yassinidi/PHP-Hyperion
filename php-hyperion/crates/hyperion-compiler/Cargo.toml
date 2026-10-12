@@ -1,0 +1,11 @@
+[package]
+name = "hyperion-compiler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyperion-core = { path = "../../crates/hyperion-core" }
+hyperion-bytecode = { path = "../hyperion-bytecode" }
+hyperion-parser = { path = "../hyperion-parser" }
+
+

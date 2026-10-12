@@ -1,0 +1,10 @@
+[package]
+name = "hyperion-jit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hyperion-core = { path = "../../crates/hyperion-core" }
+dynasm = "5.0.0"
+dynasmrt = "5.0.0"
+hyperion-bytecode = { path = "../hyperion-bytecode" }

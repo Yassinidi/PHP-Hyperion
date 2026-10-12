@@ -1,0 +1,34 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/hyperion-core",
+    "crates/hyperion-parser",
+    "crates/hyperion-bytecode",
+    "crates/hyperion-compiler",
+    "crates/hyperion-vm",
+    "crates/hyperion-jit",
+    "crates/hyperion-bridge",
+    "ext/hyperion-ext-standard",
+    "sapi/hyperion-cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["PHP-Hyperion Contributors <nailiyassin2@gmail.com>"]
+repository = "https://github.com/Yassinidi/PHP-Hyperion"
+homepage = "https://github.com/Yassinidi/PHP-Hyperion"
+license = "PolyForm-Noncommercial-1.0.0"
+keywords = ["php", "hyperion", "runtime", "jit", "fastcgi"]
+categories = ["web-programming::http-server", "development-tools"]
+
+[workspace.dependencies]
+thiserror = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+debug = true
+strip = false
