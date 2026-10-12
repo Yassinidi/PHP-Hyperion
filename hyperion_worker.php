@@ -435,9 +435,9 @@ final class HyperionIpc {
         self::rollbackActiveTransactions();
         self::cleanupTempFiles();
 
-        $host = $headers['Host'] ?? $headers['host'] ?? 'localhost';
-        $remoteAddr = $headers['Remote-Addr'] ?? '127.0.0.1';
         $serverPort = $headers['Server-Port'] ?? '8000';
+        $remoteAddr = $headers['Remote-Addr'] ?? '127.0.0.1';
+        $host = $headers['Host'] ?? $headers['host'] ?? ("127.0.0.1:{$serverPort}");
 
         $_SERVER = [
             'REQUEST_METHOD'     => strtoupper($method),
@@ -727,7 +727,11 @@ switch ($framework) {
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
         // Pre-warm and bind initial request context prior to bootstrapping so all service providers succeed
-        $warmupReq = \Illuminate\Http\Request::create('/', 'GET');
+        $appUrl = getenv('APP_URL') ?: ($app->has('config') ? $app['config']->get('app.url') : 'http://127.0.0.1:8000');
+        if (empty($appUrl) || $appUrl === 'http://localhost') {
+            $appUrl = 'http://127.0.0.1:8000';
+        }
+        $warmupReq = \Illuminate\Http\Request::create($appUrl . '/', 'GET');
         $app->instance('request', $warmupReq);
 
         try {
@@ -743,6 +747,9 @@ switch ($framework) {
             $kernel->terminate($warmupReq, $warmupRes);
             if (method_exists($app, 'forgetInstance')) {
                 $app->forgetInstance('request');
+                if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
+                    $app->forgetInstance(\Illuminate\Foundation\Vite::class);
+                }
             }
             if ($app->has('router')) {
                 $router = $app->make('router');
@@ -817,6 +824,16 @@ switch ($framework) {
                 $request = \Illuminate\Http\Request::capture();
             }
             $app->instance('request', $request);
+            if ($app->has('url')) {
+                try {
+                    $app->make('url')->setRequest($request);
+                } catch (\Throwable $e) {}
+            }
+            if (method_exists($app, 'forgetInstance')) {
+                if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
+                    $app->forgetInstance(\Illuminate\Foundation\Vite::class);
+                }
+            }
 
             // Dispatch full Laravel Kernel pipeline
             try {
@@ -829,6 +846,11 @@ switch ($framework) {
             }
             HyperionIpc::sendResponse($response);
             $kernel->terminate($request, $response);
+            if (method_exists($app, 'forgetInstance')) {
+                if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
+                    $app->forgetInstance(\Illuminate\Foundation\Vite::class);
+                }
+            }
 
             // User-defined cleanup hook
             if (is_callable($hyperionConfig['cleanup'])) {
