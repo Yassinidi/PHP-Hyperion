@@ -73,18 +73,27 @@ docker compose up -d
 
 ---
 
-### 🪟 Windows (WSL2, Native & Docker)
+### 🪟 Windows (Native Executable, Batch, PowerShell & WSL2)
 
-#### Option 1: WSL2 (Ubuntu / Debian - Recommended for Max Performance)
+#### Option 1: Native Windows Standalone (No WSL or Docker Required)
+You can run the native pre-compiled 64-bit Windows binary directly from `deploy\hyperion.exe`:
+
+```cmd
+:: From Command Prompt in the cloned directory:
+install.bat
+```
+Or simply double-click `install.bat` in Windows Explorer to automatically install `hyperion.exe` and add it to your `PATH`!
+
+#### Option 2: PowerShell
+Open PowerShell and run:
+```powershell
+.\install.ps1
+```
+
+#### Option 3: WSL2 (Ubuntu / Debian - Max Concurrency)
 Inside your WSL2 terminal:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Yassinidi/PHP-Hyperion/main/install.sh | bash
-```
-
-#### Option 2: PowerShell
-Open PowerShell as Administrator:
-```powershell
-.\install.ps1
 ```
 
 ---
@@ -153,12 +162,15 @@ server {
 PHP-Hyperion/
 ├── deploy/                   # Production deployment assets
 │   ├── hyperion              # Universal native binary (Apple Silicon + Intel macOS)
+│   ├── hyperion.exe          # Native Windows 64-bit standalone executable
 │   ├── hyperion.service      # Systemd service unit for Linux servers
 │   └── sysctl.conf           # Kernel high-concurrency socket tuning parameters
 ├── bin/
-│   ├── hyperion              # Deployed executable
+│   ├── hyperion              # Deployed macOS/Linux executable
+│   ├── hyperion.exe          # Deployed Windows executable
 │   └── hyperion-doctor       # Enterprise Laravel certification and audit tool
 ├── install.sh                # Cross-platform 1-line installer (macOS & Linux)
+├── install.bat               # Native Windows batch installer (Command Prompt / Double Click)
 ├── install.ps1               # Windows PowerShell installer
 ├── Dockerfile                # High-performance PHP 8.4 container deployment
 ├── docker-compose.yml        # Multi-container orchestration (Hyperion + Nginx + Redis)
