@@ -1,1 +1,0 @@
-<x-filament::icon {{ $attributes }}></x-filament::icon>
