@@ -751,6 +751,12 @@ switch ($framework) {
                     $app->forgetInstance(\Illuminate\Foundation\Vite::class);
                 }
             }
+            if (class_exists(\Tighten\Ziggy\BladeRouteGenerator::class)) {
+                \Tighten\Ziggy\BladeRouteGenerator::$generated = false;
+            }
+            if (class_exists(\Inertia\Inertia::class)) {
+                try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
+            }
             if ($app->has('router')) {
                 $router = $app->make('router');
                 (function() {
@@ -834,6 +840,12 @@ switch ($framework) {
                     $app->forgetInstance(\Illuminate\Foundation\Vite::class);
                 }
             }
+            if (class_exists(\Tighten\Ziggy\BladeRouteGenerator::class)) {
+                \Tighten\Ziggy\BladeRouteGenerator::$generated = false;
+            }
+            if (class_exists(\Inertia\Inertia::class)) {
+                try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
+            }
 
             // Dispatch full Laravel Kernel pipeline
             try {
@@ -850,6 +862,12 @@ switch ($framework) {
                 if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
                     $app->forgetInstance(\Illuminate\Foundation\Vite::class);
                 }
+            }
+            if (class_exists(\Tighten\Ziggy\BladeRouteGenerator::class)) {
+                \Tighten\Ziggy\BladeRouteGenerator::$generated = false;
+            }
+            if (class_exists(\Inertia\Inertia::class)) {
+                try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
             }
 
             // User-defined cleanup hook
