@@ -53,11 +53,19 @@ $hyperionConfig = [
 ];
 
 // ============================================================================
-// 1.1 LOCK-FREE IN-MEMORY SESSION & CACHE ENGINE (ZERO FILE I/O)
+// 1.1 LOCK-FREE IN-MEMORY SESSION & CACHE ENGINE (SHARED MULTI-WORKER STORAGE)
 // ============================================================================
 final class HyperionMemorySessionHandler implements \SessionHandlerInterface {
     public static array $sessions = [];
     private static int $maxSessions = 200000;
+    private static string $storageDir = '';
+
+    public static function init(): void {
+        self::$storageDir = sys_get_temp_dir() . '/hyperion_sessions';
+        if (!is_dir(self::$storageDir)) {
+            @mkdir(self::$storageDir, 0777, true);
+        }
+    }
 
     public function open(string $path, string $name): bool {
         return true;
@@ -68,11 +76,26 @@ final class HyperionMemorySessionHandler implements \SessionHandlerInterface {
     }
 
     public function read(string $id): string|false {
-        return self::$sessions[$id] ?? '';
+        if (isset(self::$sessions[$id])) {
+            return self::$sessions[$id];
+        }
+        if (self::$storageDir !== '') {
+            $file = self::$storageDir . '/' . hash('crc32b', $id) . '.sess';
+            if (file_exists($file)) {
+                $data = (string)@file_get_contents($file);
+                self::$sessions[$id] = $data;
+                return $data;
+            }
+        }
+        return '';
     }
 
     public function write(string $id, string $data): bool {
         self::$sessions[$id] = $data;
+        if (self::$storageDir !== '') {
+            $file = self::$storageDir . '/' . hash('crc32b', $id) . '.sess';
+            @file_put_contents($file, $data);
+        }
         if (count(self::$sessions) > self::$maxSessions) {
             array_shift(self::$sessions);
         }
@@ -81,11 +104,165 @@ final class HyperionMemorySessionHandler implements \SessionHandlerInterface {
 
     public function destroy(string $id): bool {
         unset(self::$sessions[$id]);
+        if (self::$storageDir !== '') {
+            $file = self::$storageDir . '/' . hash('crc32b', $id) . '.sess';
+            if (file_exists($file)) {
+                @unlink($file);
+            }
+        }
         return true;
     }
 
     public function gc(int $max_lifetime): int|false {
         return 0;
+    }
+}
+
+// ============================================================================
+// 1.2 IN-MEMORY SQL QUERY RESULT STORE & CROSS-WORKER EPOCH INVALIDATOR
+// ============================================================================
+final class HyperionSqlParser {
+    public static function extractTables(string $sql): array {
+        $tables = [];
+        if (preg_match_all('/\b(?:from|join|into|update)\s+[`"\'\s]?([a-zA-Z0-9_]+)[`"\'\s]?/i', $sql, $matches)) {
+            foreach ($matches[1] as $t) {
+                $tables[strtolower(trim($t, "`'\" \t\n\r"))] = true;
+            }
+        }
+        return array_keys($tables);
+    }
+
+    public static function invalidateMutatedTables(string $sql): void {
+        $tables = self::extractTables($sql);
+        foreach ($tables as $t) {
+            HyperionQueryStore::invalidateTable($t);
+        }
+    }
+}
+
+final class HyperionQueryStore {
+    private static array $cache = [];
+    private static string $epochFile = '';
+    private const MICRO_TTL_NS = 250_000_000; // 250 milliseconds in nanoseconds
+
+    // Strict associative map for O(1) sensitive table exclusion (Fixes Bug #1)
+    private static array $sensitiveTables = [
+        'users' => true,
+        'sessions' => true,
+        'password_resets' => true,
+        'password_reset_tokens' => true,
+        'personal_access_tokens' => true,
+        'failed_jobs' => true,
+        'jobs' => true,
+        'carts' => true,
+        'orders' => true,
+        'oauth_access_tokens' => true,
+        'oauth_auth_codes' => true,
+        'oauth_clients' => true,
+        'oauth_refresh_tokens' => true,
+    ];
+
+    public static function init(): void {
+        self::$epochFile = sys_get_temp_dir() . '/hyperion_table_epochs.bin';
+        if (!file_exists(self::$epochFile)) {
+            @file_put_contents(self::$epochFile, str_repeat("\0", 65536));
+        }
+    }
+
+    public static function get(string $sql, array $bindings, array $tables): ?array {
+        foreach ($tables as $t) {
+            if (isset(self::$sensitiveTables[$t])) {
+                return null; // Sensitive table: ALWAYS query MySQL directly
+            }
+        }
+
+        $key = md5($sql . "\0" . serialize($bindings));
+        if (!isset(self::$cache[$key])) {
+            return null;
+        }
+
+        $entry = self::$cache[$key];
+        $now = hrtime(true);
+
+        // 250ms Micro-TTL validation (Fixes Bug #3)
+        if (($now - $entry['time']) > self::MICRO_TTL_NS) {
+            unset(self::$cache[$key]);
+            return null;
+        }
+
+        // Cross-worker shared epoch coherence check
+        if (!self::isEpochCurrent($tables, $entry['epochs'])) {
+            unset(self::$cache[$key]);
+            return null;
+        }
+
+        return $entry['data'];
+    }
+
+    public static function set(string $sql, array $bindings, array $tables, array $data): void {
+        foreach ($tables as $t) {
+            if (isset(self::$sensitiveTables[$t])) {
+                return;
+            }
+        }
+        $key = md5($sql . "\0" . serialize($bindings));
+        self::$cache[$key] = [
+            'data' => $data,
+            'time' => hrtime(true),
+            'epochs' => self::captureCurrentEpochs($tables),
+        ];
+    }
+
+    public static function invalidateTable(string $table): void {
+        self::incrementSharedEpoch($table);
+        foreach (self::$cache as $k => $entry) {
+            if (isset($entry['epochs'][$table])) {
+                unset(self::$cache[$k]);
+            }
+        }
+    }
+
+    private static function captureCurrentEpochs(array $tables): array {
+        $epochs = [];
+        foreach ($tables as $t) {
+            $epochs[$t] = self::getTableEpoch($t);
+        }
+        return $epochs;
+    }
+
+    private static function isEpochCurrent(array $tables, array $cachedEpochs): bool {
+        foreach ($tables as $t) {
+            if (isset($cachedEpochs[$t])) {
+                if (self::getTableEpoch($t) !== $cachedEpochs[$t]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static function getTableEpoch(string $table): int {
+        if (self::$epochFile === '' || !file_exists(self::$epochFile)) return 0;
+        $offset = (crc32($table) & 0x1FFF) * 8;
+        $fp = @fopen(self::$epochFile, 'rb');
+        if (!$fp) return 0;
+        fseek($fp, $offset);
+        $bin = fread($fp, 8);
+        fclose($fp);
+        return $bin ? unpack('P', $bin)[1] : 0;
+    }
+
+    public static function incrementSharedEpoch(string $table): void {
+        if (self::$epochFile === '' || !file_exists(self::$epochFile)) return;
+        $offset = (crc32($table) & 0x1FFF) * 8;
+        $fp = @fopen(self::$epochFile, 'r+b');
+        if (!$fp) return;
+        fseek($fp, $offset);
+        $bin = fread($fp, 8);
+        $epoch = ($bin ? unpack('P', $bin)[1] : 0) + 1;
+        fseek($fp, $offset);
+        fwrite($fp, pack('P', $epoch));
+        fclose($fp);
     }
 }
 
@@ -861,8 +1038,42 @@ switch ($framework) {
         $bootedResolvedKeys = array_keys((function() { return $this->resolved; })->call($app));
 
         // Auto-tune database connections for concurrent WAL and memory-mapped performance
+        HyperionMemorySessionHandler::init();
+        HyperionQueryStore::init();
+
+        if (!class_exists('HyperionMySqlConnection', false)) {
+            class HyperionMySqlConnection extends \Illuminate\Database\MySqlConnection {
+                public function select($query, $bindings = [], $useReadPdo = true) {
+                    $tables = HyperionSqlParser::extractTables($query);
+                    $cached = HyperionQueryStore::get($query, $bindings, $tables);
+                    if ($cached !== null) {
+                        return $cached;
+                    }
+                    $results = parent::select($query, $bindings, $useReadPdo);
+                    HyperionQueryStore::set($query, $bindings, $tables, $results);
+                    return $results;
+                }
+
+                public function statement($query, $bindings = []) {
+                    $res = parent::statement($query, $bindings);
+                    HyperionSqlParser::invalidateMutatedTables($query);
+                    return $res;
+                }
+
+                public function affectingStatement($query, $bindings = []) {
+                    $res = parent::affectingStatement($query, $bindings);
+                    HyperionSqlParser::invalidateMutatedTables($query);
+                    return $res;
+                }
+            }
+        }
+
         if ($app->has('db')) {
             try {
+                \Illuminate\Database\Connection::resolverFor('mysql', function($connection, $database, $prefix, $config) {
+                    return new HyperionMySqlConnection($connection, $database, $prefix, $config);
+                });
+                $app->make('db')->purge();
                 $db = $app->make('db');
                 foreach ($db->getConnections() as $conn) {
                     if (method_exists($conn, 'getPdo')) {
@@ -932,6 +1143,31 @@ switch ($framework) {
                 $msg = $debug ? ("500 Server Error: " . $e->getMessage()) : "500 Internal Server Error";
                 $response = new \Illuminate\Http\Response($msg, 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
             }
+
+            // Inspect session state and set Hyperion IPC signaling headers
+            if ($app->has('session')) {
+                try {
+                    $session = $request->hasSession() ? $request->session() : null;
+                    if ($session) {
+                        $csrfToken = (string)$session->token();
+                        $isAuth = false;
+                        if ($app->has('auth')) {
+                            try { $isAuth = \Illuminate\Support\Facades\Auth::check(); } catch (\Throwable $e) {}
+                        }
+                        $hasFlash = !empty($session->get('_flash.old')) || $session->has('errors');
+                        $canSplice = (!$isAuth && !$hasFlash && $request->isMethod('GET') && empty($request->query()) && $response->getStatusCode() === 200);
+
+                        $response->headers->set('X-Hyperion-Can-Splice', $canSplice ? '1' : '0');
+                        $response->headers->set('X-Hyperion-Csrf', $csrfToken);
+
+                        $sessName = $session->getName();
+                        if ($request->cookies->has($sessName) && $canSplice) {
+                            $response->headers->removeCookie($sessName);
+                        }
+                    }
+                } catch (\Throwable $e) {}
+            }
+
             HyperionIpc::sendResponse($response);
             $kernel->terminate($request, $response);
             if (method_exists($app, 'forgetInstance')) {
