@@ -53,6 +53,43 @@ $hyperionConfig = [
 ];
 
 // ============================================================================
+// 1.1 LOCK-FREE IN-MEMORY SESSION & CACHE ENGINE (ZERO FILE I/O)
+// ============================================================================
+final class HyperionMemorySessionHandler implements \SessionHandlerInterface {
+    public static array $sessions = [];
+    private static int $maxSessions = 200000;
+
+    public function open(string $path, string $name): bool {
+        return true;
+    }
+
+    public function close(): bool {
+        return true;
+    }
+
+    public function read(string $id): string|false {
+        return self::$sessions[$id] ?? '';
+    }
+
+    public function write(string $id, string $data): bool {
+        self::$sessions[$id] = $data;
+        if (count(self::$sessions) > self::$maxSessions) {
+            array_shift(self::$sessions);
+        }
+        return true;
+    }
+
+    public function destroy(string $id): bool {
+        unset(self::$sessions[$id]);
+        return true;
+    }
+
+    public function gc(int $max_lifetime): int|false {
+        return 0;
+    }
+}
+
+// ============================================================================
 // HYPERION HIGH-SPEED BINARY IPC ENGINE (For Zend PHP CLI & Native Concurrency)
 // ============================================================================
 final class HyperionIpc {
@@ -740,6 +777,29 @@ switch ($framework) {
             // Kernel already bootstrapped or unneeded
         }
 
+        // Upgrade session and cache drivers to zero-IO in-memory execution
+        if ($app->has('session')) {
+            try {
+                $sessionManager = $app->make('session');
+                $sessionManager->extend('hyperion', function() {
+                    return new HyperionMemorySessionHandler();
+                });
+                if ($app->has('config')) {
+                    $currDriver = $app['config']->get('session.driver');
+                    if ($currDriver === 'file' || empty($currDriver)) {
+                        $app['config']->set('session.driver', 'hyperion');
+                    }
+                    $currCache = $app['config']->get('cache.default');
+                    if ($currCache === 'file' || empty($currCache)) {
+                        $app['config']->set('cache.default', 'array');
+                    }
+                }
+            } catch (\Throwable $e) {}
+        }
+        if (!headers_sent() && session_status() !== PHP_SESSION_ACTIVE) {
+            @session_set_save_handler(new HyperionMemorySessionHandler(), true);
+        }
+
         // Pre-warm the application pipeline into boot memory arena
         try {
             error_log("[WARMUP] Starting pre-warmup request");
@@ -845,6 +905,22 @@ switch ($framework) {
             }
             if (class_exists(\Inertia\Inertia::class)) {
                 try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
+            }
+
+            // Anti-Session-Bleed & Clean Auth Isolation (CVE-2026-24894)
+            if ($app->has('auth')) {
+                try {
+                    $auth = $app->make('auth');
+                    if (method_exists($auth, 'forgetGuards')) {
+                        $auth->forgetGuards();
+                    }
+                    (function() {
+                        if (is_array($this->guards)) {
+                            $this->guards = [];
+                        }
+                        $this->user = null;
+                    })->call($auth);
+                } catch (\Throwable $e) {}
             }
 
             // Dispatch full Laravel Kernel pipeline
