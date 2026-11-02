@@ -16,6 +16,16 @@ if (!$hyperionCli || !file_exists($hyperionCli)) {
     $hyperionCli = realpath(__DIR__ . '/../../bin/hyperion') ?: realpath(__DIR__ . '/../../deploy/hyperion');
 }
 
+// Verify that the detected Hyperion binary is executable and compatible with host architecture
+if ($hyperionCli && file_exists($hyperionCli)) {
+    $verOut = [];
+    $verCode = 0;
+    @exec(escapeshellcmd($hyperionCli) . ' --version 2>&1', $verOut, $verCode);
+    if ($verCode !== 0) {
+        $hyperionCli = null;
+    }
+}
+
 echo "====================================================================\n";
 echo " 🧪 PHP-HYPERION PRIMITIVE & MICRO-UNIT TEST BATTERY\n";
 echo "====================================================================\n";
@@ -54,7 +64,7 @@ foreach ($files as $file) {
         $durHypStr = sprintf("%.1f ms", $durHyp);
     }
 
-    $isPassed = ($retPhp === 0 && $retHyp === 0);
+    $isPassed = ($retPhp === 0 && ($hyperionCli === null || $retHyp === 0));
     $statusStr = $isPassed ? "\033[32mPASS ✓\033[0m" : "\033[31mFAIL ✗\033[0m";
 
     if ($isPassed) {

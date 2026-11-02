@@ -12,6 +12,7 @@ import os
 import sys
 import time
 import argparse
+import shutil
 import subprocess
 
 WORKSPACE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -57,7 +58,7 @@ def main():
     print_banner("🛡️ PHP-HYPERION UNIFIED ENTERPRISE TEST SUITE")
     print(f"Workspace Root: {WORKSPACE}")
     print(f"Python Runtime: {sys.version.split()[0]}")
-    print(f"PHP Binary    : {subprocess.getoutput('which php')}")
+    print(f"PHP Binary    : {shutil.which('php') or 'php'}")
 
     results = []
 
