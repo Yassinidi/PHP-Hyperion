@@ -12,6 +12,9 @@ sort($files);
 
 $phpCli = PHP_BINARY;
 $hyperionCli = realpath(__DIR__ . '/../../php-hyperion/target/release/hyperion-cli');
+if (!$hyperionCli || !file_exists($hyperionCli)) {
+    $hyperionCli = realpath(__DIR__ . '/../../bin/hyperion') ?: realpath(__DIR__ . '/../../deploy/hyperion');
+}
 
 echo "====================================================================\n";
 echo " 🧪 PHP-HYPERION PRIMITIVE & MICRO-UNIT TEST BATTERY\n";

@@ -2,8 +2,8 @@
   "timestamp": "2026-10-11 16:15:26",
   "hardware_cores": 10,
   "php_binary": "/opt/homebrew/bin/php",
-  "hyperion_binary": "/Users/elidinaili/Desktop/PHP-H/php-hyperion/target/release/hyperion-cli",
-  "worker_php": "/Users/elidinaili/Desktop/PHP-H/hyperion_worker.php",
+  "hyperion_binary": "bin/hyperion",
+  "worker_php": "hyperion_worker.php",
   "concurrency_tiers": [
     10,
     50,

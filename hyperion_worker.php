@@ -53,218 +53,87 @@ $hyperionConfig = [
 ];
 
 // ============================================================================
-// 1.1 LOCK-FREE IN-MEMORY SESSION & CACHE ENGINE (SHARED MULTI-WORKER STORAGE)
+// 1.1 CONTAINER SANDBOX (PER-REQUEST ISOLATION)
 // ============================================================================
-final class HyperionMemorySessionHandler implements \SessionHandlerInterface {
-    public static array $sessions = [];
-    private static int $maxSessions = 200000;
-    private static string $storageDir = '';
+final class HyperionContainerSandbox {
+    private static array $baseInstances = [];
+    private static array $baseResolved = [];
+    private static array $baseBindings = [];
+    private static array $baseReboundCallbacks = [];
+    private static array $baseTerminatingCallbacks = [];
+    private static ?\Closure $resetClosure = null;
 
-    public static function init(): void {
-        self::$storageDir = sys_get_temp_dir() . '/hyperion_sessions';
-        if (!is_dir(self::$storageDir)) {
-            @mkdir(self::$storageDir, 0777, true);
+    public static function init(object $app): void {
+        if (!class_exists(\Illuminate\Container\Container::class, false)) {
+            return;
         }
-    }
+        try {
+            self::$baseInstances = (function() { return $this->instances ?? []; })->call($app);
+            unset(self::$baseInstances['request'], self::$baseInstances['session.store'], self::$baseInstances['auth.driver']);
+            self::$baseResolved = (function() { return $this->resolved ?? []; })->call($app);
+            self::$baseBindings = (function() { return $this->bindings ?? []; })->call($app);
+            self::$baseReboundCallbacks = (function() { return $this->reboundCallbacks ?? []; })->call($app);
+            self::$baseTerminatingCallbacks = (function() { return $this->terminatingCallbacks ?? []; })->call($app);
 
-    public function open(string $path, string $name): bool {
-        return true;
-    }
-
-    public function close(): bool {
-        return true;
-    }
-
-    public function read(string $id): string|false {
-        if (isset(self::$sessions[$id])) {
-            return self::$sessions[$id];
-        }
-        if (self::$storageDir !== '') {
-            $file = self::$storageDir . '/' . hash('crc32b', $id) . '.sess';
-            if (file_exists($file)) {
-                $data = (string)@file_get_contents($file);
-                self::$sessions[$id] = $data;
-                return $data;
-            }
-        }
-        return '';
-    }
-
-    public function write(string $id, string $data): bool {
-        self::$sessions[$id] = $data;
-        if (self::$storageDir !== '') {
-            $file = self::$storageDir . '/' . hash('crc32b', $id) . '.sess';
-            @file_put_contents($file, $data);
-        }
-        if (count(self::$sessions) > self::$maxSessions) {
-            array_shift(self::$sessions);
-        }
-        return true;
-    }
-
-    public function destroy(string $id): bool {
-        unset(self::$sessions[$id]);
-        if (self::$storageDir !== '') {
-            $file = self::$storageDir . '/' . hash('crc32b', $id) . '.sess';
-            if (file_exists($file)) {
-                @unlink($file);
-            }
-        }
-        return true;
-    }
-
-    public function gc(int $max_lifetime): int|false {
-        return 0;
-    }
-}
-
-// ============================================================================
-// 1.2 IN-MEMORY SQL QUERY RESULT STORE & CROSS-WORKER EPOCH INVALIDATOR
-// ============================================================================
-final class HyperionSqlParser {
-    public static function extractTables(string $sql): array {
-        $tables = [];
-        if (preg_match_all('/\b(?:from|join|into|update)\s+[`"\'\s]?([a-zA-Z0-9_]+)[`"\'\s]?/i', $sql, $matches)) {
-            foreach ($matches[1] as $t) {
-                $tables[strtolower(trim($t, "`'\" \t\n\r"))] = true;
-            }
-        }
-        return array_keys($tables);
-    }
-
-    public static function invalidateMutatedTables(string $sql): void {
-        $tables = self::extractTables($sql);
-        foreach ($tables as $t) {
-            HyperionQueryStore::invalidateTable($t);
-        }
-    }
-}
-
-final class HyperionQueryStore {
-    private static array $cache = [];
-    private static string $epochFile = '';
-    private const MICRO_TTL_NS = 250_000_000; // 250 milliseconds in nanoseconds
-
-    // Strict associative map for O(1) sensitive table exclusion (Fixes Bug #1)
-    private static array $sensitiveTables = [
-        'users' => true,
-        'sessions' => true,
-        'password_resets' => true,
-        'password_reset_tokens' => true,
-        'personal_access_tokens' => true,
-        'failed_jobs' => true,
-        'jobs' => true,
-        'carts' => true,
-        'orders' => true,
-        'oauth_access_tokens' => true,
-        'oauth_auth_codes' => true,
-        'oauth_clients' => true,
-        'oauth_refresh_tokens' => true,
-    ];
-
-    public static function init(): void {
-        self::$epochFile = sys_get_temp_dir() . '/hyperion_table_epochs.bin';
-        if (!file_exists(self::$epochFile)) {
-            @file_put_contents(self::$epochFile, str_repeat("\0", 65536));
-        }
-    }
-
-    public static function get(string $sql, array $bindings, array $tables): ?array {
-        foreach ($tables as $t) {
-            if (isset(self::$sensitiveTables[$t])) {
-                return null; // Sensitive table: ALWAYS query MySQL directly
-            }
-        }
-
-        $key = md5($sql . "\0" . serialize($bindings));
-        if (!isset(self::$cache[$key])) {
-            return null;
-        }
-
-        $entry = self::$cache[$key];
-        $now = hrtime(true);
-
-        // 250ms Micro-TTL validation (Fixes Bug #3)
-        if (($now - $entry['time']) > self::MICRO_TTL_NS) {
-            unset(self::$cache[$key]);
-            return null;
-        }
-
-        // Cross-worker shared epoch coherence check
-        if (!self::isEpochCurrent($tables, $entry['epochs'])) {
-            unset(self::$cache[$key]);
-            return null;
-        }
-
-        return $entry['data'];
-    }
-
-    public static function set(string $sql, array $bindings, array $tables, array $data): void {
-        foreach ($tables as $t) {
-            if (isset(self::$sensitiveTables[$t])) {
-                return;
-            }
-        }
-        $key = md5($sql . "\0" . serialize($bindings));
-        self::$cache[$key] = [
-            'data' => $data,
-            'time' => hrtime(true),
-            'epochs' => self::captureCurrentEpochs($tables),
-        ];
-    }
-
-    public static function invalidateTable(string $table): void {
-        self::incrementSharedEpoch($table);
-        foreach (self::$cache as $k => $entry) {
-            if (isset($entry['epochs'][$table])) {
-                unset(self::$cache[$k]);
-            }
-        }
-    }
-
-    private static function captureCurrentEpochs(array $tables): array {
-        $epochs = [];
-        foreach ($tables as $t) {
-            $epochs[$t] = self::getTableEpoch($t);
-        }
-        return $epochs;
-    }
-
-    private static function isEpochCurrent(array $tables, array $cachedEpochs): bool {
-        foreach ($tables as $t) {
-            if (isset($cachedEpochs[$t])) {
-                if (self::getTableEpoch($t) !== $cachedEpochs[$t]) {
-                    return false;
+            self::$resetClosure = \Closure::bind(function(array $baseInst, array $baseRes, array $baseBind, array $baseReb, array $baseTerm) {
+                $this->instances = $baseInst;
+                $this->resolved = $baseRes;
+                if (!empty($baseBind)) {
+                    $this->bindings = $baseBind;
                 }
-            }
+                $this->reboundCallbacks = $baseReb;
+                $this->terminatingCallbacks = $baseTerm;
+                if (isset($this->scopedInstances)) {
+                    $this->scopedInstances = [];
+                }
+            }, $app, \Illuminate\Foundation\Application::class);
+        } catch (\Throwable $e) {}
+    }
+
+    public static function reset(object $app): void {
+        if (method_exists($app, 'forgetInstance')) {
+            $app->forgetInstance('request');
+            $app->forgetInstance('auth.driver');
+            $app->forgetInstance('session.store');
         }
-        return true;
-    }
-
-    public static function getTableEpoch(string $table): int {
-        if (self::$epochFile === '' || !file_exists(self::$epochFile)) return 0;
-        $offset = (crc32($table) & 0x1FFF) * 8;
-        $fp = @fopen(self::$epochFile, 'rb');
-        if (!$fp) return 0;
-        fseek($fp, $offset);
-        $bin = fread($fp, 8);
-        fclose($fp);
-        return $bin ? unpack('P', $bin)[1] : 0;
-    }
-
-    public static function incrementSharedEpoch(string $table): void {
-        if (self::$epochFile === '' || !file_exists(self::$epochFile)) return;
-        $offset = (crc32($table) & 0x1FFF) * 8;
-        $fp = @fopen(self::$epochFile, 'r+b');
-        if (!$fp) return;
-        fseek($fp, $offset);
-        $bin = fread($fp, 8);
-        $epoch = ($bin ? unpack('P', $bin)[1] : 0) + 1;
-        fseek($fp, $offset);
-        fwrite($fp, pack('P', $epoch));
-        fclose($fp);
+        if (method_exists($app, 'forgetScopedInstances')) {
+            $app->forgetScopedInstances();
+        }
+        if (!empty(self::$baseInstances)) {
+            try {
+                (function(array $baseInst) {
+                    foreach ($this->instances as $k => $_) {
+                        if (!isset($baseInst[$k])) {
+                            unset($this->instances[$k]);
+                        }
+                    }
+                })->call($app, self::$baseInstances);
+            } catch (\Throwable $e) {}
+        }
+        if ($app->has('view')) {
+            try {
+                $v = $app->make('view');
+                (function() {
+                    $this->renderCount = 0;
+                    $this->renderedOnce = [];
+                })->call($v);
+            } catch (\Throwable $e) {}
+        }
+        if (method_exists($app, 'forgetScopedInstances')) {
+            $app->forgetScopedInstances();
+        }
+        if (isset(self::$baseInstances['cache']) && !$app->bound('cache')) {
+            try {
+                $app->instance('cache', self::$baseInstances['cache']);
+            } catch (\Throwable $e) {}
+        }
     }
 }
+
+// (Laravel-specific classes HyperionFastRouteCollection, HyperionEncrypter, HyperionViewSplicer, HyperionCompilerEngine
+// are declared inside the Laravel bootstrap block after Composer autoloader is initialized)
+
+
 
 // ============================================================================
 // HYPERION HIGH-SPEED BINARY IPC ENGINE (For Zend PHP CLI & Native Concurrency)
@@ -274,6 +143,19 @@ final class HyperionIpc {
     public static $socket = null;
     public static bool $active = false;
     public static string $rawBody = '';
+
+    // Zero-Copy POSIX Shared Memory (SHM) State
+    public static bool $shmActive = false;
+    public static bool $extShmActive = false;
+    public static mixed $shmFfi = null;
+    public static mixed $shmPtr = null;
+    public static int $shmFd = -1;
+    public static int $shmSize = 0;
+    public static mixed $shmReqSeqPtr = null;
+    public static mixed $shmRespSeqPtr = null;
+    public static mixed $shmWorkerStatePtr = null;
+    public static mixed $shmMasterStatePtr = null;
+    public static array $lastRawHeaders = [];
 
     public static function init(): void {
         $sockPath = getenv('HYPERION_IPC_SOCK') ?: ($_SERVER['HYPERION_IPC_SOCK'] ?? null);
@@ -290,9 +172,64 @@ final class HyperionIpc {
         }
 
         stream_set_blocking($sock, true);
-        stream_set_timeout($sock, 60);
+        // Do not set an idle timeout; workers are persistent daemons that wait indefinitely for requests
+
+        if (function_exists('socket_import_stream')) {
+            $extSock = @socket_import_stream($sock);
+            if ($extSock) {
+                @socket_set_option($extSock, SOL_SOCKET, SO_RCVBUF, 262144);
+                @socket_set_option($extSock, SOL_SOCKET, SO_SNDBUF, 262144);
+            }
+        }
+
         self::$socket = $sock;
         self::$active = true;
+
+        // 1. Handshake: Send 4-byte big-endian worker_id to Rust master
+        $workerId = (int)(getenv('HYPERION_WORKER_ID') ?: 0);
+        @fwrite($sock, pack('N', $workerId));
+
+        // 2. Attach to Zero-Copy POSIX Shared Memory segment (if configured)
+        $shmName = getenv('HYPERION_SHM_NAME') ?: ($_SERVER['HYPERION_SHM_NAME'] ?? null);
+        $shmSize = (int)(getenv('HYPERION_SHM_SIZE') ?: 4194304);
+        if ($shmName && function_exists('hyperion_shm_attach')) {
+            try {
+                if (@hyperion_shm_attach($shmName, $shmSize)) {
+                    self::$extShmActive = true;
+                    self::$shmActive = true;
+                    self::$shmSize = $shmSize;
+                }
+            } catch (\Throwable $e) {
+                error_log("[Hyperion ext-hyperion SHM] Notice: " . $e->getMessage());
+            }
+        }
+        if ($shmName && !self::$extShmActive && extension_loaded('ffi')) {
+            try {
+                self::$shmFfi = \FFI::cdef("
+                    int shm_open(const char *name, int flags, int mode);
+                    void *mmap(void *addr, size_t length, int prot, int flags, int fd, int offset);
+                    int munmap(void *addr, size_t length);
+                    int close(int fd);
+                    void *memcpy(void *dest, const void *src, size_t n);
+                ");
+                $fd = self::$shmFfi->shm_open($shmName, 0x0002 /* O_RDWR */, 0666);
+                if ($fd >= 0) {
+                    $ptr = self::$shmFfi->mmap(null, $shmSize, 1 | 2 /* PROT_READ | PROT_WRITE */, 1 /* MAP_SHARED */, $fd, 0);
+                    if ($ptr !== null) {
+                        self::$shmPtr = $ptr;
+                        self::$shmFd = $fd;
+                        self::$shmSize = $shmSize;
+                        self::$shmActive = true;
+                        self::$shmReqSeqPtr = self::$shmFfi->cast('uint32_t*', self::$shmPtr + 12);
+                        self::$shmRespSeqPtr = self::$shmFfi->cast('uint32_t*', self::$shmPtr + 16);
+                        self::$shmWorkerStatePtr = self::$shmFfi->cast('uint32_t*', self::$shmPtr + 20);
+                        self::$shmMasterStatePtr = self::$shmFfi->cast('uint32_t*', self::$shmPtr + 24);
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log("[Hyperion SHM] Notice: " . $e->getMessage());
+            }
+        }
     }
 
     private static function readUint16(): int|false {
@@ -311,83 +248,205 @@ final class HyperionIpc {
         return unpack('N', $bytes)[1];
     }
 
+    public static string $readBuf = '';
+
+    public static function parsePayloadV5(string $payload): bool {
+        $payloadLen = strlen($payload);
+        if ($payloadLen < 12) {
+            return false;
+        }
+        $fixed = unpack('Cmethod/Cflags/nheadCount/NbodyLen/npathLen/nqueryLen', $payload, 0);
+        $method = match($fixed['method']) {
+            0 => 'GET',
+            1 => 'POST',
+            2 => 'PUT',
+            3 => 'DELETE',
+            4 => 'PATCH',
+            5 => 'OPTIONS',
+            6 => 'HEAD',
+            default => 'GET',
+        };
+
+        $pathLen = $fixed['pathLen'];
+        $queryLen = $fixed['queryLen'];
+        $path = $pathLen > 0 ? substr($payload, 12, $pathLen) : '/';
+        if ($path === '' || $path[0] !== '/') {
+            $path = '/' . $path;
+        }
+        $query = $queryLen > 0 ? substr($payload, 12 + $pathLen, $queryLen) : '';
+        $uri = $query !== '' ? ($path . '?' . $query) : $path;
+
+        $tableStart = 12 + $pathLen + $queryLen;
+        $hCount = $fixed['headCount'];
+        $tableBytes = $hCount * 8;
+        $blobStart = $tableStart + $tableBytes;
+        $bodyLen = $fixed['bodyLen'];
+        $blobLen = $payloadLen - $bodyLen - $blobStart;
+
+        $blob = $blobLen > 0 ? substr($payload, $blobStart, $blobLen) : '';
+        $body = $bodyLen > 0 ? substr($payload, $blobStart + $blobLen, $bodyLen) : '';
+        self::$rawBody = $body;
+
+        $headers = [];
+        if ($hCount > 0 && $tableBytes > 0) {
+            $table = unpack('n*', $payload, $tableStart);
+            for ($i = 0; $i < $hCount; $i++) {
+                $base = $i * 4;
+                $nOff = $table[$base + 1];
+                $nLen = $table[$base + 2];
+                $vOff = $table[$base + 3];
+                $vLen = $table[$base + 4];
+                $name = substr($blob, $nOff, $nLen);
+                $val  = substr($blob, $vOff, $vLen);
+                $headers[$name] = $val;
+            }
+        }
+
+        self::$lastRawHeaders = $headers;
+        self::populateSuperglobals($method, $uri, $path, $query, $headers, $body);
+        return true;
+    }
+
     public static function accept(): bool {
         if (!self::$active || self::$socket === null) {
             return false;
         }
 
-        // 1. Read 8-byte frame header (MAGIC: 4B + PAYLOAD_LEN: 4B)
-        $header = self::readExact(8);
-        if ($header === false || strlen($header) < 8) {
-            return false;
+        // 0. NATIVE C EXTENSION FAST-PATH (ext-hyperion)
+        if (self::$extShmActive && function_exists('hyperion_shm_accept')) {
+            $parsed = @hyperion_shm_accept(self::$socket);
+            if (is_array($parsed)) {
+                $method  = $parsed['method'] ?? 'GET';
+                $path    = $parsed['path'] ?? '/';
+                $query   = $parsed['query'] ?? '';
+                $body    = $parsed['body'] ?? '';
+                $headers = $parsed['headers'] ?? [];
+                $uri     = $query !== '' ? ($path . '?' . $query) : $path;
+                self::$rawBody = $body;
+                self::$lastRawHeaders = $headers;
+                self::populateSuperglobals($method, $uri, $path, $query, $headers, $body);
+                return true;
+            }
+            if (feof(self::$socket)) {
+                return false;
+            }
         }
 
-        if (substr($header, 0, 4) !== "\x48\x59\x50\x03") { // HYP\x03
-            return false;
+        // 1. FAST-PATH: Zero-Copy Shared Memory (SHM via FFI)
+        if (self::$shmActive && self::$shmPtr !== null) {
+            while (true) {
+                $token = fread(self::$socket, 1);
+                if ($token === false || $token === '') {
+                    if (feof(self::$socket)) {
+                        return false;
+                    }
+                    continue;
+                }
+                if ($token === "\x01") {
+                    break;
+                }
+            }
+
+            $lenBytes = \FFI::string(self::$shmPtr + 4, 4);
+            $frameLen = unpack('N', $lenBytes)[1];
+            $maxSlot = (int)(self::$shmSize / 2);
+            if ($frameLen >= 16 && $frameLen <= $maxSlot) {
+                $head = \FFI::string(self::$shmPtr + 64, 8);
+                if ($head[0] === "\x48" && $head[1] === "\x59" && $head[2] === "\x50" && $head[3] === "\x05") {
+                    $payloadLen = unpack('N', substr($head, 4, 4))[1];
+                    if ($payloadLen >= 12 && (8 + $payloadLen) <= $frameLen) {
+                        $payload = \FFI::string(self::$shmPtr + 72, $payloadLen);
+                        return self::parsePayloadV5($payload);
+                    }
+                }
+            }
         }
 
-        $payloadLen = unpack('N', substr($header, 4, 4))[1];
+        // 2. FALLBACK: Standard UDS Socket Streaming
+        while (strlen(self::$readBuf) < 8) {
+            $chunk = fread(self::$socket, 65536);
+            if ($chunk === false || $chunk === '') {
+                if (feof(self::$socket)) {
+                    return false;
+                }
+            } else {
+                self::$readBuf .= $chunk;
+            }
+        }
+
+        $magic = substr(self::$readBuf, 0, 4);
+        $payloadLen = unpack('N', self::$readBuf, 4)[1];
         if ($payloadLen > 67108864) { // 64 MB defensive limit
             return false;
         }
 
-        // 2. Read entire frame payload in a single batched socket read
-        $payload = $payloadLen > 0 ? self::readExact($payloadLen) : '';
-        if ($payload === false || strlen($payload) !== $payloadLen) {
-            return false;
+        $totalLen = 8 + $payloadLen;
+        while (strlen(self::$readBuf) < $totalLen) {
+            $chunk = fread(self::$socket, 65536);
+            if ($chunk === false || $chunk === '') {
+                if (feof(self::$socket)) {
+                    return false;
+                }
+            } else {
+                self::$readBuf .= $chunk;
+            }
         }
 
-        // 3. In-memory zero-syscall unpack
-        $offset = 0;
+        $payload = substr(self::$readBuf, 8, $payloadLen);
+        self::$readBuf = substr(self::$readBuf, $totalLen);
 
-        $methodLen = unpack('n', substr($payload, $offset, 2))[1];
-        $offset += 2;
-        $method = $methodLen > 0 ? substr($payload, $offset, $methodLen) : 'GET';
-        $offset += $methodLen;
-
-        $uriLen = unpack('n', substr($payload, $offset, 2))[1];
-        $offset += 2;
-        $uri = $uriLen > 0 ? substr($payload, $offset, $uriLen) : '/';
-        $offset += $uriLen;
-
-        $pathLen = unpack('n', substr($payload, $offset, 2))[1];
-        $offset += 2;
-        $path = $pathLen > 0 ? substr($payload, $offset, $pathLen) : '/';
-        $offset += $pathLen;
-
-        $queryLen = unpack('n', substr($payload, $offset, 2))[1];
-        $offset += 2;
-        $query = $queryLen > 0 ? substr($payload, $offset, $queryLen) : '';
-        $offset += $queryLen;
-
-        $headerCount = unpack('n', substr($payload, $offset, 2))[1];
-        $offset += 2;
-        if ($headerCount > 2000) {
-            return false;
+        if ($magic === "\x48\x59\x50\x05") { // HYP\x05
+            return self::parsePayloadV5($payload);
         }
 
-        $headers = [];
-        for ($i = 0; $i < $headerCount; $i++) {
-            $kLen = unpack('n', substr($payload, $offset, 2))[1];
+
+        if ($magic === "\x48\x59\x50\x03") { // HYP\x03 (Fallback backward compatibility)
+            $offset = 0;
+            $methodLen = unpack('n', substr($payload, $offset, 2))[1];
             $offset += 2;
-            $k = $kLen > 0 ? substr($payload, $offset, $kLen) : '';
-            $offset += $kLen;
+            $method = $methodLen > 0 ? substr($payload, $offset, $methodLen) : 'GET';
+            $offset += $methodLen;
 
-            $vLen = unpack('n', substr($payload, $offset, 2))[1];
+            $uriLen = unpack('n', substr($payload, $offset, 2))[1];
             $offset += 2;
-            $v = $vLen > 0 ? substr($payload, $offset, $vLen) : '';
-            $offset += $vLen;
+            $uri = $uriLen > 0 ? substr($payload, $offset, $uriLen) : '/';
+            $offset += $uriLen;
 
-            $headers[$k] = $v;
+            $pathLen = unpack('n', substr($payload, $offset, 2))[1];
+            $offset += 2;
+            $path = $pathLen > 0 ? substr($payload, $offset, $pathLen) : '/';
+            $offset += $pathLen;
+
+            $queryLen = unpack('n', substr($payload, $offset, 2))[1];
+            $offset += 2;
+            $query = $queryLen > 0 ? substr($payload, $offset, $queryLen) : '';
+            $offset += $queryLen;
+
+            $headerCount = unpack('n', substr($payload, $offset, 2))[1];
+            $offset += 2;
+            $headers = [];
+            for ($i = 0; $i < $headerCount; $i++) {
+                $kLen = unpack('n', substr($payload, $offset, 2))[1];
+                $offset += 2;
+                $k = $kLen > 0 ? substr($payload, $offset, $kLen) : '';
+                $offset += $kLen;
+                $vLen = unpack('n', substr($payload, $offset, 2))[1];
+                $offset += 2;
+                $v = $vLen > 0 ? substr($payload, $offset, $vLen) : '';
+                $offset += $vLen;
+                $headers[$k] = $v;
+            }
+
+            $bodyLen = unpack('N', substr($payload, $offset, 4))[1];
+            $offset += 4;
+            $body = $bodyLen > 0 ? substr($payload, $offset, $bodyLen) : '';
+            self::$rawBody = $body;
+
+            self::populateSuperglobals($method, $uri, $path, $query, $headers, $body);
+            return true;
         }
 
-        $bodyLen = unpack('N', substr($payload, $offset, 4))[1];
-        $offset += 4;
-        $body = $bodyLen > 0 ? substr($payload, $offset, $bodyLen) : '';
-        self::$rawBody = $body;
-
-        self::populateSuperglobals($method, $uri, $path, $query, $headers, $body);
-        return true;
+        return false;
     }
 
     public static function sendResponse(mixed $response): void {
@@ -399,44 +458,63 @@ final class HyperionIpc {
         }
 
         $statusCode = 200;
-        $headers = [];
+        $statusText = 'OK';
         $content = '';
+        $wireHeaders = '';
+        $headersList = [];
 
         if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
             $statusCode = $response->getStatusCode();
+            $statusText = \Symfony\Component\HttpFoundation\Response::$statusTexts[$statusCode] ?? 'OK';
             if (method_exists($response->headers, 'allPreserveCaseWithoutCookies')) {
-                foreach ($response->headers->allPreserveCaseWithoutCookies() as $name => $values) {
-                    foreach ((array)$values as $val) {
-                        $headers[] = [(string)$name, (string)$val];
-                    }
-                }
+                $allHeaders = $response->headers->allPreserveCaseWithoutCookies();
             } else {
-                foreach ($response->headers->all() as $name => $values) {
-                    foreach ((array)$values as $val) {
-                        $headers[] = [(string)$name, (string)$val];
-                    }
+                $allHeaders = $response->headers->all();
+            }
+            foreach ($allHeaders as $name => $values) {
+                $lower = strtolower($name);
+                if ($lower === 'connection' || $lower === 'content-length' || $lower === 'server') {
+                    continue;
+                }
+                foreach ((array)$values as $val) {
+                    $wireHeaders .= "{$name}: {$val}\r\n";
+                    $headersList[] = [(string)$name, (string)$val];
                 }
             }
             if (method_exists($response->headers, 'getCookies')) {
                 foreach ($response->headers->getCookies() as $cookie) {
-                    $headers[] = ['Set-Cookie', (string)$cookie];
+                    $wireHeaders .= "Set-Cookie: {$cookie}\r\n";
+                    $headersList[] = ['Set-Cookie', (string)$cookie];
                 }
             }
             if ($response instanceof \Symfony\Component\HttpFoundation\BinaryFileResponse) {
                 $file = $response->getFile();
                 $content = ($file && $file->isReadable()) ? (file_get_contents($file->getPathname()) ?: '') : '';
             } elseif ($response instanceof \Symfony\Component\HttpFoundation\StreamedResponse) {
-                ob_start();
-                $response->sendContent();
-                $content = (string)ob_get_clean();
+                $content = '';
+                ob_start(function($chunk) use (&$content) {
+                    $content .= $chunk;
+                    return '';
+                }, 1);
+                try {
+                    $response->sendContent();
+                } finally {
+                    @ob_end_clean();
+                }
             } else {
                 $content = (string)$response->getContent();
             }
         } elseif ($response instanceof \Psr\Http\Message\ResponseInterface) {
             $statusCode = $response->getStatusCode();
+            $statusText = $response->getReasonPhrase() ?: 'OK';
             foreach ($response->getHeaders() as $name => $values) {
+                $lower = strtolower($name);
+                if ($lower === 'connection' || $lower === 'content-length' || $lower === 'server') {
+                    continue;
+                }
                 foreach ((array)$values as $val) {
-                    $headers[] = [(string)$name, (string)$val];
+                    $wireHeaders .= "{$name}: {$val}\r\n";
+                    $headersList[] = [(string)$name, (string)$val];
                 }
             }
             $content = (string)$response->getBody();
@@ -445,7 +523,34 @@ final class HyperionIpc {
             $statusCode = http_response_code() ?: 200;
         }
 
-        self::sendRawResponse($statusCode, $headers, $content);
+        // 0. NATIVE C EXTENSION FAST-PATH (ext-hyperion)
+        if (self::$extShmActive && function_exists('hyperion_shm_respond')) {
+            if (@hyperion_shm_respond(self::$socket, $statusCode, $statusText, $wireHeaders, $content)) {
+                return;
+            }
+        }
+
+        $contentLen = strlen($content);
+        $wire = "HTTP/1.1 {$statusCode} {$statusText}\r\n"
+              . $wireHeaders
+              . "Server: PHP-Hyperion/1.0.0 (Persistent IPC)\r\n"
+              . "Content-Length: {$contentLen}\r\n"
+              . "Connection: keep-alive\r\n\r\n"
+              . $content;
+
+        $wireLen = strlen($wire);
+        $respSlot = (int)(self::$shmSize / 2);
+
+        // 1. ULTRA FAST-PATH: Direct Raw HTTP Wire Emission in Shared Memory
+        if (self::$shmActive && self::$shmPtr !== null && $wireLen <= $respSlot) {
+            self::$shmFfi->memcpy(self::$shmPtr + $respSlot, $wire, $wireLen);
+            self::$shmFfi->memcpy(self::$shmPtr + 8, pack('N', $wireLen), 4);
+
+            @fwrite(self::$socket, "\x01");
+            return;
+        }
+
+        self::sendRawResponse($statusCode, $headersList, $content);
     }
 
     public static function sendRawResponse(int $statusCode, array $headers, string $content): void {
@@ -453,23 +558,117 @@ final class HyperionIpc {
             return;
         }
 
-        // 1. Pack response payload in memory
-        $payload = pack('n', $statusCode);
-        $payload .= pack('n', count($headers));
-        foreach ($headers as [$k, $v]) {
-            $kStr = (string)$k;
-            $vStr = (string)$v;
-            $payload .= pack('n', strlen($kStr)) . $kStr . pack('n', strlen($vStr)) . $vStr;
+        // Fast vector-packed binary response frame (HYP\x06)
+        $blob = '';
+        $table = '';
+        $hCount = count($headers);
+        foreach ($headers as $h) {
+            $nStr = is_array($h) ? (string)$h[0] : (string)$h;
+            $vStr = is_array($h) ? (string)$h[1] : '';
+            $nOff = strlen($blob);
+            $nLen = strlen($nStr);
+            $blob .= $nStr;
+            $vOff = strlen($blob);
+            $vLen = strlen($vStr);
+            $blob .= $vStr;
+            $table .= pack('nnnn', $nOff, $nLen, $vOff, $vLen);
         }
-        $payload .= pack('N', strlen($content)) . $content;
 
-        // 2. Prepend 8-byte frame header: [MAGIC: 4B "HYP\x04"][PAYLOAD_LEN: 4B uint32 BE]
-        $frame = "\x48\x59\x50\x04" . pack('N', strlen($payload)) . $payload;
+        $payload = pack('nnnN', $statusCode, 0, $hCount, strlen($content)) . $table . $blob . $content;
+        $payloadLen = strlen($payload);
 
-        // 3. Single syscall write
+        // 1. FAST-PATH: Zero-Copy Shared Memory (SHM)
+        $respSlot = (int)(self::$shmSize / 2);
+        if (self::$shmActive && self::$shmPtr !== null && $payloadLen <= $respSlot) {
+            // Write payload directly to Response Slot (offset respSlot)
+            self::$shmFfi->memcpy(self::$shmPtr + $respSlot, $payload, $payloadLen);
+            // Write response length to SHM header (offset 8)
+            self::$shmFfi->memcpy(self::$shmPtr + 8, pack('N', $payloadLen), 4);
+
+            @fwrite(self::$socket, "\x01");
+
+            self::rollbackActiveTransactions();
+            self::cleanupTempFiles();
+            return;
+        }
+
+        // 2. FALLBACK: Standard socket streaming
+        $frame = "\x48\x59\x50\x06" . pack('N', $payloadLen) . $payload;
         self::writeAll($frame);
         self::rollbackActiveTransactions();
         self::cleanupTempFiles();
+    }
+
+
+    public static function emitNativeResponse(mixed $response): void {
+        if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
+            if (function_exists('hyperion_send_symfony_response') && @hyperion_send_symfony_response($response)) {
+                return;
+            }
+            $statusCode = $response->getStatusCode();
+            $statusText = \Symfony\Component\HttpFoundation\Response::$statusTexts[$statusCode] ?? 'OK';
+            $wireHeaders = '';
+            $allHeaders = method_exists($response->headers, 'allPreserveCaseWithoutCookies')
+                ? $response->headers->allPreserveCaseWithoutCookies()
+                : $response->headers->all();
+            foreach ($allHeaders as $name => $values) {
+                $lower = strtolower((string)$name);
+                if ($lower === 'connection' || $lower === 'content-length' || $lower === 'server') {
+                    continue;
+                }
+                foreach ((array)$values as $val) {
+                    $sval = str_replace(["\r", "\n"], '', (string)$val);
+                    $wireHeaders .= "{$name}: {$sval}\r\n";
+                }
+            }
+            if (method_exists($response->headers, 'getCookies')) {
+                foreach ($response->headers->getCookies() as $cookie) {
+                    $sc = str_replace(["\r", "\n"], '', (string)$cookie);
+                    $wireHeaders .= "Set-Cookie: {$sc}\r\n";
+                }
+            }
+            if ($response instanceof \Symfony\Component\HttpFoundation\BinaryFileResponse) {
+                $file = $response->getFile();
+                $content = ($file && $file->isReadable()) ? (file_get_contents($file->getPathname()) ?: '') : '';
+            } elseif ($response instanceof \Symfony\Component\HttpFoundation\StreamedResponse) {
+                $content = '';
+                ob_start(static function (string $chunk) use (&$content): string {
+                    $content .= $chunk;
+                    return '';
+                }, 1);
+                try {
+                    $response->sendContent();
+                } finally {
+                    @ob_end_clean();
+                }
+            } else {
+                $content = (string)$response->getContent();
+            }
+            @hyperion_send_response($statusCode, $statusText, $wireHeaders, $content);
+            return;
+        }
+
+        if ($response instanceof \Psr\Http\Message\ResponseInterface) {
+            $statusCode = $response->getStatusCode();
+            $statusText = $response->getReasonPhrase() ?: 'OK';
+            $wireHeaders = '';
+            foreach ($response->getHeaders() as $name => $values) {
+                $lower = strtolower((string)$name);
+                if ($lower === 'connection' || $lower === 'content-length' || $lower === 'server') {
+                    continue;
+                }
+                foreach ((array)$values as $val) {
+                    $sval = str_replace(["\r", "\n"], '', (string)$val);
+                    $wireHeaders .= "{$name}: {$sval}\r\n";
+                }
+            }
+            @hyperion_send_response($statusCode, $statusText, $wireHeaders, (string)$response->getBody());
+            return;
+        }
+
+        if (is_string($response)) {
+            @hyperion_send_response(http_response_code() ?: 200, 'OK', '', $response);
+        }
     }
 
     public static array $trackedPdoInstances = [];
@@ -479,6 +678,13 @@ final class HyperionIpc {
             return;
         }
         self::$trackedPdoInstances[spl_object_id($pdo)] = $pdo;
+        if (function_exists('hyperion_track_pdo')) {
+            @hyperion_track_pdo($pdo);
+        }
+        $sqliteTune = getenv('HYPERION_SQLITE_TUNE');
+        if ($sqliteTune !== '1' && strtolower((string)$sqliteTune) !== 'true') {
+            return;
+        }
         try {
             $driver = @$pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
             if ($driver === 'sqlite') {
@@ -487,6 +693,7 @@ final class HyperionIpc {
                 @$pdo->exec("PRAGMA busy_timeout = 5000;");
                 @$pdo->exec("PRAGMA temp_store = MEMORY;");
                 @$pdo->exec("PRAGMA mmap_size = 268435456;");
+                @$pdo->exec("PRAGMA cache_size = -64000;");
             } elseif ($driver === 'mysql') {
                 @$pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
                 @$pdo->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
@@ -532,6 +739,59 @@ final class HyperionIpc {
         if (function_exists('header_remove')) {
             header_remove();
         }
+
+        // ULTRA FAST-PATH: Direct Raw HTTP Wire Emission in Shared Memory
+        $respSlot = (int)(self::$shmSize / 2);
+        if (self::$shmActive && self::$shmPtr !== null) {
+            $wireHeaders = '';
+            $hasContentType = false;
+            foreach ($outHeaders as $h) {
+                $nStr = is_array($h) ? (string)$h[0] : (string)$h;
+                $vStr = is_array($h) ? (string)$h[1] : '';
+                $lower = strtolower($nStr);
+                if ($lower === 'connection' || $lower === 'content-length' || $lower === 'server') {
+                    continue;
+                }
+                if ($lower === 'content-type') {
+                    $hasContentType = true;
+                }
+                $wireHeaders .= "{$nStr}: {$vStr}\r\n";
+            }
+            if (!$hasContentType) {
+                $wireHeaders .= "Content-Type: text/html; charset=UTF-8\r\n";
+            }
+            $contentLen = strlen($content);
+            $statusText = match($statusCode) {
+                200 => 'OK',
+                201 => 'Created',
+                204 => 'No Content',
+                301 => 'Moved Permanently',
+                302 => 'Found',
+                400 => 'Bad Request',
+                401 => 'Unauthorized',
+                403 => 'Forbidden',
+                404 => 'Not Found',
+                500 => 'Internal Server Error',
+                default => 'OK',
+            };
+            $wire = "HTTP/1.1 {$statusCode} {$statusText}\r\n"
+                  . $wireHeaders
+                  . "Server: PHP-Hyperion/1.0.0 (Persistent IPC)\r\n"
+                  . "Content-Length: {$contentLen}\r\n"
+                  . "Connection: keep-alive\r\n\r\n"
+                  . $content;
+            $wireLen = strlen($wire);
+            if ($wireLen <= $respSlot) {
+                self::$shmFfi->memcpy(self::$shmPtr + $respSlot, $wire, $wireLen);
+                self::$shmFfi->memcpy(self::$shmPtr + 8, pack('N', $wireLen), 4);
+
+                @fwrite(self::$socket, "\x01");
+                self::rollbackActiveTransactions();
+                self::cleanupTempFiles();
+                return;
+            }
+        }
+
         self::sendRawResponse($statusCode, $outHeaders, $content);
         self::rollbackActiveTransactions();
         self::cleanupTempFiles();
@@ -540,12 +800,14 @@ final class HyperionIpc {
     public static array $tempFiles = [];
 
     public static function cleanupTempFiles(): void {
-        foreach (self::$tempFiles as $f) {
-            if (is_file($f)) {
-                @unlink($f);
+        if (!empty(self::$tempFiles)) {
+            foreach (self::$tempFiles as $f) {
+                if (is_file($f)) {
+                    @unlink($f);
+                }
             }
+            self::$tempFiles = [];
         }
-        self::$tempFiles = [];
     }
 
     private static function parseMultipartFormData(string $body, string $boundary, array &$post, array &$files): void {
@@ -633,42 +895,55 @@ final class HyperionIpc {
         }
     }
 
+    public static bool $isLaravelFramework = false;
+    public static bool $lastBodyIsJson = false;
+
     private static function populateSuperglobals(string $method, string $uri, string $path, string $query, array $headers, string $body): void {
         global $publicDir, $entrypoint;
 
-        // Reset response state & headers from previous request
-        http_response_code(200);
-        if (function_exists('header_remove')) {
-            header_remove();
-        }
-        if (isset($_SESSION)) {
-            $_SESSION = [];
+        if (!self::$isLaravelFramework) {
+            // Reset response state & headers from previous request for classic PHP scripts
+            if (!headers_sent()) {
+                http_response_code(200);
+                if (function_exists('header_remove')) {
+                    header_remove();
+                }
+            }
+            if (isset($_SESSION)) {
+                $_SESSION = [];
+            }
+            self::drainOutputBuffers();
+        } elseif (ob_get_level() > 0) {
+            self::drainOutputBuffers();
         }
 
-        self::drainOutputBuffers();
-        self::rollbackActiveTransactions();
-        self::cleanupTempFiles();
+        static $baseServer = null;
+        if ($baseServer === null) {
+            $baseServer = [
+                'SERVER_PROTOCOL'    => 'HTTP/1.1',
+                'PHP_SELF'           => '/index.php',
+                'SCRIPT_NAME'        => '/index.php',
+                'SCRIPT_FILENAME'    => $entrypoint ?? (($publicDir ?? '.') . '/index.php'),
+                'DOCUMENT_ROOT'      => $publicDir ?? getcwd(),
+            ];
+        }
 
         $serverPort = $headers['Server-Port'] ?? '8000';
         $remoteAddr = $headers['Remote-Addr'] ?? '127.0.0.1';
         $host = $headers['Host'] ?? $headers['host'] ?? ("127.0.0.1:{$serverPort}");
+        $colonPos = strpos($host, ':');
 
-        $_SERVER = [
-            'REQUEST_METHOD'     => strtoupper($method),
-            'REQUEST_URI'        => $uri,
-            'PATH_INFO'          => $path,
-            'QUERY_STRING'       => $query,
-            'SERVER_PROTOCOL'    => 'HTTP/1.1',
-            'SERVER_NAME'        => explode(':', $host)[0],
-            'SERVER_PORT'        => $serverPort,
-            'REMOTE_ADDR'        => $remoteAddr,
-            'HTTP_HOST'          => $host,
-            'SCRIPT_NAME'        => '/index.php',
-            'SCRIPT_FILENAME'    => $entrypoint ?? (($publicDir ?? '.') . '/index.php'),
-            'DOCUMENT_ROOT'      => $publicDir ?? getcwd(),
-            'REQUEST_TIME'       => time(),
-            'REQUEST_TIME_FLOAT' => microtime(true),
-        ];
+        $_SERVER = $baseServer;
+        $_SERVER['REQUEST_METHOD']     = $method;
+        $_SERVER['REQUEST_URI']        = $uri;
+        $_SERVER['PATH_INFO']          = $path;
+        $_SERVER['QUERY_STRING']       = $query;
+        $_SERVER['SERVER_NAME']        = $colonPos !== false ? substr($host, 0, $colonPos) : $host;
+        $_SERVER['SERVER_PORT']        = $serverPort;
+        $_SERVER['REMOTE_ADDR']        = $remoteAddr;
+        $_SERVER['HTTP_HOST']          = $host;
+        $_SERVER['REQUEST_TIME']       = time();
+        $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
 
         foreach ($headers as $k => $v) {
             $upper = strtoupper(str_replace('-', '_', $k));
@@ -679,17 +954,25 @@ final class HyperionIpc {
             }
         }
 
-        // Production Reverse Proxy / SSL Detection (ALB / Cloudflare / Nginx / Traefik)
-        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
-            $_SERVER['HTTPS'] = 'on';
-            $_SERVER['SERVER_PORT'] = '443';
+        // Reverse Proxy / SSL Header Override (opt-in via HYPERION_TRUST_PROXIES=1;
+        // otherwise Laravel's TrustProxies middleware validates against REMOTE_ADDR)
+        static $trustProxiesBool = null;
+        if ($trustProxiesBool === null) {
+            $tp = getenv('HYPERION_TRUST_PROXIES');
+            $trustProxiesBool = ($tp === '1' || strtolower((string)$tp) === 'true');
         }
-        if (isset($_SERVER['HTTP_X_FORWARDED_PORT'])) {
-            $_SERVER['SERVER_PORT'] = $_SERVER['HTTP_X_FORWARDED_PORT'];
-        }
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            $_SERVER['REMOTE_ADDR'] = trim($ips[0]);
+        if ($trustProxiesBool) {
+            if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
+                $_SERVER['HTTPS'] = 'on';
+                $_SERVER['SERVER_PORT'] = '443';
+            }
+            if (isset($_SERVER['HTTP_X_FORWARDED_PORT'])) {
+                $_SERVER['SERVER_PORT'] = $_SERVER['HTTP_X_FORWARDED_PORT'];
+            }
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+                $_SERVER['REMOTE_ADDR'] = trim($ips[0]);
+            }
         }
 
         $_GET = [];
@@ -703,15 +986,19 @@ final class HyperionIpc {
 
         $_POST = [];
         $_FILES = [];
-        $cType = $_SERVER['CONTENT_TYPE'] ?? '';
-        if (str_contains(strtolower($cType), 'application/x-www-form-urlencoded')) {
-            parse_str($body, $_POST);
-        } elseif (str_contains(strtolower($cType), 'multipart/form-data') && preg_match('/boundary=(?:["\']?([^"\';\s]+)["\']?)/i', $cType, $bm)) {
-            self::parseMultipartFormData($body, $bm[1], $_POST, $_FILES);
-        } elseif (str_contains(strtolower($cType), 'application/json')) {
-            $jsonParsed = json_decode($body, true);
-            if (is_array($jsonParsed)) {
-                $_POST = $jsonParsed;
+        self::$lastBodyIsJson = false;
+        if ($body !== '') {
+            $cType = $_SERVER['CONTENT_TYPE'] ?? '';
+            if (stripos($cType, 'application/json') !== false) {
+                self::$lastBodyIsJson = true;
+                $jsonParsed = json_decode($body, true);
+                if (is_array($jsonParsed)) {
+                    $_POST = $jsonParsed;
+                }
+            } elseif (stripos($cType, 'application/x-www-form-urlencoded') !== false) {
+                parse_str($body, $_POST);
+            } elseif (stripos($cType, 'multipart/form-data') !== false && preg_match('/boundary=(?:["\']?([^"\';\s]+)["\']?)/i', $cType, $bm)) {
+                self::parseMultipartFormData($body, $bm[1], $_POST, $_FILES);
             }
         }
 
@@ -721,12 +1008,16 @@ final class HyperionIpc {
             foreach ($parts as $part) {
                 $eq = explode('=', trim($part), 2);
                 if (count($eq) === 2) {
-                    $_COOKIE[urldecode(trim($eq[0]))] = urldecode(trim($eq[1]));
+                    $_COOKIE[rawurldecode(trim($eq[0]))] = rawurldecode(trim($eq[1]));
                 }
             }
         }
 
-        $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
+        if (empty($_POST) && empty($_COOKIE)) {
+            $_REQUEST = $_GET;
+        } else {
+            $_REQUEST = array_merge($_GET, $_POST, $_COOKIE);
+        }
     }
 
     private static function readExact(int $length): string|false {
@@ -759,13 +1050,22 @@ final class HyperionIpc {
 
 HyperionIpc::init();
 
-if (!function_exists('hyperion_accept_request')) {
-    function hyperion_accept_request(): bool {
-        if (HyperionIpc::$active) {
-            return HyperionIpc::accept();
+register_shutdown_function(function() {
+    $err = error_get_last();
+    if ($err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        if (HyperionIpc::$active && HyperionIpc::$socket) {
+            error_log("[Hyperion Worker Fatal] " . $err['message'] . " in " . $err['file'] . ":" . $err['line']);
+            $debug = filter_var(getenv('APP_DEBUG') ?: ($_ENV['APP_DEBUG'] ?? ($_SERVER['APP_DEBUG'] ?? 'false')), FILTER_VALIDATE_BOOLEAN);
+            $msg = $debug
+                ? ("500 Internal Server Error (Worker Crash): " . $err['message'] . " in " . $err['file'] . ":" . $err['line'])
+                : "500 Internal Server Error";
+            @HyperionIpc::sendRawResponse(500, [['Content-Type', 'text/plain; charset=UTF-8']], $msg);
         }
-        return false;
     }
+});
+
+if (!function_exists('hyperion_accept_request')) {
+    eval('function hyperion_accept_request(): bool { if (HyperionIpc::$active) { return HyperionIpc::accept(); } return false; }');
 }
 
 // ============================================================================
@@ -854,7 +1154,11 @@ if ($publicDir === null) {
 } else {
     $publicDir = rtrim(str_replace('\\', '/', $publicDir), '/');
     if (!str_starts_with($publicDir, '/') && !preg_match('/^[A-Za-z]:\//', $publicDir)) {
-        $publicDir = $basePath . '/' . $publicDir;
+        if (file_exists($publicDir)) {
+            $publicDir = realpath($publicDir) ?: ($basePath . '/' . $publicDir);
+        } else {
+            $publicDir = $basePath . '/' . $publicDir;
+        }
     }
 }
 
@@ -893,7 +1197,19 @@ if ($framework === 'auto') {
         $framework = 'wordpress';
     } elseif (file_exists($basePath . '/bootstrap/app.php') && (file_exists($basePath . '/artisan') || is_dir($basePath . '/app'))) {
         $framework = 'laravel';
+    } elseif (file_exists(dirname($basePath) . '/bootstrap/app.php') && (file_exists(dirname($basePath) . '/artisan') || is_dir(dirname($basePath) . '/app'))) {
+        $basePath = dirname($basePath);
+        $framework = 'laravel';
+    } elseif (file_exists($publicDir . '/../bootstrap/app.php') && (file_exists($publicDir . '/../artisan') || is_dir($publicDir . '/../app'))) {
+        $basePath = realpath($publicDir . '/..') ?: dirname($publicDir);
+        $framework = 'laravel';
     } elseif (file_exists($basePath . '/bin/console') || file_exists($basePath . '/src/Kernel.php')) {
+        $framework = 'symfony';
+    } elseif (file_exists(dirname($basePath) . '/bin/console') || file_exists(dirname($basePath) . '/src/Kernel.php')) {
+        $basePath = dirname($basePath);
+        $framework = 'symfony';
+    } elseif (file_exists($publicDir . '/../bin/console') || file_exists($publicDir . '/../src/Kernel.php')) {
+        $basePath = realpath($publicDir . '/..') ?: dirname($publicDir);
         $framework = 'symfony';
     } elseif (class_exists('Slim\Factory\AppFactory') || class_exists('Slim\App')) {
         $framework = 'slim';
@@ -922,6 +1238,18 @@ if ($entrypoint === null || !file_exists($entrypoint)) {
 
 error_log(sprintf("[HYPERION_WORKER_BOOT] framework=%s basePath=%s publicDir=%s entrypoint=%s", $framework, $basePath, $publicDir, $entrypoint));
 
+$nativeReactorActive = getenv('HYPERION_NATIVE_REACTOR') === '1'
+    && function_exists('hyperion_reactor_serve');
+$maxRequestsCfg = (int)(getenv('HYPERION_MAX_REQUESTS') ?: 2500000);
+$maxMemoryMbCfg = (int)(getenv('HYPERION_MAX_MEMORY_MB') ?: 512);
+$nativeReactorOpts = [
+    'public_dir'       => $publicDir,
+    'base_path'        => $basePath,
+    'entrypoint'       => $entrypoint,
+    'max_requests'     => $maxRequestsCfg,
+    'max_memory_mb'    => $maxMemoryMbCfg,
+    'sandbox_rollback' => false,
+];
 
 switch ($framework) {
 
@@ -931,9 +1259,28 @@ switch ($framework) {
     case 'laravel':
         define('LARAVEL_START', microtime(true));
 
+        if (!class_exists(\Illuminate\Foundation\Application::class, false)) {
+            $autoloadCandidates = [
+                $basePath . '/vendor/autoload.php',
+                dirname($basePath) . '/vendor/autoload.php',
+                $publicDir . '/../vendor/autoload.php',
+            ];
+            foreach ($autoloadCandidates as $candidate) {
+                if (file_exists($candidate)) {
+                    require_once $candidate;
+                    break;
+                }
+            }
+        }
+
         $bootstrapFile = $basePath . '/bootstrap/app.php';
         if (!file_exists($bootstrapFile)) {
-            throw new RuntimeException("Laravel bootstrap file not found at: {$bootstrapFile}");
+            if (file_exists(dirname($basePath) . '/bootstrap/app.php')) {
+                $basePath = dirname($basePath);
+                $bootstrapFile = $basePath . '/bootstrap/app.php';
+            } else {
+                throw new RuntimeException("Laravel bootstrap file not found at: {$bootstrapFile}");
+            }
         }
 
         /** @var \Illuminate\Foundation\Application $app */
@@ -950,31 +1297,84 @@ switch ($framework) {
 
         try {
             $kernel->bootstrap();
+            error_log("[KERNEL_BOOTSTRAP] SUCCESS! has_login=" . ($app['router']->has('login') ? 'YES' : 'NO') . " total_routes=" . count($app['router']->getRoutes()));
         } catch (\Throwable $e) {
-            // Kernel already bootstrapped or unneeded
+            $msg = is_object($e) && method_exists($e, 'getMessage') ? $e->getMessage() : (string)$e;
+            $file = is_object($e) && method_exists($e, 'getFile') ? $e->getFile() : '';
+            $line = is_object($e) && method_exists($e, 'getLine') ? $e->getLine() : 0;
+            $trace = is_object($e) && method_exists($e, 'getTraceAsString') ? $e->getTraceAsString() : '';
+            error_log("[BOOTSTRAP ERROR] " . (is_object($e) ? get_class($e) : gettype($e)) . ": " . $msg . " in " . $file . ":" . $line . "\n" . $trace);
         }
 
-        // Upgrade session and cache drivers to zero-IO in-memory execution
-        if ($app->has('session')) {
+        // Eagerly register and boot all deferred service providers (Cache, Bus, Queue, etc.) into Boot Arena
+        if (method_exists($app, 'loadDeferredProviders')) {
             try {
-                $sessionManager = $app->make('session');
-                $sessionManager->extend('hyperion', function() {
-                    return new HyperionMemorySessionHandler();
-                });
-                if ($app->has('config')) {
-                    $currDriver = $app['config']->get('session.driver');
-                    if ($currDriver === 'file' || empty($currDriver)) {
-                        $app['config']->set('session.driver', 'hyperion');
-                    }
-                    $currCache = $app['config']->get('cache.default');
-                    if ($currCache === 'file' || empty($currCache)) {
-                        $app['config']->set('cache.default', 'array');
-                    }
-                }
+                $app->loadDeferredProviders();
             } catch (\Throwable $e) {}
         }
-        if (!headers_sent() && session_status() !== PHP_SESSION_ACTIVE) {
-            @session_set_save_handler(new HyperionMemorySessionHandler(), true);
+        if (!$app->bound('cache')) {
+            try {
+                $app->register(\Illuminate\Cache\CacheServiceProvider::class);
+            } catch (\Throwable $e) {}
+        }
+        try {
+            $app->make('cache');
+        } catch (\Throwable $e) {}
+
+        // Retain the application's configured session and cache drivers (100% compatibility, zero forced overrides)
+
+        // Register hardware-accelerated C AES-256-CBC + HMAC-SHA256 Encrypter BEFORE warmup
+        // so EncryptCookies and EncryptedStore bind to native C crypto at construction time.
+        if (!class_exists('HyperionEncrypter', false)) {
+            class HyperionEncrypter extends \Illuminate\Encryption\Encrypter {
+                public function encrypt(#[\SensitiveParameter] $value, $serialize = true) {
+                    if (function_exists('hyperion_fast_encrypt')) {
+                        if (!$serialize && is_string($value)) {
+                            $res = hyperion_fast_encrypt($value, $this->key, $this->cipher);
+                            if ($res !== false) {
+                                return $res;
+                            }
+                        } elseif ($serialize) {
+                            $serialized = serialize($value);
+                            $res = hyperion_fast_encrypt($serialized, $this->key, $this->cipher);
+                            if ($res !== false) {
+                                return $res;
+                            }
+                        }
+                    }
+                    return parent::encrypt($value, $serialize);
+                }
+
+                public function encryptString(#[\SensitiveParameter] $value) {
+                    return $this->encrypt($value, false);
+                }
+
+                public function decrypt($payload, $unserialize = true) {
+                    if (is_string($payload) && function_exists('hyperion_fast_decrypt')) {
+                        $res = hyperion_fast_decrypt($payload, $this->key, $this->cipher);
+                        if ($res !== false) {
+                            return $unserialize ? unserialize($res) : $res;
+                        }
+                    }
+                    return parent::decrypt($payload, $unserialize);
+                }
+
+                public function decryptString($payload) {
+                    return $this->decrypt($payload, false);
+                }
+            }
+        }
+
+        if ($app->has('encrypter')) {
+            try {
+                $origEnc = $app->make('encrypter');
+                $key = (function() { return $this->key; })->call($origEnc);
+                $cipher = (function() { return $this->cipher; })->call($origEnc);
+                $fastEnc = new HyperionEncrypter($key, $cipher);
+                $app->instance('encrypter', $fastEnc);
+                $app->instance(\Illuminate\Contracts\Encryption\Encrypter::class, $fastEnc);
+                $app->instance(\Illuminate\Contracts\Encryption\StringEncrypter::class, $fastEnc);
+            } catch (\Throwable $e) {}
         }
 
         // Pre-warm the application pipeline into boot memory arena
@@ -982,6 +1382,19 @@ switch ($framework) {
             error_log("[WARMUP] Starting pre-warmup request");
             $warmupRes = $kernel->handle($warmupReq);
             $kernel->terminate($warmupReq, $warmupRes);
+
+            // Also pre-warm /login if registered so Inertia, Blade, and Settings pipelines are fully initialized in Boot Arena
+            if ($app->has('router') && $app['router']->has('login')) {
+                try {
+                    $warmupLoginReq = \Illuminate\Http\Request::create($appUrl . '/login', 'GET');
+                    $app->instance('request', $warmupLoginReq);
+                    $warmupLoginRes = $kernel->handle($warmupLoginReq);
+                    $kernel->terminate($warmupLoginReq, $warmupLoginRes);
+                    error_log("[WARMUP] /login pre-warmup completed with status: " . $warmupLoginRes->getStatusCode());
+                } catch (\Throwable $e) {
+                    error_log("[WARMUP] /login pre-warmup note: " . $e->getMessage());
+                }
+            }
             if (method_exists($app, 'forgetInstance')) {
                 $app->forgetInstance('request');
                 if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
@@ -1016,7 +1429,57 @@ switch ($framework) {
             error_log("[WARMUP EXCEPTION] " . $e->getMessage() . "\n" . $e->getTraceAsString());
         }
 
-        // Fast-path kernel route registration and pre-compilation into boot memory
+        if (!class_exists('HyperionEncrypter', false)) {
+            class HyperionEncrypter extends \Illuminate\Encryption\Encrypter {
+                public function encrypt(#[\SensitiveParameter] $value, $serialize = true) {
+                    if (function_exists('hyperion_fast_encrypt')) {
+                        if (!$serialize && is_string($value)) {
+                            $res = hyperion_fast_encrypt($value, $this->key, $this->cipher);
+                            if ($res !== false) {
+                                return $res;
+                            }
+                        } elseif ($serialize) {
+                            $serialized = serialize($value);
+                            $res = hyperion_fast_encrypt($serialized, $this->key, $this->cipher);
+                            if ($res !== false) {
+                                return $res;
+                            }
+                        }
+                    }
+                    return parent::encrypt($value, $serialize);
+                }
+
+                public function encryptString(#[\SensitiveParameter] $value) {
+                    return $this->encrypt($value, false);
+                }
+
+                public function decrypt($payload, $unserialize = true) {
+                    if (is_string($payload) && function_exists('hyperion_fast_decrypt')) {
+                        $res = hyperion_fast_decrypt($payload, $this->key, $this->cipher);
+                        if ($res !== false) {
+                            return $unserialize ? unserialize($res) : $res;
+                        }
+                    }
+                    return parent::decrypt($payload, $unserialize);
+                }
+
+                public function decryptString($payload) {
+                    return $this->decrypt($payload, false);
+                }
+            }
+        }
+
+        if ($app->has('view')) {
+            try {
+                $viewFactory = $app->make('view');
+                $vendorErrors = $basePath . '/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views';
+                if (is_dir($vendorErrors)) {
+                    $viewFactory->addNamespace('errors', $vendorErrors);
+                }
+            } catch (\Throwable $e) {}
+        }
+
+        // Pre-compile Symfony route regexes into boot memory while keeping standard Laravel Router & RouteCollection
         if ($app->has('router')) {
             try {
                 $router = $app->make('router');
@@ -1033,47 +1496,59 @@ switch ($framework) {
             } catch (\Throwable $e) {}
         }
 
-        // Snapshot clean container instance keys before request processing loop
-        $bootedInstanceKeys = array_keys((function() { return $this->instances; })->call($app));
-        $bootedResolvedKeys = array_keys((function() { return $this->resolved; })->call($app));
+        // Fast-path native encrypter registration (byte-identical AES-256-CBC + HMAC-SHA256)
+        if ($app->has('encrypter')) {
+            try {
+                $origEnc = $app->make('encrypter');
+                $key = (function() { return $this->key; })->call($origEnc);
+                $cipher = (function() { return $this->cipher; })->call($origEnc);
+                $fastEnc = new HyperionEncrypter($key, $cipher);
+                $app->instance('encrypter', $fastEnc);
+                $app->instance(\Illuminate\Contracts\Encryption\Encrypter::class, $fastEnc);
+                $app->instance(\Illuminate\Contracts\Encryption\StringEncrypter::class, $fastEnc);
+            } catch (\Throwable $e) {}
+        }
 
-        // Auto-tune database connections for concurrent WAL and memory-mapped performance
-        HyperionMemorySessionHandler::init();
-        HyperionQueryStore::init();
+        // Pre-allocate Prototype Request (Zero new bag allocations per request)
+        $prototypeRequest = \Illuminate\Http\Request::create('/', 'GET');
 
-        if (!class_exists('HyperionMySqlConnection', false)) {
-            class HyperionMySqlConnection extends \Illuminate\Database\MySqlConnection {
-                public function select($query, $bindings = [], $useReadPdo = true) {
-                    $tables = HyperionSqlParser::extractTables($query);
-                    $cached = HyperionQueryStore::get($query, $bindings, $tables);
-                    if ($cached !== null) {
-                        return $cached;
-                    }
-                    $results = parent::select($query, $bindings, $useReadPdo);
-                    HyperionQueryStore::set($query, $bindings, $tables, $results);
-                    return $results;
+        // Eagerly resolve core singletons (DB, View, Cookie, Session, Auth, URL, Redirect, Translator, ResponseFactory)
+        // BEFORE snapshotting container state so persistent connections and singletons stay warm across requests
+        foreach ([
+            'db',
+            'view',
+            'cookie',
+            'session',
+            'session.store',
+            'auth',
+            'translator',
+            'files',
+            \Illuminate\Contracts\Routing\ResponseFactory::class,
+            \Illuminate\Contracts\Debug\ExceptionHandler::class,
+        ] as $coreService) {
+            if ($app->bound($coreService)) {
+                try {
+                    $app->make($coreService);
+                } catch (\Throwable $e) {}
+            }
+        }
+
+        $urlGenerator = null;
+        if ($app->bound('url')) {
+            try {
+                $app->instance('request', $prototypeRequest);
+                $urlGenerator = $app->make('url');
+                if ($app->bound('redirect')) {
+                    $app->make('redirect');
                 }
-
-                public function statement($query, $bindings = []) {
-                    $res = parent::statement($query, $bindings);
-                    HyperionSqlParser::invalidateMutatedTables($query);
-                    return $res;
-                }
-
-                public function affectingStatement($query, $bindings = []) {
-                    $res = parent::affectingStatement($query, $bindings);
-                    HyperionSqlParser::invalidateMutatedTables($query);
-                    return $res;
-                }
+                $app->forgetInstance('request');
+            } catch (\Throwable $e) {
+                $urlGenerator = null;
             }
         }
 
         if ($app->has('db')) {
             try {
-                \Illuminate\Database\Connection::resolverFor('mysql', function($connection, $database, $prefix, $config) {
-                    return new HyperionMySqlConnection($connection, $database, $prefix, $config);
-                });
-                $app->make('db')->purge();
                 $db = $app->make('db');
                 foreach ($db->getConnections() as $conn) {
                     if (method_exists($conn, 'getPdo')) {
@@ -1083,54 +1558,339 @@ switch ($framework) {
             } catch (\Throwable $e) {}
         }
 
-        // Persistent Request Processing Loop
-        $reqNum = 0;
-        while (hyperion_accept_request()) {
-            $reqNum++;
-            if (HyperionIpc::$active && HyperionIpc::$rawBody !== '') {
-                $request = \Illuminate\Http\Request::create(
-                    $_SERVER['REQUEST_URI'] ?? '/',
+        // Flush any warmup cookies, session attributes, or auth guards before snapshotting clean boot state
+        $bootReboundCallbacks = (function (): array {
+            if (isset($this->instances['cookie'])) {
+                try { $this->instances['cookie']->flushQueuedCookies(); } catch (\Throwable $e) {}
+            }
+            if (isset($this->instances['session.store'])) {
+                try { $this->instances['session.store']->flush(); } catch (\Throwable $e) {}
+            }
+            if (isset($this->instances['auth']) && method_exists($this->instances['auth'], 'forgetGuards')) {
+                try { $this->instances['auth']->forgetGuards(); } catch (\Throwable $e) {}
+            }
+            unset(
+                $this->instances['auth.driver'],
+                $this->instances['auth.password.tokens'],
+                $this->instances['request']
+            );
+            if (!empty($this->reboundCallbacks['request'])) {
+                $cleanReqCallbacks = [];
+                foreach ($this->reboundCallbacks['request'] as $cb) {
+                    if ($cb instanceof \Closure) {
+                        try {
+                            $rf = new \ReflectionFunction($cb);
+                            $staticVars = $rf->getStaticVariables();
+                            if (isset($staticVars['target']) && $staticVars['target'] instanceof \Illuminate\Contracts\Auth\Guard) {
+                                continue;
+                            }
+                            $cbThis = $rf->getClosureThis();
+                            if ($cbThis instanceof \Illuminate\Contracts\Auth\Guard) {
+                                continue;
+                            }
+                        } catch (\Throwable $e) {}
+                    }
+                    $cleanReqCallbacks[] = $cb;
+                }
+                $this->reboundCallbacks['request'] = $cleanReqCallbacks;
+            }
+            return $this->reboundCallbacks;
+        })->call($app);
+        HyperionContainerSandbox::init($app);
+
+        $bootLocale = 'en';
+        if ($app->has('config')) {
+            try {
+                $bootLocale = (string)($app['config']->get('app.locale') ?: 'en');
+            } catch (\Throwable $e) {}
+        }
+
+        // Suspend cyclic garbage collection during request bursts for deterministic latency
+        if (function_exists('gc_disable')) {
+            gc_disable();
+        }
+
+        HyperionIpc::$isLaravelFramework = true;
+        $hasVite = class_exists(\Illuminate\Foundation\Vite::class, false);
+        $hasZiggy = class_exists(\Tighten\Ziggy\BladeRouteGenerator::class, false);
+        $hasInertia = class_exists(\Inertia\Inertia::class, false);
+
+        // Pre-bound O(1) single-route reset (bound to Route scope for protected parameters)
+        $resetMatchedRoute = \Closure::bind(static function (\Illuminate\Routing\Route $route): void {
+            $route->parameters = null;
+            $route->originalParameters = null;
+        }, null, \Illuminate\Routing\Route::class);
+
+        $resetViewFactory = null;
+        if (class_exists(\Illuminate\View\Factory::class, false)) {
+            $resetViewFactory = \Closure::bind(static function (\Illuminate\View\Factory $view): void {
+                $view->renderCount = 0;
+                $view->renderedOnce = [];
+            }, null, \Illuminate\View\Factory::class);
+        }
+
+        // Pre-bound Octane-grade State Reset closure (bound once to Application scope)
+        $fastStateReset = \Closure::bind(static function (\Illuminate\Foundation\Application $app, \Illuminate\Http\Request $request) use (
+            $resetMatchedRoute,
+            $resetViewFactory,
+            $bootReboundCallbacks,
+            $bootLocale,
+            $hasVite,
+            $hasZiggy,
+            $hasInertia
+        ): void {
+            // 1. Clean matched route controller and bound parameters
+            if ($matchedRoute = $request->route()) {
+                $resetMatchedRoute($matchedRoute);
+            }
+
+            // 2. Cookie queue flush to prevent cookie accumulation across requests
+            if (isset($app->instances['cookie'])) {
+                try {
+                    $app->instances['cookie']->flushQueuedCookies();
+                } catch (\Throwable $e) {}
+            }
+
+            // 3. Auth, password broker & session state isolation (Octane FlushSessionState semantics:
+            // flush in-memory session store attributes without destroying the driver or DB connections)
+            if ($request->hasSession() && isset($app->instances['session.store'])) {
+                try {
+                    $app->instances['session.store']->flush();
+                } catch (\Throwable $e) {}
+            }
+            unset(
+                $app->instances['auth.driver'],
+                $app->instances['auth.password.tokens'],
+                $app->instances['request']
+            );
+            if (isset($app->instances['auth']) && $app->instances['auth']->hasResolvedGuards()) {
+                try {
+                    $app->instances['auth']->forgetGuards();
+                } catch (\Throwable $e) {}
+            }
+            // Restore clean boot reboundCallbacks (O(1) Zend COW assignment; prevents O(N) SessionGuard leak)
+            $app->reboundCallbacks = $bootReboundCallbacks;
+
+            // 4. Reset translator locale to boot default only when changed
+            if (isset($app->instances['translator']) && $app->instances['translator']->getLocale() !== $bootLocale) {
+                try {
+                    $app->instances['translator']->setLocale($bootLocale);
+                } catch (\Throwable $e) {}
+            }
+
+            // 5. Reset View Factory per-request state
+            if ($resetViewFactory !== null && isset($app->instances['view']) && $app->instances['view'] instanceof \Illuminate\View\Factory) {
+                try {
+                    $resetViewFactory($app->instances['view']);
+                } catch (\Throwable $e) {}
+            }
+
+            // 6. Rollback any uncommitted PDO transactions
+            HyperionIpc::rollbackActiveTransactions();
+
+            // 7. Reset Inertia, Vite & Ziggy per-request state
+            if ($hasInertia) {
+                try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
+            }
+            if ($hasVite) {
+                unset($app->instances[\Illuminate\Foundation\Vite::class]);
+            }
+            if ($hasZiggy) {
+                \Tighten\Ziggy\BladeRouteGenerator::$generated = false;
+            }
+
+            // 8. Clear scoped instances
+            if (!empty($app->scopedInstances)) {
+                $app->forgetScopedInstances();
+            }
+        }, null, \Illuminate\Foundation\Application::class);
+
+        $resetLaravelProps = \Closure::bind(static function(\Illuminate\Http\Request $req): void {
+            $req->session = null;
+            $req->userResolver = null;
+            $req->routeResolver = null;
+            $req->defaultUser = null;
+        }, null, \Illuminate\Http\Request::class);
+
+        $hydrateHeaderBag = \Closure::bind(static function (\Symfony\Component\HttpFoundation\HeaderBag $bag, array $rawHeaders): void {
+            $headers = [];
+            $hasCacheControl = false;
+            foreach ($rawHeaders as $key => $val) {
+                $lk = strtolower((string)$key);
+                $headers[$lk] = [(string)$val];
+                if ($lk === 'cache-control') {
+                    $hasCacheControl = true;
+                }
+            }
+            $bag->headers = $headers;
+            $bag->cacheControl = $hasCacheControl ? $bag->parseCacheControl($headers['cache-control'][0]) : [];
+        }, null, \Symfony\Component\HttpFoundation\HeaderBag::class);
+
+        $hydrateRequestFast = \Closure::bind(static function (
+            \Illuminate\Http\Request $req,
+            string $method,
+            string $uri,
+            array $query,
+            array $post,
+            array $cookies,
+            array $files,
+            array $server,
+            array $rawHeaders,
+            ?string $content
+        ) use ($resetLaravelProps, $hydrateHeaderBag): void {
+            $req->method = $method;
+            $req->requestUri = $uri;
+            $req->pathInfo = null;
+            $req->baseUrl = null;
+            $req->basePath = null;
+            $req->format = null;
+            $req->query->replace($query);
+            $req->request->replace($post);
+            $req->attributes->replace([]);
+            $req->cookies->replace($cookies);
+            if (!empty($files)) {
+                $req->files->replace($files);
+            } elseif ($req->files->count() > 0) {
+                $req->files->replace([]);
+            }
+            $req->server->replace($server);
+            $hydrateHeaderBag($req->headers, $rawHeaders);
+            $req->content = $content;
+            $req->json = HyperionIpc::$lastBodyIsJson ? $req->request : null;
+            $req->convertedFiles = null;
+            $resetLaravelProps($req);
+        }, null, \Symfony\Component\HttpFoundation\Request::class);
+
+        if ($nativeReactorActive) {
+            $hydrateHeaderBagNative = \Closure::bind(static function (\Symfony\Component\HttpFoundation\HeaderBag $bag, array $symHeaders): void {
+                $bag->headers = $symHeaders;
+                $bag->cacheControl = isset($symHeaders['cache-control'][0])
+                    ? $bag->parseCacheControl($symHeaders['cache-control'][0])
+                    : [];
+            }, null, \Symfony\Component\HttpFoundation\HeaderBag::class);
+
+            $hydrateRequestNative = \Closure::bind(static function (
+                \Illuminate\Http\Request $req,
+                string $method,
+                string $uri,
+                array $query,
+                array $post,
+                array $cookies,
+                array $files,
+                array $server,
+                array $symHeaders,
+                ?string $content,
+                bool $isJson
+            ) use ($resetLaravelProps, $hydrateHeaderBagNative): void {
+                $req->method = $method;
+                $req->requestUri = $uri;
+                $req->pathInfo = null;
+                $req->baseUrl = null;
+                $req->basePath = null;
+                $req->format = null;
+                $req->query->replace($query);
+                $req->request->replace($post);
+                $req->attributes->replace([]);
+                $req->cookies->replace($cookies);
+                if (!empty($files)) {
+                    $req->files->replace($files);
+                } elseif ($req->files->count() > 0) {
+                    $req->files->replace([]);
+                }
+                $req->server->replace($server);
+                $hydrateHeaderBagNative($req->headers, $symHeaders);
+                $req->content = $content;
+                $req->json = $isJson ? $req->request : null;
+                $req->convertedFiles = null;
+                $resetLaravelProps($req);
+            }, null, \Symfony\Component\HttpFoundation\Request::class);
+
+            $appDebugBool = false;
+            if ($app->has('config')) {
+                try {
+                    $appDebugBool = (bool)$app['config']->get('app.debug');
+                } catch (\Throwable $_) {}
+            } else {
+                $appDebugBool = filter_var(getenv('APP_DEBUG') ?: ($_ENV['APP_DEBUG'] ?? 'false'), FILTER_VALIDATE_BOOLEAN);
+            }
+
+            hyperion_reactor_serve(static function () use (
+                $app,
+                $kernel,
+                $prototypeRequest,
+                $hydrateRequestNative,
+                $fastStateReset,
+                $urlGenerator,
+                $appDebugBool
+            ): void {
+                $request = clone $prototypeRequest;
+                $hydrateRequestNative(
+                    $request,
                     $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                    $_SERVER['REQUEST_URI'] ?? '/',
+                    $_GET,
                     $_POST,
                     $_COOKIE,
                     $_FILES,
                     $_SERVER,
-                    HyperionIpc::$rawBody
+                    hyperion_request_headers(),
+                    hyperion_request_raw_body(),
+                    hyperion_request_is_json()
                 );
-            } else {
-                $request = \Illuminate\Http\Request::capture();
-            }
+                $app->instance('request', $request);
+                if ($urlGenerator !== null) {
+                    try {
+                        $urlGenerator->setRequest($request);
+                    } catch (\Throwable $e) {}
+                }
+
+                try {
+                    $response = $kernel->handle($request);
+                } catch (\Throwable $e) {
+                    try {
+                        $handler = $app->make(\Illuminate\Contracts\Debug\ExceptionHandler::class);
+                        $handler->report($e);
+                        $response = $handler->render($request, $e);
+                    } catch (\Throwable $inner) {
+                        $errCls = get_class($e);
+                        $errMsg = $e->getMessage();
+                        error_log("[HANDLE ERROR] {$errCls}: {$errMsg} in " . $e->getFile() . ':' . $e->getLine());
+                        $msg = $appDebugBool ? "500 Server Error: {$errCls}: {$errMsg}" : '500 Internal Server Error';
+                        $response = new \Illuminate\Http\Response($msg, 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
+                    }
+                }
+
+                HyperionIpc::emitNativeResponse($response);
+                $kernel->terminate($request, $response);
+                $fastStateReset($app, $request);
+            }, $nativeReactorOpts);
+            exit(0);
+        }
+
+        // Persistent Zero-Overhead Request Processing Loop (Legacy SHM IPC fallback)
+        $maxRequests = (int)(getenv('HYPERION_MAX_REQUESTS') ?: 100000);
+        $maxMemoryBytes = ((int)(getenv('HYPERION_MAX_MEMORY_MB') ?: 512)) * 1048576;
+        $reqNum = 0;
+        while (hyperion_accept_request()) {
+            $reqNum++;
+            $rawContent = (HyperionIpc::$active && HyperionIpc::$rawBody !== '') ? HyperionIpc::$rawBody : null;
+            $request = clone $prototypeRequest;
+            $hydrateRequestFast(
+                $request,
+                $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                $_SERVER['REQUEST_URI'] ?? '/',
+                $_GET,
+                $_POST,
+                $_COOKIE,
+                $_FILES,
+                $_SERVER,
+                HyperionIpc::$lastRawHeaders,
+                $rawContent
+            );
             $app->instance('request', $request);
             if ($app->has('url')) {
                 try {
-                    $app->make('url')->setRequest($request);
-                } catch (\Throwable $e) {}
-            }
-            if (method_exists($app, 'forgetInstance')) {
-                if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
-                    $app->forgetInstance(\Illuminate\Foundation\Vite::class);
-                }
-            }
-            if (class_exists(\Tighten\Ziggy\BladeRouteGenerator::class)) {
-                \Tighten\Ziggy\BladeRouteGenerator::$generated = false;
-            }
-            if (class_exists(\Inertia\Inertia::class)) {
-                try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
-            }
-
-            // Anti-Session-Bleed & Clean Auth Isolation (CVE-2026-24894)
-            if ($app->has('auth')) {
-                try {
-                    $auth = $app->make('auth');
-                    if (method_exists($auth, 'forgetGuards')) {
-                        $auth->forgetGuards();
-                    }
-                    (function() {
-                        if (is_array($this->guards)) {
-                            $this->guards = [];
-                        }
-                        $this->user = null;
-                    })->call($auth);
+                    $app['url']->setRequest($request);
                 } catch (\Throwable $e) {}
             }
 
@@ -1138,242 +1898,38 @@ switch ($framework) {
             try {
                 $response = $kernel->handle($request);
             } catch (\Throwable $e) {
-                error_log("[WORKER] Request #$reqNum handle EXCEPTION: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-                $debug = (bool)($_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? ($app->has('config') ? $app['config']->get('app.debug', false) : false));
-                $msg = $debug ? ("500 Server Error: " . $e->getMessage()) : "500 Internal Server Error";
-                $response = new \Illuminate\Http\Response($msg, 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
-            }
-
-            // Inspect session state and set Hyperion IPC signaling headers
-            if ($app->has('session')) {
                 try {
-                    $session = $request->hasSession() ? $request->session() : null;
-                    if ($session) {
-                        $csrfToken = (string)$session->token();
-                        $isAuth = false;
-                        if ($app->has('auth')) {
-                            try { $isAuth = \Illuminate\Support\Facades\Auth::check(); } catch (\Throwable $e) {}
-                        }
-                        $hasFlash = !empty($session->get('_flash.old')) || $session->has('errors');
-                        $canSplice = (!$isAuth && !$hasFlash && $request->isMethod('GET') && empty($request->query()) && $response->getStatusCode() === 200);
-
-                        $response->headers->set('X-Hyperion-Can-Splice', $canSplice ? '1' : '0');
-                        $response->headers->set('X-Hyperion-Csrf', $csrfToken);
-
-                        $sessName = $session->getName();
-                        if ($request->cookies->has($sessName) && $canSplice) {
-                            $response->headers->removeCookie($sessName);
-                        }
+                    $handler = $app->make(\Illuminate\Contracts\Debug\ExceptionHandler::class);
+                    $handler->report($e);
+                    $response = $handler->render($request, $e);
+                } catch (\Throwable $inner) {
+                    $errCls = is_object($e) ? get_class($e) : gettype($e);
+                    $errMsg = is_object($e) && method_exists($e, 'getMessage') ? $e->getMessage() : (string)$e;
+                    $errFile = is_object($e) && method_exists($e, 'getFile') ? $e->getFile() : '';
+                    $errLine = is_object($e) && method_exists($e, 'getLine') ? $e->getLine() : 0;
+                    error_log("[HANDLE ERROR] $errCls: $errMsg in $errFile:$errLine\n" . ($e instanceof \Throwable ? $e->getTraceAsString() : ''));
+                    $debug = false;
+                    if ($app->has('config')) {
+                        try { $debug = (bool)$app['config']->get('app.debug'); } catch (\Throwable $_) {}
+                    } else {
+                        $debug = filter_var(getenv('APP_DEBUG') ?: ($_ENV['APP_DEBUG'] ?? 'false'), FILTER_VALIDATE_BOOLEAN);
                     }
-                } catch (\Throwable $e) {}
+                    $msg = $debug ? "500 Server Error: $errCls: $errMsg" : "500 Internal Server Error";
+                    $response = new \Illuminate\Http\Response($msg, 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
+                }
             }
 
             HyperionIpc::sendResponse($response);
             $kernel->terminate($request, $response);
-            if (method_exists($app, 'forgetInstance')) {
-                if (class_exists(\Illuminate\Foundation\Vite::class, false)) {
-                    $app->forgetInstance(\Illuminate\Foundation\Vite::class);
-                }
-            }
-            if (class_exists(\Tighten\Ziggy\BladeRouteGenerator::class)) {
-                \Tighten\Ziggy\BladeRouteGenerator::$generated = false;
-            }
-            if (class_exists(\Inertia\Inertia::class)) {
-                try { \Inertia\Inertia::flushShared(); } catch (\Throwable $e) {}
-            }
-
-            // User-defined cleanup hook
-            if (is_callable($hyperionConfig['cleanup'])) {
-                ($hyperionConfig['cleanup'])($app, $request, $response);
-            }
-
-            // Stateful resets for persistent daemons
-            if (class_exists(\Livewire\Livewire::class, false)) {
-                try { app('livewire')->flushState(); } catch (\Throwable $e) {}
-            }
-            if (class_exists(\Filament\Support\Components\ComponentManager::class, false)) {
-                try { \Filament\Support\Components\ComponentManager::resolveScoped(); } catch (\Throwable $e) {}
-            }
-            if (class_exists(\Filament\Facades\Filament::class, false)) {
-                try { \Filament\Facades\Filament::setCurrentPanel(null); } catch (\Throwable $e) {}
-            }
-            if ($hyperionConfig['reset_auth'] && $app->has('auth')) {
-                try {
-                    $auth = $app->make('auth');
-                    if (method_exists($auth, 'hasResolvedGuards') && $auth->hasResolvedGuards()) {
-                        (function() {
-                            if (is_array($this->guards)) {
-                                foreach ($this->guards as $k => $_) {
-                                    unset($this->guards[$k]);
-                                }
-                            }
-                        })->call($auth);
-                    }
-                } catch (\Throwable $e) {}
-            }
-
-            if ($app->has('session')) {
-                try {
-                    $sm = $app->make('session');
-                    if (method_exists($sm, 'getDrivers') && !empty($sm->getDrivers())) {
-                        (function() {
-                            if (is_array($this->drivers)) {
-                                foreach ($this->drivers as $k => $_) {
-                                    unset($this->drivers[$k]);
-                                }
-                            }
-                        })->call($sm);
-                    }
-                } catch (\Throwable $e) {}
-            }
-
-            if ($app->has('cookie')) {
-                try {
-                    $cookieJar = $app->make('cookie');
-                    foreach ($cookieJar->getQueuedCookies() as $c) {
-                        $cookieJar->unqueue($c->getName());
-                    }
-                } catch (\Throwable $e) {}
-            }
-
-            if (class_exists(\Illuminate\Support\Facades\Facade::class, false)) {
-                \Illuminate\Support\Facades\Facade::clearResolvedInstances();
-            }
-
-            if ($hyperionConfig['reset_db'] && $app->has('db')) {
-                try {
-                    foreach ($app->make('db')->getConnections() as $conn) {
-                        $conn->flushQueryLog();
-                        if (method_exists($conn, 'transactionLevel') && $conn->transactionLevel() > 0) {
-                            $conn->rollBack();
-                        }
-                        if (method_exists($conn, 'getPdo')) {
-                            HyperionIpc::tunePdo($conn->getPdo());
-                        }
-                    }
-                } catch (\Throwable $e) {}
-            }
-
-            if (method_exists($app, 'forgetInstance')) {
-                $app->forgetInstance('request');
-                $app->forgetInstance('session.store');
-            }
-
-            if ($app->has('url')) {
-                try {
-                    (function() {
-                        $this->routeGenerator = null;
-                        $this->request = null;
-                        $this->cachedRoot = null;
-                        $this->cachedScheme = null;
-                    })->call($app->make('url'));
-                } catch (\Throwable $e) {}
-            }
-
-            if ($app->has('view')) {
-                try {
-                    $view = $app->make('view');
-                    $view->flushState();
-                    (function() {
-                        if (is_array($this->shared)) {
-                            foreach ($this->shared as $k => $_) {
-                                if ($k !== '__env') {
-                                    unset($this->shared[$k]);
-                                }
-                            }
-                        }
-                    })->call($view);
-                } catch (\Throwable $e) {}
-            }
-
-            if ($app->has('view.engine.resolver')) {
-                try {
-                    $resolver = $app->make('view.engine.resolver');
-                    $compilerEngine = $resolver->resolve('blade');
-                    (function() {
-                        if (is_array($this->lastCompiled)) {
-                            foreach ($this->lastCompiled as $k => $_) {
-                                unset($this->lastCompiled[$k]);
-                            }
-                        }
-                    })->call($compilerEngine);
-                } catch (\Throwable $e) {}
-            }
-
-            if ($app->has('blade.compiler')) {
-                try {
-                    $blade = $app->make('blade.compiler');
-                    (function() {
-                        if (is_array($this->rawBlocks)) {
-                            foreach ($this->rawBlocks as $k => $_) {
-                                unset($this->rawBlocks[$k]);
-                            }
-                        }
-                        if (is_array($this->footer)) {
-                            foreach ($this->footer as $k => $_) {
-                                unset($this->footer[$k]);
-                            }
-                        }
-                    })->call($blade);
-                } catch (\Throwable $e) {}
-            }
-
-            if (class_exists(\Illuminate\Pagination\Paginator::class, false)) {
-                try {
-                    (function() {
-                        static::$currentPathResolver = null;
-                        static::$currentPageResolver = null;
-                        static::$queryStringResolver = null;
-                    })->bindTo(null, \Illuminate\Pagination\Paginator::class)();
-                } catch (\Throwable $e) {}
-            }
-
-            if ($app->has('router')) {
-                try {
-                    $router = $app->make('router');
-                    (function() {
-                        $this->current = null;
-                        $this->currentRequest = null;
-                    })->call($router);
-                    foreach ($router->getRoutes()->getRoutes() as $route) {
-                        $route->flushController();
-                        (function() {
-                            $this->parameters = null;
-                            $this->originalParameters = null;
-                        })->call($route);
-                    }
-                } catch (\Throwable $e) {}
-            }
-
-            if (method_exists($app, 'forgetScopedInstances')) {
-                try { $app->forgetScopedInstances(); } catch (\Throwable $e) {}
-            }
-
-            // Clean up request-scoped bindings without reallocating container arrays
-            try {
-                (function($instKeys, $resKeys) {
-                    if (is_array($this->instances)) {
-                        foreach (array_keys($this->instances) as $k) {
-                            if (!in_array($k, $instKeys, true)) {
-                                unset($this->instances[$k]);
-                            }
-                        }
-                    }
-                    if (is_array($this->resolved)) {
-                        foreach (array_keys($this->resolved) as $k) {
-                            if (!in_array($k, $resKeys, true)) {
-                                unset($this->resolved[$k]);
-                            }
-                        }
-                    }
-                })->call($app, $bootedInstanceKeys, $bootedResolvedKeys);
-            } catch (\Throwable $e) {}
-
+            $fastStateReset($app, $request);
             HyperionIpc::cleanupTempFiles();
 
-            $maxRequests = (int)(getenv('HYPERION_MAX_REQUESTS') ?: 10000);
-            $maxMemoryMb = (int)(getenv('HYPERION_MAX_MEMORY_MB') ?: 512);
-            if ($reqNum >= $maxRequests || (memory_get_usage(true) / 1048576) >= $maxMemoryMb) {
+            // Periodic cyclic GC collect to prevent latency spikes
+            if ($reqNum % 10000 === 0 && function_exists('gc_collect_cycles')) {
+                gc_collect_cycles();
+            }
+
+            if ($reqNum >= $maxRequests || (($reqNum & 255) === 0 && memory_get_usage(true) >= $maxMemoryBytes)) {
                 exit(0);
             }
         }
@@ -1433,7 +1989,101 @@ switch ($framework) {
             } catch (\Throwable $e) {}
         }
 
+        if ($nativeReactorActive && $kernel !== null) {
+            $symPrototypeRequest = \Symfony\Component\HttpFoundation\Request::create('/', 'GET');
+            $hydrateSymHeaders = \Closure::bind(static function (\Symfony\Component\HttpFoundation\HeaderBag $bag, array $symHeaders): void {
+                $bag->headers = $symHeaders;
+                $bag->cacheControl = isset($symHeaders['cache-control'][0])
+                    ? $bag->parseCacheControl($symHeaders['cache-control'][0])
+                    : [];
+            }, null, \Symfony\Component\HttpFoundation\HeaderBag::class);
+
+            $hydrateSymfonyFast = \Closure::bind(static function (
+                \Symfony\Component\HttpFoundation\Request $req,
+                string $method,
+                string $uri,
+                array $query,
+                array $post,
+                array $cookies,
+                array $files,
+                array $server,
+                array $symHeaders,
+                ?string $content
+            ) use ($hydrateSymHeaders): void {
+                $req->method = $method;
+                $req->requestUri = $uri;
+                $req->pathInfo = null;
+                $req->baseUrl = null;
+                $req->basePath = null;
+                $req->format = null;
+                $req->query->replace($query);
+                $req->request->replace($post);
+                $req->attributes->replace([]);
+                $req->cookies->replace($cookies);
+                if (!empty($files)) {
+                    $req->files->replace($files);
+                } elseif ($req->files->count() > 0) {
+                    $req->files->replace([]);
+                }
+                $req->server->replace($server);
+                $hydrateSymHeaders($req->headers, $symHeaders);
+                $req->content = $content;
+            }, null, \Symfony\Component\HttpFoundation\Request::class);
+
+            $servicesResetter = null;
+            try {
+                if ($kernel->getContainer()->has('services_resetter')) {
+                    $servicesResetter = $kernel->getContainer()->get('services_resetter');
+                }
+            } catch (\Throwable $e) {}
+
+            $symDebug = (bool)($_SERVER['APP_DEBUG'] ?? $_ENV['APP_DEBUG'] ?? (getenv('APP_DEBUG') === '1'));
+            $cleanupCb = is_callable($hyperionConfig['cleanup']) ? $hyperionConfig['cleanup'] : null;
+
+            hyperion_reactor_serve(static function () use (
+                $kernel,
+                $symPrototypeRequest,
+                $hydrateSymfonyFast,
+                $servicesResetter,
+                $symDebug,
+                $cleanupCb
+            ): void {
+                $request = clone $symPrototypeRequest;
+                $hydrateSymfonyFast(
+                    $request,
+                    $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                    $_SERVER['REQUEST_URI'] ?? '/',
+                    $_GET,
+                    $_POST,
+                    $_COOKIE,
+                    $_FILES,
+                    $_SERVER,
+                    hyperion_request_headers(),
+                    hyperion_request_raw_body()
+                );
+                try {
+                    $response = $kernel->handle($request);
+                } catch (\Throwable $e) {
+                    $msg = $symDebug ? ('500 Server Error: ' . get_class($e) . ': ' . $e->getMessage()) : '500 Internal Server Error';
+                    $response = new \Symfony\Component\HttpFoundation\Response($msg, 500, ['Content-Type' => 'text/plain; charset=UTF-8']);
+                }
+                HyperionIpc::emitNativeResponse($response);
+                $kernel->terminate($request, $response);
+                if ($servicesResetter !== null) {
+                    $servicesResetter->reset();
+                }
+                if ($cleanupCb !== null) {
+                    $cleanupCb($kernel);
+                }
+            }, $nativeReactorOpts);
+            exit(0);
+        }
+
+        $symMaxRequests = $maxRequestsCfg;
+        $symMaxMemoryBytes = $maxMemoryMbCfg * 1048576;
+        $symReqCount = 0;
         while (hyperion_accept_request()) {
+            $symReqCount++;
             if ($kernel !== null) {
                 if (HyperionIpc::$active && HyperionIpc::$rawBody !== '') {
                     $request = \Symfony\Component\HttpFoundation\Request::create(
@@ -1467,11 +2117,10 @@ switch ($framework) {
                 } catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {
                     $response = new \Symfony\Component\HttpFoundation\JsonResponse(['error' => 'Not Found'], 404);
                 } catch (\Throwable $e) {
-                    $response = new \Symfony\Component\HttpFoundation\JsonResponse(['error' => $e->getMessage()], 500);
+                    $response = new \Symfony\Component\HttpFoundation\JsonResponse(['error' => 'Internal Server Error'], 500);
                 }
                 HyperionIpc::sendResponse($response);
             } elseif (file_exists($entrypoint)) {
-                // Execute standalone Symfony HttpFoundation/Routing entrypoint
                 (function($__file) {
                     ob_start();
                     require $__file;
@@ -1482,6 +2131,10 @@ switch ($framework) {
             if (is_callable($hyperionConfig['cleanup'])) {
                 ($hyperionConfig['cleanup'])($kernel);
             }
+
+            if ($symReqCount >= $symMaxRequests || (($symReqCount & 255) === 0 && memory_get_usage(true) >= $symMaxMemoryBytes)) {
+                exit(0);
+            }
         }
         break;
 
@@ -1489,12 +2142,10 @@ switch ($framework) {
     // C. SLIM 4 & PSR-7 / PSR-15 FRAMEWORKS
     // ------------------------------------------------------------------------
     case 'slim':
-        // Build or import Slim App instance
         $slimApp = null;
         $entrypoint = $hyperionConfig['entrypoint'] ?? $entrypoint;
 
         if (file_exists($entrypoint)) {
-            // Buffer initial index to capture app setup
             ob_start();
             $returned = require_once $entrypoint;
             ob_end_clean();
@@ -1526,18 +2177,67 @@ switch ($framework) {
             } catch (\Throwable $e) {}
         }
 
+        if ($nativeReactorActive && $slimApp instanceof \Slim\App) {
+            $streamFactory = class_exists('\Slim\Psr7\Factory\StreamFactory')
+                ? new \Slim\Psr7\Factory\StreamFactory()
+                : null;
+            $cleanupCb = is_callable($hyperionConfig['cleanup']) ? $hyperionConfig['cleanup'] : null;
+
+            hyperion_reactor_serve(static function () use (
+                $slimApp,
+                $serverRequestCreator,
+                $streamFactory,
+                $cleanupCb
+            ): void {
+                $request = $serverRequestCreator !== null
+                    ? $serverRequestCreator->createServerRequestFromGlobals()
+                    : \Slim\Factory\ServerRequestCreatorFactory::create()->createServerRequestFromGlobals();
+                $rawBody = hyperion_request_raw_body();
+                if ($rawBody !== null && $rawBody !== '') {
+                    if ($streamFactory !== null) {
+                        $request = $request->withBody($streamFactory->createStream($rawBody));
+                    }
+                    if (!empty($_POST)) {
+                        $request = $request->withParsedBody($_POST);
+                    }
+                } elseif (!empty($_POST)) {
+                    $request = $request->withParsedBody($_POST);
+                }
+
+                $response = $slimApp->handle($request);
+                HyperionIpc::emitNativeResponse($response);
+
+                if ($cleanupCb !== null) {
+                    $cleanupCb($slimApp);
+                }
+            }, $nativeReactorOpts);
+            exit(0);
+        }
+
+        $slimMaxRequests = $maxRequestsCfg;
+        $slimMaxMemoryBytes = $maxMemoryMbCfg * 1048576;
+        $slimReqCount = 0;
         while (hyperion_accept_request()) {
+            $slimReqCount++;
             if ($slimApp instanceof \Slim\App) {
                 $request = $serverRequestCreator !== null
                     ? $serverRequestCreator->createServerRequestFromGlobals()
                     : \Slim\Factory\ServerRequestCreatorFactory::create()->createServerRequestFromGlobals();
-                if (HyperionIpc::$active && HyperionIpc::$rawBody !== '') {
-                    if (class_exists('\Slim\Psr7\Factory\StreamFactory')) {
-                        $stream = (new \Slim\Psr7\Factory\StreamFactory())->createStream(HyperionIpc::$rawBody);
-                        $request = $request->withBody($stream);
+                $rawInput = (HyperionIpc::$active && HyperionIpc::$rawBody !== '')
+                    ? HyperionIpc::$rawBody
+                    : (string)@file_get_contents('php://input');
+                if ($rawInput !== '' && class_exists('\Slim\Psr7\Factory\StreamFactory')) {
+                    $stream = (new \Slim\Psr7\Factory\StreamFactory())->createStream($rawInput);
+                    $request = $request->withBody($stream);
+                    if (stripos($_SERVER['CONTENT_TYPE'] ?? '', 'json') !== false) {
+                        $parsedJson = json_decode($rawInput, true);
+                        if (is_array($parsedJson)) {
+                            $request = $request->withParsedBody($parsedJson);
+                        }
+                    } elseif (!empty($_POST)) {
+                        $request = $request->withParsedBody($_POST);
                     }
-                }
-                if (!empty($_POST)) {
+                } elseif (!empty($_POST)) {
                     $request = $request->withParsedBody($_POST);
                 }
                 $response = $slimApp->handle($request);
@@ -1545,7 +2245,6 @@ switch ($framework) {
                 if (HyperionIpc::$active) {
                     HyperionIpc::sendResponse($response);
                 } else {
-                    // Send PSR-7 HTTP headers
                     if (!headers_sent()) {
                         header(sprintf(
                             'HTTP/%s %s %s',
@@ -1572,6 +2271,10 @@ switch ($framework) {
             if (is_callable($hyperionConfig['cleanup'])) {
                 ($hyperionConfig['cleanup'])($slimApp);
             }
+
+            if ($slimReqCount >= $slimMaxRequests || (($slimReqCount & 255) === 0 && memory_get_usage(true) >= $slimMaxMemoryBytes)) {
+                exit(0);
+            }
         }
         break;
 
@@ -1581,15 +2284,64 @@ switch ($framework) {
     case 'wordpress':
         define('WP_USE_THEMES', true);
 
-        // Pre-load WordPress core into boot memory
         if (file_exists($basePath . '/wp-load.php')) {
             require_once $basePath . '/wp-load.php';
         } elseif (file_exists($basePath . '/wp-config.php')) {
             require_once $basePath . '/wp-config.php';
         }
 
+        if (isset($GLOBALS['wpdb']) && is_object($GLOBALS['wpdb']) && method_exists($GLOBALS['wpdb'], 'get_pdo')) {
+            try {
+                HyperionIpc::tunePdo($GLOBALS['wpdb']->get_pdo());
+            } catch (\Throwable $e) {}
+        }
+
+        $wpTemplateLoader = defined('ABSPATH') && defined('WPINC')
+            ? (ABSPATH . WPINC . '/template-loader.php')
+            : ($basePath . '/wp-includes/template-loader.php');
+
+        if ($nativeReactorActive) {
+            $hasWpClass = class_exists('WP', false);
+            $hasWpQueryClass = class_exists('WP_Query', false);
+            $hasWpFn = function_exists('wp');
+            $cleanupCb = is_callable($hyperionConfig['cleanup']) ? $hyperionConfig['cleanup'] : null;
+            $wpOpts = $nativeReactorOpts;
+            $wpOpts['sandbox_rollback'] = true;
+
+            hyperion_reactor_serve(static function () use (
+                $wpTemplateLoader,
+                $hasWpClass,
+                $hasWpQueryClass,
+                $hasWpFn,
+                $cleanupCb
+            ): void {
+                if ($hasWpClass && (!isset($GLOBALS['wp']) || !($GLOBALS['wp'] instanceof \WP))) {
+                    $GLOBALS['wp'] = new \WP();
+                }
+                if ($hasWpQueryClass) {
+                    $GLOBALS['wp_the_query'] = new \WP_Query();
+                    $GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
+                }
+                unset($GLOBALS['post']);
+
+                if ($hasWpFn) {
+                    wp();
+                }
+                if (is_file($wpTemplateLoader)) {
+                    hyperion_exec_script($wpTemplateLoader);
+                }
+                if ($cleanupCb !== null) {
+                    $cleanupCb();
+                }
+            }, $wpOpts);
+            exit(0);
+        }
+
+        $wpMaxRequests = $maxRequestsCfg;
+        $wpMaxMemoryBytes = $maxMemoryMbCfg * 1048576;
+        $wpReqCount = 0;
         while (hyperion_accept_request()) {
-            // Reset global request state
+            $wpReqCount++;
             if (class_exists('WP') && (!isset($GLOBALS['wp']) || !($GLOBALS['wp'] instanceof \WP))) {
                 $GLOBALS['wp'] = new \WP();
             }
@@ -1603,9 +2355,8 @@ switch ($framework) {
             if (function_exists('wp')) {
                 wp();
             }
-            $templateLoader = defined('ABSPATH') ? ABSPATH . WPINC . '/template-loader.php' : $basePath . '/wp-includes/template-loader.php';
-            if (file_exists($templateLoader)) {
-                require $templateLoader;
+            if (file_exists($wpTemplateLoader)) {
+                require $wpTemplateLoader;
             }
             $output = ob_get_clean();
             if (HyperionIpc::$active) {
@@ -1617,6 +2368,10 @@ switch ($framework) {
             if (is_callable($hyperionConfig['cleanup'])) {
                 ($hyperionConfig['cleanup'])();
             }
+
+            if ($wpReqCount >= $wpMaxRequests || (($wpReqCount & 255) === 0 && memory_get_usage(true) >= $wpMaxMemoryBytes)) {
+                exit(0);
+            }
         }
         break;
 
@@ -1627,9 +2382,7 @@ switch ($framework) {
     case 'plain':
         $entrypoint = $hyperionConfig['entrypoint'] ?? $entrypoint;
 
-        // Universal Dynamic Database & Connection Auto-Tuning
-        // Automatically discovers and tunes any PDO connections in any user project
-        $discoverAndTuneDatabases = function() {
+        $discoverAndTuneDatabases = static function (): void {
             $commonDbMethods = ['getConnection', 'getPdo', 'get', 'instance', 'getInstance', 'connection', 'db'];
             foreach (get_declared_classes() as $cls) {
                 if (str_ends_with($cls, 'Database') || str_ends_with($cls, 'DB') || str_contains($cls, 'Connection') || str_contains($cls, '\\Database')) {
@@ -1655,15 +2408,111 @@ switch ($framework) {
                 }
             }
         };
+
+        $entrypointDeclaresTopLevelSymbols = static function (string $file): bool {
+            if (!is_file($file) || !class_exists(\PhpToken::class)) {
+                return true;
+            }
+            $src = @file_get_contents($file);
+            if ($src === false || $src === '') {
+                return false;
+            }
+            $tokens = \PhpToken::tokenize($src);
+            $cnt = count($tokens);
+            $depth = 0;
+            $prevMeaningfulId = 0;
+            for ($i = 0; $i < $cnt; $i++) {
+                $t = $tokens[$i];
+                $tid = $t->id;
+                $txt = $t->text;
+                if ($tid === T_WHITESPACE || $tid === T_COMMENT || $tid === T_DOC_COMMENT) {
+                    continue;
+                }
+                if ($txt === '{' || $tid === T_CURLY_OPEN || $tid === T_DOLLAR_OPEN_CURLY_BRACES) {
+                    $depth++;
+                    $prevMeaningfulId = $tid;
+                    continue;
+                }
+                if ($txt === '}') {
+                    if ($depth > 0) {
+                        $depth--;
+                    }
+                    $prevMeaningfulId = $tid;
+                    continue;
+                }
+                if ($depth === 0) {
+                    if (($tid === T_CLASS || $tid === T_INTERFACE || $tid === T_TRAIT || $tid === T_ENUM) && $prevMeaningfulId !== T_NEW) {
+                        return true;
+                    }
+                    if ($tid === T_CONST) {
+                        return true;
+                    }
+                    if ($tid === T_FUNCTION) {
+                        for ($k = $i + 1; $k < $cnt; $k++) {
+                            $nt = $tokens[$k];
+                            if ($nt->id === T_WHITESPACE || $nt->id === T_COMMENT || $nt->id === T_DOC_COMMENT || $nt->text === '&') {
+                                continue;
+                            }
+                            if ($nt->id === T_STRING) {
+                                return true;
+                            }
+                            break;
+                        }
+                    }
+                    if ($tid === T_STRING && strcasecmp($txt, 'define') === 0) {
+                        return true;
+                    }
+                }
+                $prevMeaningfulId = $tid;
+            }
+            return false;
+        };
+
+        if ($nativeReactorActive) {
+            if ($entrypoint && is_file($entrypoint) && !$entrypointDeclaresTopLevelSymbols($entrypoint)) {
+                $_SERVER['REQUEST_METHOD'] = 'GET';
+                $_SERVER['REQUEST_URI'] = '/health';
+                ob_start();
+                @hyperion_exec_script($entrypoint);
+                @ob_end_clean();
+                if (function_exists('header_remove')) {
+                    @header_remove();
+                }
+                http_response_code(200);
+            }
+            $discoverAndTuneDatabases();
+
+            $plainOpts = $nativeReactorOpts;
+            $plainOpts['sandbox_rollback'] = true;
+
+            if (is_callable($hyperionConfig['cleanup'])) {
+                $cleanupCb = $hyperionConfig['cleanup'];
+                hyperion_reactor_serve(static function () use ($entrypoint, $cleanupCb): void {
+                    if ($entrypoint && is_file($entrypoint)) {
+                        hyperion_exec_script($entrypoint);
+                    }
+                    $cleanupCb();
+                }, $plainOpts);
+            } else {
+                /* 100% C-direct execution: Rust mio -> C SAPI -> OPcache JIT -> C Sandbox Rollback! */
+                hyperion_reactor_serve(null, $plainOpts);
+            }
+            exit(0);
+        }
+
         $discoverAndTuneDatabases();
+        $plainMaxRequests = $maxRequestsCfg;
+        $plainMaxMemoryBytes = $maxMemoryMbCfg * 1048576;
+        $plainReqCount = 0;
+        $plainDbTuned = false;
 
         while (hyperion_accept_request()) {
+            $plainReqCount++;
             ob_start();
             $uri = $_SERVER['REQUEST_URI'] ?? '/';
             $parsedPath = parse_url($uri, PHP_URL_PATH) ?? '/';
             $cleanPath = ltrim($parsedPath, '/');
 
-            // Security Defense: Path Traversal & Null Byte Protection
             if (str_contains($cleanPath, '..') || str_contains($cleanPath, "\0")) {
                 http_response_code(400);
                 header("Content-Type: text/plain; charset=UTF-8");
@@ -1677,7 +2526,6 @@ switch ($framework) {
                 continue;
             }
 
-            // 1. Check direct file in public or base directory
             $targetScript = null;
             if ($cleanPath !== '') {
                 $candidate = null;
@@ -1689,9 +2537,7 @@ switch ($framework) {
 
                 if ($candidate !== null) {
                     $real = realpath($candidate);
-                    // Ensure the resolved path is strictly jailed inside publicDir or basePath
                     if ($real !== false && (str_starts_with($real, $publicDir . '/') || str_starts_with($real, $basePath . '/'))) {
-                        // Protect hidden dotfiles and sensitive config files
                         $filename = basename($real);
                         $isSensitive = str_starts_with($filename, '.')
                             || preg_match('/\.(env|git|lock|sql|sqlite|sqlite3|db|yml|yaml|toml|sh|bat|bak|dist)$/i', $filename);
@@ -1713,7 +2559,6 @@ switch ($framework) {
                 }
             }
 
-            // Static asset handling (strict whitelist of safe web extensions)
             if ($targetScript !== null && !str_ends_with($targetScript, '.php') && is_file($targetScript)) {
                 $ext = strtolower(pathinfo($targetScript, PATHINFO_EXTENSION));
                 $allowedMimes = [
@@ -1749,7 +2594,6 @@ switch ($framework) {
                 continue;
             }
 
-            // 2. Resolve PHP target script or fallback to entrypoint
             if ($targetScript === null || !is_file($targetScript) || !str_ends_with($targetScript, '.php')) {
                 $targetScript = $entrypoint;
             }
@@ -1776,11 +2620,29 @@ switch ($framework) {
                 }
             }
 
-            // Dynamically tune any database connections initialized during request
-            $discoverAndTuneDatabases();
+            if (!$plainDbTuned) {
+                $discoverAndTuneDatabases();
+                $plainDbTuned = true;
+            }
 
             if (is_callable($hyperionConfig['cleanup'])) {
                 ($hyperionConfig['cleanup'])();
+            }
+
+            $_GET = [];
+            $_POST = [];
+            $_FILES = [];
+            $_COOKIE = [];
+            $_REQUEST = [];
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                @session_write_close();
+            }
+            while (ob_get_level() > 0) {
+                @ob_end_clean();
+            }
+
+            if ($plainReqCount >= $plainMaxRequests || (($plainReqCount & 255) === 0 && memory_get_usage(true) >= $plainMaxMemoryBytes)) {
+                exit(0);
             }
         }
         break;

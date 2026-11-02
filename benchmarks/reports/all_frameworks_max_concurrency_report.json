@@ -3,7 +3,7 @@
     "timestamp": "2026-09-10 15:57:13",
     "cpu_cores": 10,
     "php_cli": "/opt/homebrew/bin/php",
-    "hyperion_cli": "/Users/elidinaili/Desktop/LAB/PHP-H/php-hyperion/target/release/hyperion-cli"
+    "hyperion_cli": "bin/hyperion"
   },
   "frameworks": {
     "laravel-complex": {

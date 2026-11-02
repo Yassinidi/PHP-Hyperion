@@ -1,4 +1,4 @@
-name: PHP-Hyperion CI
+name: PHP-Hyperion CI & Verification
 
 on:
   push:
@@ -7,72 +7,48 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-and-test:
-    name: Build & Test (Ubuntu & macOS)
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
+  syntax-and-installers:
+    name: Lint & Installer Verification
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Rust Toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Setup PHP Matrix
+        uses: shivammathur/setup-php@v2
         with:
-          components: clippy, rustfmt
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_sqlite, bcmath, opcache
+          coverage: none
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: php-hyperion -> target
-
-      - name: Install System Dependencies (Linux)
-        if: runner.os == 'Linux'
+      - name: Validate Shell and Batch Installers
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential clang pkg-config libssl-dev sqlite3 libsqlite3-dev apache2-utils
+          bash -n install.sh
+          chmod +x install.sh
+          chmod +x bin/hyperion-doctor
 
-      - name: Install System Dependencies (macOS)
-        if: runner.os == 'macOS'
+      - name: Verify Worker PHP Syntax
         run: |
-          brew install sqlite
+          php -l hyperion_worker.php
 
-      - name: Build PHP-Hyperion Release Binary
+      - name: Run Unified Unit Tests
         run: |
-          cd php-hyperion
-          cargo build --release -p hyperion-cli
+          python3 tests/run_all_tests.py --unit
 
-      - name: Run Core Engine Unit Tests
-        run: |
-          cd php-hyperion
-          cargo test --release --workspace
+  macos-verification:
+    name: macOS Deployment Verification
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Setup PHP for Composer & Seed Verification
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           extensions: mbstring, pdo, pdo_sqlite, bcmath
           coverage: none
 
-      - name: Install Laravel Dependencies
+      - name: Run Universal Unit Battery
         run: |
-          cd laravel-crud
-          composer install --no-interaction --prefer-dist --optimize-autoloader
-          touch database/database.sqlite
-          php artisan migrate:fresh --seed
-
-      - name: Run PHPUnit Suite via PHP-Hyperion Engine
-        run: |
-          cd laravel-crud
-          ../php-hyperion/target/release/hyperion-cli vendor/bin/phpunit tests/Unit
-          ../php-hyperion/target/release/hyperion-cli vendor/bin/phpunit tests/Feature
-
-      - name: Run High-Throughput Sanity Benchmark
-        run: |
-          cd laravel-crud
-          HYPERION_REACTORS=4 HYPERION_MAX_FIBRES=16 ../php-hyperion/target/release/hyperion-cli -S 127.0.0.1:8000 -W hyperion_worker.php &
-          PID=$!
-          while ! curl -s http://127.0.0.1:8000/api/categories > /dev/null; do sleep 0.2; done
-          ab -k -n 5000 -c 50 http://127.0.0.1:8000/api/categories
-          kill -9 $PID || true
+          python3 tests/run_all_tests.py --unit

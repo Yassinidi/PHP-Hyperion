@@ -46,8 +46,11 @@ def http_get(url):
 def http_post(url, json_data):
     data = json.dumps(json_data).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json", "User-Agent": "Tester"})
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        return resp.status, resp.read().decode('utf-8')
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            return resp.status, resp.read().decode('utf-8')
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode('utf-8')
 
 def test_ecommerce_features(base_url):
     results = {}
@@ -98,7 +101,7 @@ def test_ecommerce_features(base_url):
         ]
     }
     status, body = http_post(f"{base_url}/api/cart/checkout", checkout_payload)
-    assert status in (200, 201), f"Expected 200/201 on /api/cart/checkout, got {status}"
+    assert status in (200, 201), f"Expected 200/201 on /api/cart/checkout, got {status}, body: {body}"
     chk = json.loads(body)
     assert chk.get('success') is True, f"Checkout failed: {body}"
     results['cart_checkout'] = f"PASS (Order #{chk.get('order_id')})"

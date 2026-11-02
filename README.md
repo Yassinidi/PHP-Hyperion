@@ -164,6 +164,7 @@ PHP-Hyperion/
 │   ├── hyperion              # Universal native binary (Apple Silicon + Intel macOS)
 │   ├── hyperion.exe          # Native Windows 64-bit standalone executable
 │   ├── hyperion.service      # Systemd service unit for Linux servers
+│   ├── nginx.conf            # High-concurrency reverse proxy configuration
 │   └── sysctl.conf           # Kernel high-concurrency socket tuning parameters
 ├── bin/
 │   ├── hyperion              # Deployed macOS/Linux executable
